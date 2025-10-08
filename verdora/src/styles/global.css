@@ -1,1 +1,24 @@
-/* placeholder file - implement styles */
+:root {
+  /* Color Variables */
+  --color-green-lightest: #E9F5DB;
+  --color-green-light: #CFE1B9;
+  --color-green-sage: #B5C99A;
+  --color-green-medium: #97A97C;
+  --color-green-dark: #87986A;
+  --color-green-darker: #718355;
+  --color-green-darkest: #485935;
+
+  /* Semantic Color Roles */
+  --color-background-primary: var(--color-green-lightest);
+  --color-text-primary: var(--color-green-darkest);
+  --color-accent-primary: var(--color-green-medium);
+
+  /* Font Variables */
+  --font-family-serif: 'Domaine Display', serif;
+  --font-family-sans-serif: 'Barlow', sans-serif;
+
+  /* Specific Usage Roles */
+  --font-family-navbar: var(--font-family-sans-serif); /* Barlow for clean navigation */
+  --font-family-heading: var(--font-family-serif); /* Domaine Display for impact */
+  --font-family-body: var(--font-family-serif); /* Domaine Display for main content */
+}
