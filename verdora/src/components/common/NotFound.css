@@ -1,0 +1,56 @@
+/* Animation for the whole content */
+.fade-in {
+  animation: fadeIn 1.5s ease-in-out forwards;
+  opacity: 0;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Floating animation for the big 404 */
+.float-404 {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+/* Slide-up effect for the text section */
+.slide-up {
+  animation: slideUp 1.2s ease-out forwards;
+  opacity: 0;
+}
+
+@keyframes slideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Add a slight background fade on hover */
+.notfound-container:hover {
+  background: linear-gradient(180deg, #ffffff 0%, #f9f9f9 100%);
+  transition: background 0.5s ease;
+}
