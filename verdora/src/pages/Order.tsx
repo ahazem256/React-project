@@ -1,1 +1,8 @@
-// placeholder file - implement content
+
+
+export default function Order() {
+  return (
+    <div>Order</div>
+  )
+}
+

@@ -1,1 +1,7 @@
-// placeholder file - implement content
+
+export default function Products() {
+  return (
+    <div>Products</div>
+  )
+}
+

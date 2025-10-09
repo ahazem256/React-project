@@ -7,52 +7,49 @@ import { Helmet } from "react-helmet";
 import auth from '../../assets/download (6).jpeg'
 import "../../styles/global.css"
 
-interface ForgotPasswordValues {
-  email: string;
+interface VerifyResetCodeValues {
+  resetCode: string;
 }
 
-// Interface for API response
-interface ForgotPasswordResponse {
-  statusMsg: string;
+interface VerifyResetCodeResponse {
+  status: string;
   message?: string;
 }
 
-const ForgetPassword: React.FC = () => {
-  const [errorMsg, setErrorMsg] = useState<string>("");
+const VerifyResetCode: React.FC = () => {
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const navigate = useNavigate();
 
-  const ForgotPasswordSchema = Yup.object({
-    email: Yup.string()
-      .email("Invalid email format")
-      .required("Email is required"),
+  const verifyResetCodeSchema = Yup.object({
+    resetCode: Yup.string().required("Reset code is required"),
   });
 
-  const formik = useFormik<ForgotPasswordValues>({
-    initialValues: { email: "" },
-    validationSchema: ForgotPasswordSchema,
-    onSubmit: (values) => forgotPassword(values),
+  const formik = useFormik<VerifyResetCodeValues>({
+    initialValues: {
+      resetCode: "",
+    },
+    validationSchema: verifyResetCodeSchema,
+    onSubmit: (values) => {
+      verifyResetCode(values);
+    },
   });
 
-  async function forgotPassword(values: ForgotPasswordValues): Promise<void> {
+  async function verifyResetCode(values: VerifyResetCodeValues): Promise<void> {
     setIsLoading(true);
-    setErrorMsg(""); // Clear previous errors
+    setErrorMsg(null); // Clear previous errors
     
     try {
-      const { data } = await axios.post<ForgotPasswordResponse>(
-        "https://ecommerce.routemisr.com/api/v1/auth/forgotPasswords",
+      const { data } = await axios.post<VerifyResetCodeResponse>(
+        "https://ecommerce.routemisr.com/api/v1/auth/verifyResetCode",
         values
       );
-      
-      if (data.statusMsg === "success") {
-        navigate("/auth/verify-reset-code");
+
+      if (data.status === "Success") {
+        navigate("/auth/reset-password");
       }
-    } catch (error: unknown) {
-      if (axios.isAxiosError(error)) {
-        setErrorMsg(error.response?.data?.message || "Something went wrong");
-      } else {
-        setErrorMsg("Something went wrong");
-      }
+    } catch (error: any) {
+      setErrorMsg(error.response?.data?.message || "Something went wrong");
     } finally {
       setIsLoading(false);
     }
@@ -62,8 +59,9 @@ const ForgetPassword: React.FC = () => {
     <>
       <Helmet>
         <link rel="stylesheet" href="/path/to/Nib.woff2" />
-        <title>Verdora - Forgot Password</title>
+        <title>Verdora - Verify Reset Code</title>
       </Helmet>
+
       <section
         className="d-flex align-items-center justify-content-center min-vh-100"
         style={{ backgroundColor: "#fff" }}
@@ -72,51 +70,54 @@ const ForgetPassword: React.FC = () => {
           className="row w-100 justify-content-center align-items-center"
           style={{ maxWidth: "900px" }}
         >
-          {/* Form*/}
+          {/* Form */}
           <div className="col-md-6">
             <div className="card p-4" style={{ border: "none", fontFamily: "var(--font-family-form)" }}>
-              <h2 className="text-center mb-3 fw-bold">Reset Password</h2>
+              <h2 className="text-center mb-3 fw-bold">Verify Reset Code</h2>
               <p className="text-center text-muted mb-4">
-                You will receive an email to reset your password.
+                Please enter the reset code sent to your email.
               </p>
-
               <form onSubmit={formik.handleSubmit}>
+                {/* Reset Code Field */}
                 <div className="mb-3">
-                  <label htmlFor="email" className="form-label fw-semibold">
-                    Email Address
+                  <label htmlFor="resetCode" className="form-label fw-semibold">
+                    Reset Code
                   </label>
                   <input
-                    type="email"
-                    id="email"
-                    name="email"
+                    type="text"
+                    id="resetCode"
+                    name="resetCode"
                     className={`form-control ${
-                      formik.touched.email && formik.errors.email
+                      formik.touched.resetCode && formik.errors.resetCode
                         ? "is-invalid"
                         : ""
                     }`}
-                    value={formik.values.email}
+                    value={formik.values.resetCode}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     style={{ fontFamily: "var(--font-family-form)" }}
+                    placeholder="Enter the 6-digit code"
                   />
-                  {formik.touched.email && formik.errors.email && (
+                  {formik.touched.resetCode && formik.errors.resetCode && (
                     <div className="invalid-feedback" style={{ fontFamily: "var(--font-family-form)" }}>
-                      {formik.errors.email}
+                      {formik.errors.resetCode}
                     </div>
                   )}
                 </div>
 
+                {/* Error Message */}
                 {errorMsg && (
                   <div className="alert alert-danger text-center py-2" style={{ fontFamily: "var(--font-family-form)" }}>
                     {errorMsg}
                   </div>
                 )}
 
+                {/* Submit Button */}
                 <button
                   type="submit"
-                  className="btn w-100 "
+                  className="btn btn-success w-100"
                   disabled={isLoading || !(formik.dirty && formik.isValid)}
-                  style={{ fontFamily: "var(--font-family-form)", backgroundColor:" var(--color-green-darkest)"}}
+                  style={{ fontFamily: "var(--font-family-form)" }}
                 >
                   {isLoading ? (
                     <>
@@ -125,20 +126,32 @@ const ForgetPassword: React.FC = () => {
                         role="status"
                         aria-hidden="true"
                       ></span>
-                      Sending...
+                      Verifying...
                     </>
                   ) : (
-                    "Reset Password"
+                    "Verify Code"
                   )}
                 </button>
+
+                {/* Request New Code Link */}
+                <p className="text-center mt-3 mb-0" style={{ fontFamily: "var(--font-family-form)" }}>
+                  Didn't receive a code?{" "}
+                  <a
+                    onClick={() => navigate("/auth/forget-password")}
+                    className="fw-semibold text-success"
+                    style={{ cursor: "pointer", textDecoration: "none" }}
+                  >
+                    Request a new one
+                  </a>
+                </p>
               </form>
             </div>
           </div>
-          {/* Img */}
-          <div className="col-md-6 d-md-block ">
+          {/* Image */}
+          <div className="col-md-6 d-md-block">
             <img
               src={auth}
-              alt="Forgot Password"
+              alt="Verify Reset Code"
               className="img-fluid rounded"
             />
           </div>
@@ -148,4 +161,4 @@ const ForgetPassword: React.FC = () => {
   );
 };
 
-export default ForgetPassword;
+export default VerifyResetCode;
