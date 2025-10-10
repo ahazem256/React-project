@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import AuthNavbar from "./components/AuthNavbar/AuthNavbar";
 import MainNavbar from "./components/MainNavbar/MainNavbar";
 import ResetPassword from "./pages/Auth/ResetPassword";
@@ -18,140 +18,95 @@ import Indoor from "./pages/categories/Indoor";
 import Outdoor from "./pages/categories/Outdoor";
 import Flowering from "./pages/categories/Flowering";
 import Bonsai_miniature from "./pages/categories/Bonsai_miniature";
-
 import NotFound from "./components/common/NotFound";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import { Toaster } from "react-hot-toast";
 
-
-const App: React.FC = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-    const saved = sessionStorage.getItem("isAuthenticated");
-    return saved === "true";
-  });
-
-  const [cartCount, setCartCount] = useState<number>(1);
-
-  // تحميل Bootstrap مرة واحدة
+const AppContent: React.FC = () => {
+  const location = useLocation();
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(!!localStorage.getItem("token"));
+  const [userName, setUserName] = useState<string>(localStorage.getItem("userName") || "");
+  const [cartCount, setCartCount] = useState<number>(0);
   useEffect(() => {
-    const bootstrapLink = document.createElement("link");
-    bootstrapLink.rel = "stylesheet";
-    bootstrapLink.href =
-      "https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css";
-    if (!document.querySelector(`link[href="${bootstrapLink.href}"]`)) {
-      document.head.appendChild(bootstrapLink);
-    }
-  }, []);
+    const checkAuth = () => {
+      const token = localStorage.getItem("token");
+      const name = localStorage.getItem("userName");
+      setIsAuthenticated(!!token);
+      setUserName(name || "");
+    };
 
-  // حفظ حالة تسجيل الدخول في sessionStorage
-  useEffect(() => {
-    sessionStorage.setItem("isAuthenticated", isAuthenticated.toString());
-  }, [isAuthenticated]);
+    window.addEventListener("storage", checkAuth);
+    checkAuth(); // initial check
+    return () => window.removeEventListener("storage", checkAuth);
+  }, [location.pathname]);
 
-  const handleLogin = (): void => {
+  const handleLogin = (token: string, name: string): void => {
+    localStorage.setItem("token", token);
+    localStorage.setItem("userName", name);
+    setUserName(name);
     setIsAuthenticated(true);
   };
 
   const handleLogout = (): void => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userName");
     setIsAuthenticated(false);
+    setUserName("");
   };
-
-
-
-
-
 
   return (
     <>
       <Toaster position="top-right" />
+      <div style={{ minHeight: "100vh", backgroundColor: "#f8f9fa" }}>
+        {/* Navbar */}
+        {isAuthenticated ? (
+          <MainNavbar onLogout={handleLogout} cartCount={cartCount} userName={userName} />
+        ) : (
+          <AuthNavbar />
+        )}
 
-      <Router>
-        <div style={{ minHeight: "100vh", backgroundColor: "#f8f9fa" }}>
-          {/* Navbar */}
-          {!isAuthenticated ? (
-            <AuthNavbar onLogin={handleLogin} />
-          ) : (
-            <MainNavbar onLogout={handleLogout} cartCount={cartCount} />
-          )}
-          <Routes>
-            {/* Public Routes */}
-            <Route path="/" element={<SignIn />} />
-            <Route path="/auth/forget-password" element={<ForgotPassword />} />
-            <Route path="/auth/verify-reset-code" element={<VerifyResetCode />} />
-            <Route path="/auth/reset-password" element={<ResetPassword />} />
-            <Route path="/auth/signin" element={<SignIn />} />
-            <Route path="/auth/signup" element={<SignUp />} />
+        <Routes>
+          {/* Redirect root */}
+          <Route
+            path="/"
+            element={isAuthenticated ? <Navigate to="/home" replace /> : <Navigate to="/auth/signin" replace />}
+          />
 
-            {/* Protected Routes */}
-            <Route
-              path="/home"
-              element={
-                <ProtectedRoute>
-                  <Home />
-                </ProtectedRoute>
-              }
-            />
-            <Route path="/categories/indoor" element={<Indoor />} />
-            <Route path="/categories/outdoor" element={<Outdoor />} />
-            <Route path="/categories/flowering" element={<Flowering />} />
-            <Route path="/categories/bonsai_miniature" element={<Bonsai_miniature />} />
-            <Route
-              path="/cart"
-              element={
-                <ProtectedRoute>
-                  <Cart />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/order"
-              element={
-                <ProtectedRoute>
-                  <Order />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/productdetails"
-              element={
-                <ProtectedRoute>
-                  <ProductDetails />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/products"
-              element={
-                <ProtectedRoute>
-                  <Products />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/profile"
-              element={
-                <ProtectedRoute>
-                  <Profile />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/checkout"
-              element={
-                <ProtectedRoute>
-                  <Checkout />
-                </ProtectedRoute>
-              }
-            />
+          {/* Auth Routes */}
+          <Route
+            path="/auth/signin"
+            element={isAuthenticated ? <Navigate to="/home" replace /> : <SignIn onLogin={handleLogin} />}
+          />
+          <Route path="/auth/signup" element={<SignUp />} />
+          <Route path="/auth/forget-password" element={<ForgotPassword />} />
+          <Route path="/auth/verify-reset-code" element={<VerifyResetCode />} />
+          <Route path="/auth/reset-password" element={<ResetPassword />} />
 
-            {/* Not Found */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </div>
-      </Router>
+          {/* Protected Routes */}
+          <Route path="/home" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Home /></ProtectedRoute>} />
+          <Route path="/categories/indoor" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Indoor /></ProtectedRoute>} />
+          <Route path="/categories/outdoor" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Outdoor /></ProtectedRoute>} />
+          <Route path="/categories/flowering" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Flowering /></ProtectedRoute>} />
+          <Route path="/categories/bonsai_miniature" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Bonsai_miniature /></ProtectedRoute>} />
+          <Route path="/cart" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Cart /></ProtectedRoute>} />
+          <Route path="/order" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Order /></ProtectedRoute>} />
+          <Route path="/productdetails" element={<ProtectedRoute isAuthenticated={isAuthenticated}><ProductDetails /></ProtectedRoute>} />
+          <Route path="/products" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Products /></ProtectedRoute>} />
+          <Route path="/profile" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Profile /></ProtectedRoute>} />
+          <Route path="/checkout" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Checkout /></ProtectedRoute>} />
+
+          {/* Not Found */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </div>
     </>
   );
-
 };
+
+const App: React.FC = () => (
+  <Router>
+    <AppContent />
+  </Router>
+);
 
 export default App;
