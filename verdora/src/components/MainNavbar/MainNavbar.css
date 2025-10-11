@@ -1,8 +1,21 @@
 /* MainNavbar.css */
+
+
 nav {
     font-family: var(--font-family-sans-serif);
-    background-color: transparent;
-    position: relative;
+    background-color: rgba(255, 255, 255, 0.7) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 1000 !important;
+    transition: all 0.3s ease;
+}
+
+/* Override any Bootstrap default positioning */
+.navbar {
+    position: sticky !important;
+    top: 0 !important;
 }
 
 .navbar-container {
@@ -130,19 +143,63 @@ nav {
     color: var(--color-green-darker) !important;
 }
 
-.btn-order {
+.btn-person {
     color: var(--color-text-primary) !important;
 }
 
-.btn-order:hover {
+.btn-menu {
+    color: var(--color-text-primary) !important;
+}
+
+.btn-person:hover {
     transform: scale(1.04);
     color: var(--color-green-darker) !important;
 }
 
-.btn-logout:hover {
-    transform: scale(1.08);
-    color: var(--color-green-darker) !important;
+.user-dropdown {
+    position: relative;
+    display: inline-block;
 }
+
+.user-dropdown-toggle {
+    background: none;
+    border: none;
+    color: var(--color-green-darkest);
+    cursor: pointer;
+}
+
+.user-dropdown-menu {
+    position: absolute;
+    top: 120%;
+    right: 0;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    min-width: 150px;
+    z-index: 1000;
+    padding: 5px 0;
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 8px 12px;
+    background: none;
+    border: none;
+    text-align: left;
+    color: #333;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.dropdown-item:hover {
+    background-color: #f4f4f4;
+}
+
 
 /* Toggle Menu Button */
 .menu-toggle-btn {
@@ -216,7 +273,8 @@ nav {
 
 .mobile-cart-btn,
 .mobile-logout-btn,
-.mobile-order-btn {
+.mobile-order-btn,
+.mobile-profile-btn {
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -278,16 +336,30 @@ nav {
     transform: rotate(90deg) scale(0.95);
 }
 
+
+
 /* Responsive Design */
 @media (max-width: 991px) {
 
     .navbar-nav-desktop,
     .navbar-icons-desktop {
-        display: none;
+        display: none !important;
     }
 
     .menu-toggle-btn {
         display: block;
+    }
+
+    .btn-cart,
+    .btn-order,
+    .btn-logout,
+    .welcome,
+    .btn-profile {
+        display: none !important;
+    }
+
+    .user-dropdown {
+        display: none !important;
     }
 }
 
@@ -301,6 +373,10 @@ nav {
 
 /* تحسينات إضافية للأجهزة الصغيرة جداً */
 @media (max-width: 576px) {
+    body {
+        overflow-y: hidden;
+    }
+
     .navbar-brand img {
         height: 100px !important;
     }
@@ -308,4 +384,5 @@ nav {
     .mobile-menu {
         width: 100%;
     }
+
 }

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Logo from "../../assets/logo.png";
 import { IoPersonOutline, IoCartOutline, IoClose, IoLogOutOutline } from "react-icons/io5";
+import { MdOutlineManageAccounts } from "react-icons/md";
 import { CiMenuFries } from "react-icons/ci";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import { GoHistory } from "react-icons/go";
@@ -22,6 +23,7 @@ const MainNavbar: React.FC<MainNavbarProps> = ({
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [activeLink, setActiveLink] = useState<string>("home");
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [storedName, setStoredName] = useState<string>("");
 
   const categories = [
@@ -115,11 +117,11 @@ const MainNavbar: React.FC<MainNavbarProps> = ({
           {/* Desktop Icons */}
           <div className="navbar-icons-desktop d-flex align-items-center gap-3">
             {storedName && (
-              <span className="fw-bold text-success me-2">Welcome, {storedName}</span>
+              <span className="fw-bold text-success me-2 welcome">Welcome, {storedName}</span>
             )}
 
             <Link to="/cart" className="btn position-relative btn-cart" type="button">
-              <IoCartOutline size={28} />
+              <IoCartOutline size={26} />
               {cartCount > 0 && (
                 <span
                   className="translate-middle badge rounded-pill"
@@ -130,34 +132,52 @@ const MainNavbar: React.FC<MainNavbarProps> = ({
               )}
             </Link>
 
-            <Link
-              to="/order"
-              className="btn position-relative btn-order"
-              type="button"
-              onClick={() => setActiveLink("order")}
-            >
-              <GoHistory size={26} />
-            </Link>
+            <div className="user-dropdown">
+              <button
+                className="btn user-dropdown-toggle btn-person"
+                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                type="button"
+                aria-label="User menu"
+              >
+                <IoPersonOutline size={26} />
+              </button>
 
-            
-            <button
-              onClick={goToProfile}
-              className="btn"
-              style={{ color: "var(--color-green-darkest)" }}
-              type="button"
-            >
-              <IoPersonOutline size={26} />
-            </button>
+              {isUserMenuOpen && (
+                <div className="user-dropdown-menu btn-order">
+                  <Link
+                    to="/order"
+                    className="dropdown-item"
+                    onClick={() => {
+                      setActiveLink("order");
+                      setIsUserMenuOpen(false);
+                    }}
+                  >
+                    <GoHistory size={20} /> <span>Orders</span>
+                  </Link>
 
-           
-            <button
-              onClick={handleLogout}
-              className="btn btn-logout"
-              style={{ color: "var(--color-green-darkest)" }}
-              type="button"
-            >
-              <IoLogOutOutline size={26} />
-            </button>
+                  <button
+                    onClick={() => {
+                      goToProfile();
+                      setIsUserMenuOpen(false);
+                    }}
+                    className="dropdown-item"
+                  >
+                    <MdOutlineManageAccounts size={20} /> <span>Profile</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      handleLogout();
+                      setIsUserMenuOpen(false);
+                    }}
+                    className="dropdown-item"
+                  >
+                    <IoLogOutOutline size={20} /> <span>Logout</span>
+                  </button>
+                </div>
+              )}
+            </div>
+
           </div>
 
           {/* Mobile Toggle */}
@@ -176,8 +196,39 @@ const MainNavbar: React.FC<MainNavbarProps> = ({
             <div className="mobile-nav-links">
               <Link className={`nav-link main-navbar-mobile ${activeLink === "home" ? "active" : ""}`} to="/home" onClick={closeMenu}>Home</Link>
               <Link className={`nav-link main-navbar-mobile ${activeLink === "products" ? "active" : ""}`} to="/products" onClick={closeMenu}>Products</Link>
-              <Link className={`nav-link main-navbar-mobile ${activeLink === "categories" ? "active" : ""}`} to="/categories" onClick={closeMenu}>Categories</Link>
-              <Link to="/profile" className="nav-link main-navbar-mobile" onClick={closeMenu}>Profile</Link>
+
+
+              <div
+                className="nav-item dropdown"
+                onMouseEnter={() => setIsDropdownOpen(true)}
+                onMouseLeave={() => setIsDropdownOpen(false)}
+              >
+                <button
+                  className={`nav-link main-navbar d-flex align-items-center ${activeLink === 'categories' ? 'active' : ''
+                    }`}
+                >
+                  <span className="fw-medium">Categories</span>
+                  <RiArrowDropDownLine size={25} />
+                </button>
+
+                {isDropdownOpen && (
+                  <div className="dropdown-menu show">
+                    {categories.map((cat) => (
+                      <Link
+                        key={cat.path}
+                        to={cat.path}
+                        className="dropdown-item"
+                        onClick={() => {
+                          setActiveLink('categories');
+                          setIsDropdownOpen(false);
+                        }}
+                      >
+                        {cat.name}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
 
             <div className="mobile-icons mt-3">
@@ -189,17 +240,17 @@ const MainNavbar: React.FC<MainNavbarProps> = ({
               </Link>
 
               <Link to="/order" className="btn position-relative mobile-order-btn" onClick={closeMenu}>
-                <GoHistory size={26} />
+                <GoHistory size={25} />
                 <span>Orders</span>
               </Link>
 
-              <Link to="/profile" className="btn mobile-profile-btn" onClick={closeMenu}>
-                <IoPersonOutline size={30} />
+              <Link to="/profile" className="btn position-relative mobile-profile-btn" onClick={closeMenu}>
+                <IoPersonOutline size={25} />
                 <span>Profile</span>
               </Link>
 
               <button onClick={() => { handleLogout(); closeMenu(); }} className="btn mobile-logout-btn mt-2">
-                <IoLogOutOutline size={30} />
+                <IoLogOutOutline size={25} />
                 <span>Logout</span>
               </button>
             </div>
