@@ -21,6 +21,9 @@ import Bonsai_miniature from "./pages/categories/Bonsai_miniature";
 import NotFound from "./components/common/NotFound";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import { Toaster } from "react-hot-toast";
+import Footer from './components/footer/footer';
+
+
 
 const AppContent: React.FC = () => {
   const location = useLocation();
@@ -57,47 +60,49 @@ const AppContent: React.FC = () => {
   return (
     <>
       <Toaster position="top-right" />
-      <div style={{ minHeight: "100vh", backgroundColor: "#f8f9fa" }}>
+      <div className="app-container">
         {/* Navbar */}
         {isAuthenticated ? (
           <MainNavbar onLogout={handleLogout} cartCount={cartCount} userName={userName} />
         ) : (
           <AuthNavbar />
         )}
+        <main className="app-content">
+          <Routes>
+            {/* Redirect root */}
+            <Route
+              path="/"
+              element={isAuthenticated ? <Navigate to="/home" replace /> : <Navigate to="/auth/signin" replace />}
+            />
 
-        <Routes>
-          {/* Redirect root */}
-          <Route
-            path="/"
-            element={isAuthenticated ? <Navigate to="/home" replace /> : <Navigate to="/auth/signin" replace />}
-          />
+            {/* Auth Routes */}
+            <Route
+              path="/auth/signin"
+              element={isAuthenticated ? <Navigate to="/home" replace /> : <SignIn onLogin={handleLogin} />}
+            />
+            <Route path="/auth/signup" element={<SignUp />} />
+            <Route path="/auth/forget-password" element={<ForgotPassword />} />
+            <Route path="/auth/verify-reset-code" element={<VerifyResetCode />} />
+            <Route path="/auth/reset-password" element={<ResetPassword />} />
 
-          {/* Auth Routes */}
-          <Route
-            path="/auth/signin"
-            element={isAuthenticated ? <Navigate to="/home" replace /> : <SignIn onLogin={handleLogin} />}
-          />
-          <Route path="/auth/signup" element={<SignUp />} />
-          <Route path="/auth/forget-password" element={<ForgotPassword />} />
-          <Route path="/auth/verify-reset-code" element={<VerifyResetCode />} />
-          <Route path="/auth/reset-password" element={<ResetPassword />} />
+            {/* Protected Routes */}
+            <Route path="/home" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Home /></ProtectedRoute>} />
+            <Route path="/categories/indoor" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Indoor /></ProtectedRoute>} />
+            <Route path="/categories/outdoor" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Outdoor /></ProtectedRoute>} />
+            <Route path="/categories/flowering" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Flowering /></ProtectedRoute>} />
+            <Route path="/categories/bonsai_miniature" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Bonsai_miniature /></ProtectedRoute>} />
+            <Route path="/cart" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Cart /></ProtectedRoute>} />
+            <Route path="/order" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Order /></ProtectedRoute>} />
+            <Route path="/productdetails" element={<ProtectedRoute isAuthenticated={isAuthenticated}><ProductDetails /></ProtectedRoute>} />
+            <Route path="/products" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Products /></ProtectedRoute>} />
+            <Route path="/profile" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Profile /></ProtectedRoute>} />
+            <Route path="/checkout" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Checkout /></ProtectedRoute>} />
 
-          {/* Protected Routes */}
-          <Route path="/home" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Home /></ProtectedRoute>} />
-          <Route path="/categories/indoor" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Indoor /></ProtectedRoute>} />
-          <Route path="/categories/outdoor" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Outdoor /></ProtectedRoute>} />
-          <Route path="/categories/flowering" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Flowering /></ProtectedRoute>} />
-          <Route path="/categories/bonsai_miniature" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Bonsai_miniature /></ProtectedRoute>} />
-          <Route path="/cart" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Cart /></ProtectedRoute>} />
-          <Route path="/order" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Order /></ProtectedRoute>} />
-          <Route path="/productdetails" element={<ProtectedRoute isAuthenticated={isAuthenticated}><ProductDetails /></ProtectedRoute>} />
-          <Route path="/products" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Products /></ProtectedRoute>} />
-          <Route path="/profile" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Profile /></ProtectedRoute>} />
-          <Route path="/checkout" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Checkout /></ProtectedRoute>} />
-
-          {/* Not Found */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+            {/* Not Found */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </main>
+        {isAuthenticated && !location.pathname.startsWith("/auth") && <Footer />}
       </div>
     </>
   );

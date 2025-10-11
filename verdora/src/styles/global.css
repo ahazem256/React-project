@@ -1,4 +1,3 @@
-
 :root {
   /* Color Variables */
   --color-green-lightest: #E9F5DB;
@@ -17,11 +16,38 @@
   /* Font Variables */
   --font-family-serif: 'Domaine Display', serif;
   --font-family-sans-serif: 'Barlow', sans-serif;
-  --font-family-form: "Nib", serif;;
+  --font-family-form: "Nib", serif;
+  ;
 
   /* Specific Usage Roles */
-  --font-family-navbar: var(--font-family-sans-serif); /* Barlow for clean navigation */
-  --font-family-heading: var(--font-family-serif); /* Domaine Display for impact */
-  --font-family-body: var(--font-family-serif); /* Domaine Display for main content */
- 
+  --font-family-navbar: var(--font-family-sans-serif);
+  /* Barlow for clean navigation */
+  --font-family-heading: var(--font-family-serif);
+  /* Domaine Display for impact */
+  --font-family-body: var(--font-family-serif);
+  /* Domaine Display for main content */
+
+}
+
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  /* يغطي طول الشاشة بالكامل */
+  background-color: #f8f9fa;
+}
+
+.app-content {
+  flex: 1;
+}
+
+
+footer {
+  background-color: var(--color-green-dark);
+  color: white;
+  text-align: center;
+  padding: 15px 0;
+  font-size: 14px;
+  font-family: var(--font-family-sans-serif);
 }

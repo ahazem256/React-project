@@ -1,0 +1,184 @@
+.footer {
+    background: linear-gradient(180deg,
+            rgba(174, 231, 185, 0.9) 0%,
+            rgba(189, 237, 196, 0.85) 50%,
+            rgba(230, 249, 234, 0.8) 100%);
+    backdrop-filter: blur(8px);
+    color: var(--color-green-darkest);
+    font-family: var(--font-family-sans-serif);
+    padding: 3rem 1rem 1rem;
+    margin-top: 0;
+    border-top: 2px solid rgba(120, 168, 125, 0.3);
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* باقي الكود زي ما هو */
+.footer-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: auto;
+}
+
+.footer-section {
+    flex: 1 1 250px;
+    min-width: 220px;
+}
+
+.footer-logo {
+    display: flex;
+    align-items: center;
+}
+
+.footer-section .footer-text {
+    font-size: 20px;
+    color: var(--color-text-secondary);
+    max-width: 250px;
+    line-height: 1.6;
+}
+
+.footer-leaf {
+    color: #1a602d;
+}
+
+.footer-brand {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--color-green-darker);
+}
+
+
+.footer-section .footer-title {
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+.footer-social {
+    display: flex;
+    justify-content: center;
+    margin-top: 0.5rem;
+    gap: 1rem;
+}
+
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-links li {
+    margin-bottom: 0.6rem;
+}
+
+.footer-links a {
+    color: var(--color-green-darkest);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: var(--color-green-medium);
+}
+
+.footer-social {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.footer-social a {
+    color: var(--color-green-darkest);
+    font-size: 18px;
+    transition: transform 0.3s, color 0.3s;
+}
+
+.footer-social a:hover {
+    color: var(--color-green-medium);
+    transform: scale(1.1);
+}
+
+.footer-bottom {
+    text-align: center;
+    border-top: 1px solid rgba(120, 168, 125, 0.3);
+    padding-top: 1rem;
+    margin-top: 2rem;
+    font-size: 14px;
+    color: var(--color-green-dark);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .footer-container {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .footer-section {
+        flex: none;
+        width: 100%;
+    }
+
+    .footer-text {
+        max-width: 100%;
+    }
+}
+
+.footer-section:nth-child(2),
+.footer-section:nth-child(3) {
+    margin-top: 28px;
+    /* خلتهم ينزلوا تحت شوية */
+}
+
+.footer-dropdown {
+    position: relative;
+}
+
+.dropdown-title {
+    cursor: pointer;
+    color: var(--color-green-darkest);
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.dropdown-title:hover {
+    color: var(--color-green-medium);
+}
+
+/* القائمة المنسدلة */
+.footer-dropdown-menu {
+    position: absolute;
+    left: 0;
+    top: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    list-style: none;
+    padding: 0.5rem 0;
+    margin: 0;
+    display: none;
+    z-index: 10;
+    min-width: 180px;
+}
+
+/* إظهار القائمة عند الـ hover */
+.footer-dropdown:hover .footer-dropdown-menu {
+    display: block;
+}
+
+.footer-dropdown-menu li {
+    padding: 0.5rem 1rem;
+}
+
+.footer-dropdown-menu li a {
+    color: var(--color-green-darkest);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-dropdown-menu li a:hover {
+    color: var(--color-green-medium);
+}
