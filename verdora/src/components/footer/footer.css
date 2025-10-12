@@ -109,28 +109,12 @@
     color: var(--color-green-dark);
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-    .footer-container {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-    }
 
-    .footer-section {
-        flex: none;
-        width: 100%;
-    }
-
-    .footer-text {
-        max-width: 100%;
-    }
-}
 
 .footer-section:nth-child(2),
 .footer-section:nth-child(3) {
     margin-top: 45px;
-    /* خلتهم ينزلوا تحت شوية */
+
 }
 
 .footer-dropdown {
@@ -148,7 +132,7 @@
     color: var(--color-green-medium);
 }
 
-/* القائمة المنسدلة */
+
 .footer-dropdown-menu {
     position: absolute;
     left: 0;
@@ -164,7 +148,7 @@
     min-width: 180px;
 }
 
-/* إظهار القائمة عند الـ hover */
+
 .footer-dropdown:hover .footer-dropdown-menu {
     display: block;
 }
@@ -181,4 +165,41 @@
 
 .footer-dropdown-menu li a:hover {
     color: var(--color-green-medium);
+}
+
+@media (max-width: 768px) {
+    .footer-container {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .footer-section {
+        flex: none;
+        width: 100%;
+    }
+
+
+    .footer-section:first-child {
+        order: -1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+
+    }
+
+    .footer-logo img {
+        margin: 0 auto;
+    }
+
+    .footer-text {
+        max-width: 90%;
+        margin: 0 auto;
+    }
+
+    .footer-section:nth-child(2),
+    .footer-section:nth-child(3) {
+        margin-top: 0;
+    }
 }
