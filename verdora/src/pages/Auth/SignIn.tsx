@@ -50,19 +50,33 @@ export default function SignIn({ onLogin }: SignInProps) {
 
       if (data.message === "success") {
         const token = data.token;
-        const userName = data.user?.name || "User";
 
-        // Save token + userName
+
+        const storedUserData = JSON.parse(localStorage.getItem("userData") || "{}");
+
+        const userName =
+          storedUserData?.name?.Name ||
+          storedUserData?.name ||
+          data.user?.name ||
+          "User";
+
         localStorage.setItem("token", token);
         localStorage.setItem("userName", userName);
+        localStorage.setItem(
+          "userData",
+          JSON.stringify({
+            ...storedUserData,
+            name: storedUserData.name || { Name: userName },
+          })
+        );
 
-        // Update Redux + App
         dispatch(setToken(token));
-        onLogin(token, userName); 
+        onLogin(token, userName);
 
         toast.success(`Welcome back, ${userName}!`);
         navigate("/home", { replace: true });
       }
+
     } catch (error: any) {
       toast.error(
         error.response?.data?.message || error.message || "Sign in failed"
@@ -122,11 +136,10 @@ export default function SignIn({ onLogin }: SignInProps) {
                   <input
                     type="email"
                     id="email"
-                    className={`form-control p-3 rounded-0 ${
-                      formState.errors.email && formState.touchedFields.email
-                        ? "is-invalid"
-                        : ""
-                    }`}
+                    className={`form-control p-3 rounded-0 ${formState.errors.email && formState.touchedFields.email
+                      ? "is-invalid"
+                      : ""
+                      }`}
                     placeholder="Enter your email"
                     {...register("email")}
                   />
@@ -153,12 +166,11 @@ export default function SignIn({ onLogin }: SignInProps) {
                   <input
                     type="password"
                     id="password"
-                    className={`form-control p-3 rounded-0 ${
-                      formState.errors.password &&
+                    className={`form-control p-3 rounded-0 ${formState.errors.password &&
                       formState.touchedFields.password
-                        ? "is-invalid"
-                        : ""
-                    }`}
+                      ? "is-invalid"
+                      : ""
+                      }`}
                     placeholder="Enter your password"
                     {...register("password")}
                   />
