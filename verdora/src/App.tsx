@@ -21,7 +21,7 @@ import Bonsai_miniature from "./pages/categories/Bonsai_miniature";
 import NotFound from "./components/common/NotFound";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import { Toaster } from "react-hot-toast";
-import Footer from './components/footer/footer';
+import Footer from './components/footer/Footer';
 
 
 
@@ -93,10 +93,11 @@ const AppContent: React.FC = () => {
             <Route path="/categories/bonsai_miniature" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Bonsai_miniature /></ProtectedRoute>} />
             <Route path="/cart" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Cart /></ProtectedRoute>} />
             <Route path="/order" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Order /></ProtectedRoute>} />
-            <Route path="/productdetails" element={<ProtectedRoute isAuthenticated={isAuthenticated}><ProductDetails /></ProtectedRoute>} />
+            <Route path="/product/:id" element={<ProtectedRoute isAuthenticated={isAuthenticated}><ProductDetails /></ProtectedRoute>} />
             <Route path="/products" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Products /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Profile /></ProtectedRoute>} />
             <Route path="/checkout" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Checkout /></ProtectedRoute>} />
+
 
             {/* Not Found */}
             <Route path="*" element={<NotFound />} />

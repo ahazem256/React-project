@@ -7,8 +7,10 @@
   --color-green-dark: #87986A;
   --color-green-darker: #718355;
   --color-green-darkest: #485935;
+  --body-background:#ffff;
 
   /* Semantic Color Roles */
+  --body: var(--body-background);
   --color-background-primary: var(--color-green-lightest);
   --color-text-primary: var(--color-green-darkest);
   --color-accent-primary: var(--color-green-medium);
