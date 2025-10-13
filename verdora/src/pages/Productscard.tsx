@@ -1,7 +1,7 @@
 import type {Product} from "./Hooks"
-import { FaShoppingCart } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../redux/slices/cartSlice";
+import toast from "react-hot-toast";
 
 interface ProductCardProps {
   product: Product;
@@ -14,6 +14,7 @@ export default function ProductsCard({product, onClick} : ProductCardProps) {
 
   const handleAddToCart = () => {
     dispatch(addToCart({product, quantity: 1 })); 
+     toast.success(`${product.name} added to cart!`)
   };
     
     const {name, description, image, price, rate} = product
@@ -34,8 +35,7 @@ export default function ProductsCard({product, onClick} : ProductCardProps) {
         <p>{price} </p>
       </div>
        <p className='text-warning'>{rate}</p>
-      <button className="btn add-to-cart-btn border border-black w-75 rounded-0 fs-4" style={{height: "55px", fontFamily: "var(--font-family-serif)", color: "var(--color-green-darkest)"}} onClick={handleAddToCart}> <FaShoppingCart className="cart" style={{ marginRight: "8px", fontSize: "25", color: "var(--color-green-darkest)", marginTop: "-5" }}
-      /> add to cart</button>
+      <button className="btn add-to-cart-btn border border-black w-75 rounded-0 fs-4" style={{height: "55px", fontFamily: "var(--font-family-serif)", color: "var(--color-green-darkest)"}} onClick={handleAddToCart}> add to cart</button>
     </div>
   </div>
 </div>
