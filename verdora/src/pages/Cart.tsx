@@ -1,17 +1,20 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import type { RootState, AppDispatch } from "../redux/store";
 import { removeFromCart, clearCart } from "../redux/slices/cartSlice";
 import { Link } from "react-router-dom";
 
 const Cart: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
   const cartItems = useSelector((state: RootState) => state.cart.items);
 
-  // حساب السعر الإجمالي
   const totalPrice = cartItems.reduce((sum, item) => {
-    const priceNumber = parseFloat(item.price.replace(/[^\d.]/g, ""));
-    return sum + priceNumber * item.quantity;
+    const price = typeof item.price === 'string' 
+      ? parseFloat(item.price.replace(/[^\d.]/g, "")) 
+      : item.price;
+    return sum + price * item.quantity;
   }, 0);
 
   if (cartItems.length === 0) {
@@ -30,7 +33,13 @@ const Cart: React.FC = () => {
       <h1 style={{ marginBottom: "32px" }}>Your Cart</h1>
       <div>
         {cartItems.map((item) => {
-          const priceNumber = parseFloat(item.price.replace(/[^\d.]/g, ""));
+          const productName = item.name || 'Product';
+          const productImage = typeof item.image === 'string' ? item.image : item.image[0] || '';
+          const price = typeof item.price === 'string' 
+            ? parseFloat(item.price.replace(/[^\d.]/g, "")) 
+            : item.price;
+          const currency = typeof item.price === 'string' && item.price.includes('EGP') ? 'EGP' : '$';
+          
           return (
             <div
               key={item.id}
@@ -44,16 +53,16 @@ const Cart: React.FC = () => {
               }}
             >
               <img
-                src={typeof item.image === "string" ? item.image : item.image[0]}
-                alt={item.name}
+                src={productImage}
+                alt={productName}
                 style={{ width: "100px", height: "100px", objectFit: "cover", borderRadius: "4px" }}
               />
               <div style={{ flex: 1 }}>
-                <h3 style={{ margin: "0 0 8px 0" }}>{item.name}</h3>
+                <h3 style={{ margin: "0 0 8px 0" }}>{productName}</h3>
                 <p style={{ margin: "0 0 8px 0", color: "#555" }}>
-                  {item.quantity} × {priceNumber} EGP
+                  {item.quantity} × {currency}{price.toFixed(2)}
                 </p>
-                <p style={{ fontWeight: "700", margin: 0 }}>Subtotal: {priceNumber * item.quantity} EGP</p>
+                <p style={{ fontWeight: "700", margin: 0 }}>Subtotal: {currency}{(price * item.quantity).toFixed(2)}</p>
               </div>
               <button
                 onClick={() => dispatch(removeFromCart(item.id))}
@@ -74,21 +83,38 @@ const Cart: React.FC = () => {
       </div>
 
       <div style={{ marginTop: "32px", textAlign: "right" }}>
-        <h2>Total: {totalPrice.toFixed(2)} EGP</h2>
-        <button
-          onClick={() => dispatch(clearCart())}
-          style={{
-            marginTop: "16px",
-            padding: "12px 20px",
-            backgroundColor: "#333",
-            color: "#fff",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-          }}
-        >
-          Clear Cart
-        </button>
+        <h2>Total: {totalPrice.toFixed(2)} {cartItems.length > 0 && typeof cartItems[0].price === 'string' && cartItems[0].price.includes('EGP') ? 'EGP' : '$'}</h2>
+        <div style={{ display: "flex", gap: "12px", justifyContent: "flex-end", marginTop: "16px" }}>
+          <button
+            onClick={() => dispatch(clearCart())}
+            style={{
+              padding: "12px 20px",
+              backgroundColor: "#6c757d",
+              color: "#fff",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer",
+              fontSize: "16px",
+            }}
+          >
+            Clear Cart
+          </button>
+          <button
+            onClick={() => navigate("/checkout")}
+            style={{
+              padding: "12px 20px",
+              backgroundColor: "#28a745",
+              color: "#fff",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer",
+              fontSize: "16px",
+              fontWeight: "600",
+            }}
+          >
+            Proceed to Checkout
+          </button>
+        </div>
       </div>
     </div>
   );
