@@ -26,7 +26,7 @@ const Checkout: React.FC = () => {
 
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // Tottal pricee
+  // Calculate total price
   const totalPrice = cartItems.reduce((sum, item) => {
     const price = typeof item.price === 'string' 
       ? parseFloat(item.price.replace(/[^\d.]/g, "")) 
@@ -37,8 +37,9 @@ const Checkout: React.FC = () => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     
-    //only numbers for phone, zipCode, cardNumber, and cvv fields
+    // Allow only numbers for phone, zipCode, cardNumber, and cvv fields
     if (name === 'phone' || name === 'zipCode' || name === 'cardNumber' || name === 'cvv') {
+      // Remove all non-digit characters
       const numericValue = value.replace(/\D/g, '');
       setFormData(prev => ({
         ...prev,
@@ -56,10 +57,11 @@ const Checkout: React.FC = () => {
     e.preventDefault();
     setIsProcessing(true);
 
-   
+    // Simulate payment processing
     try {
       await new Promise(resolve => setTimeout(resolve, 2000));
       
+      // Store order data before clearing cart
       dispatch(addOrder({
         items: cartItems,
         shippingInfo: {
@@ -78,6 +80,7 @@ const Checkout: React.FC = () => {
       // Clear cart after storing order
       dispatch(clearCart());
       
+      // Navigate to order page
       navigate("/order");
     } catch (error) {
       alert("Payment processing failed. Please try again.");

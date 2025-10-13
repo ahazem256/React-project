@@ -9,8 +9,19 @@ interface CartState {
   items: CartItem[];
 }
 
+// Hydrate cart from localStorage (simple persistence)
+const savedCartItems: CartItem[] = (() => {
+  try {
+    const raw = localStorage.getItem("cart_items");
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+})();
+
 const initialState: CartState = {
-  items: [],
+  items: savedCartItems,
 };
 
 const cartSlice = createSlice({

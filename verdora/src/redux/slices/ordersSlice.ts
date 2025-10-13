@@ -30,9 +30,19 @@ interface OrdersState {
   currentOrder: Order | null;
 }
 
+// Hydrate orders from localStorage (simple persistence)
+const savedOrdersState: Partial<OrdersState> = (() => {
+  try {
+    const raw = localStorage.getItem("orders_state");
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+})();
+
 const initialState: OrdersState = {
-  orders: [],
-  currentOrder: null,
+  orders: Array.isArray(savedOrdersState.orders) ? savedOrdersState.orders : [],
+  currentOrder: (savedOrdersState as any).currentOrder || null,
 };
 
 const ordersSlice = createSlice({

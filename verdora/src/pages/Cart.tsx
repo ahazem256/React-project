@@ -10,20 +10,24 @@ const Cart: React.FC = () => {
   const navigate = useNavigate();
   const cartItems = useSelector((state: RootState) => state.cart.items);
 
+  //handles both string and number prices
   const totalPrice = cartItems.reduce((sum, item) => {
-    const price = typeof item.price === 'string' 
-      ? parseFloat(item.price.replace(/[^\d.]/g, "")) 
+    const price = typeof item.price === 'string'
+      ? parseFloat(item.price.replace(/[^\d.]/g, ""))
       : item.price;
     return sum + price * item.quantity;
   }, 0);
 
   if (cartItems.length === 0) {
     return (
+
       <div style={{ textAlign: "center", padding: "100px 20px" }}>
         <h2>Your cart is empty</h2>
         <Link to="/" style={{ color: "#333", textDecoration: "underline" }}>
           Go Shopping
         </Link>
+
+
       </div>
     );
   }
@@ -33,13 +37,14 @@ const Cart: React.FC = () => {
       <h1 style={{ marginBottom: "32px" }}>Your Cart</h1>
       <div>
         {cartItems.map((item) => {
+          // Handle both existing and FakeStore API product structures
           const productName = item.name || 'Product';
           const productImage = typeof item.image === 'string' ? item.image : item.image[0] || '';
-          const price = typeof item.price === 'string' 
-            ? parseFloat(item.price.replace(/[^\d.]/g, "")) 
+          const price = typeof item.price === 'string'
+            ? parseFloat(item.price.replace(/[^\d.]/g, ""))
             : item.price;
           const currency = typeof item.price === 'string' && item.price.includes('EGP') ? 'EGP' : '$';
-          
+
           return (
             <div
               key={item.id}
