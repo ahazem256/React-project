@@ -7,16 +7,14 @@ import "./Footer.css";
 const Footer: React.FC = () => {
     return (
         <footer className="footer">
-            <div className="footer-container container-fluid">
+            <div className="footer-container">
                 {/* القسم الأول: اللوجو والوصف */}
-                <div className="footer-section">
+                <div className="footer-section footer-about">
                     <div className="footer-logo">
                         <img
                             src={Logo}
-                            alt="logo"
-                            style={{
-                                height: '100px', width: '220px'
-                            }}
+                            alt="Verdora Logo"
+                            className="logo-img"
                         />
                     </div>
                     <p className="footer-text">
@@ -26,7 +24,7 @@ const Footer: React.FC = () => {
                 </div>
 
                 {/* القسم الثاني: روابط التنقل */}
-                <div className="footer-section">
+                <div className="footer-section footer-links-section">
                     <h5 className="footer-title">Quick Links</h5>
                     <ul className="footer-links">
                         <li><Link to="/home">Home</Link></li>
@@ -40,23 +38,38 @@ const Footer: React.FC = () => {
                                 <li><Link to="/categories/bonsai_miniature">Bonsai & Miniature</Link></li>
                             </ul>
                         </li>
-
                     </ul>
                 </div>
 
                 {/* القسم الثالث: سوشيال ميديا */}
-                <div className="footer-section">
+                <div className="footer-section footer-social-section">
                     <h5 className="footer-title">Follow Us</h5>
                     <div className="footer-social">
-                        <a href="#" aria-label="Facebook"><FaFacebookF /></a>
-                        <a href="#" aria-label="Instagram"><FaInstagram /></a>
-                        <a href="#" aria-label="Twitter"><FaTwitter /></a>
+                        <a href="#" aria-label="Facebook" className="social-link">
+                            <FaFacebookF />
+                        </a>
+                        <a href="#" aria-label="Instagram" className="social-link">
+                            <FaInstagram />
+                        </a>
+                        <a href="#" aria-label="Twitter" className="social-link">
+                            <FaTwitter />
+                        </a>
+                    </div>
+                    <div className="footer-contact">
+                        <p>
+                            <span className="black-icon">📧</span>
+                            support@verdora.com
+                        </p>
+                        <p>
+                            <span className="black-icon">📞</span>
+                            +1 234 567 890
+                        </p>
                     </div>
                 </div>
             </div>
 
             <div className="footer-bottom">
-                <p>© {new Date().getFullYear()} Verdora<FaLeaf size={28} className="footer-leaf" /> All Rights Reserved.</p>
+                <p>© {new Date().getFullYear()} Verdora<FaLeaf className="footer-leaf" /> All Rights Reserved.</p>
             </div>
         </footer>
     );

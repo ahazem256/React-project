@@ -1,0 +1,32 @@
+export interface Product {
+  id: number;
+  category: string;
+  name: string;
+  price: string;
+  stock?: number;
+  image: string;
+  bestseller?: boolean;
+  oldprice?: string;
+  rate?: string;
+  description?: string;
+  review?: string;
+  discount?: string;
+  isNew?: boolean;
+  scientificName?: string;
+  nativeRegion?: string;
+  lifeCycle?: string;
+  genus?: string;
+  type?: string;
+  climate?: string;
+  soilType?: string;
+  wateringNeeds?: string;
+  sunlight?: string;
+  humidity?: string;
+  growthRate?: string;
+  propagation?: string;
+  toxicity?: string;
+  careTips?: string;
+  floweringSeason?: string;
+  height?: string;
+  containerType?: string;
+}
