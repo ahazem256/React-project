@@ -12,7 +12,7 @@ import Cart from "./pages/Cart";
 import Order from "./pages/Order";
 import ProductDetails from "./pages/ProductDetails";
 import Products from "./pages/Products";
-import Profile from "./pages/Profile";
+import Profile from "./pages/profile/Profile";
 import Checkout from "./pages/Checkout";
 import Indoor from "./pages/categories/Indoor";
 import Outdoor from "./pages/categories/Outdoor";
