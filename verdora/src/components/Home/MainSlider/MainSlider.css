@@ -1,0 +1,43 @@
+.hero-slider {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    background: url("/src/assets/mainslider.jpg") center/cover no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: 8%;
+}
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+}
+
+.hero-btn {
+    border-radius: 50px;
+    padding: 0.7rem 2rem;
+    transition: 0.3s ease;
+}
+
+.hero-btn:hover {
+    background-color: var(--color-green-darkest);
+    /* لون أخضر جميل */
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .hero-slider {
+        height: 70vh;
+        padding-left: 5%;
+    }
+
+    .hero-slider h1 {
+        font-size: 2rem;
+    }
+
+    .hero-slider p {
+        font-size: 1rem;
+    }
+}

@@ -1,0 +1,194 @@
+.categories-container {
+    padding: 30px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.category-slider {
+    padding: 40px 20px;
+    text-align: center;
+    position: relative;
+    font-family: var(-font-family-serif);
+}
+
+
+.category-slider-title {
+    font-size: 1.8rem;
+    margin-bottom: 25px;
+    color: #2d572c;
+    font-weight: bold;
+    display: flex;
+    align-items: start;
+}
+
+.category-slide {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    border-radius: 12px;
+    transition: transform 0.3s ease;
+    position: relative;
+}
+
+.category-slide:hover {
+    transform: translateY(-5px);
+}
+
+.image-container {
+    position: relative;
+    width: 85%;
+}
+
+.category-image {
+    width: 100%;
+    height: 250px;
+    object-fit: contain;
+    border-radius: 12px;
+    transition: transform 0.3s ease;
+    background-color: #f9f9f9;
+}
+
+.category-image:hover {
+    transform: scale(1.05);
+}
+
+/* .details {
+    text-align: center;
+
+    width: 100%;
+}
+
+.category-name {
+    font-weight: 600;
+    font-size: 20px;
+    color: var(--color-green-darkest);
+    display: inline-block;
+    border-bottom: 2px solid #97a97c;
+    padding-bottom: 3px;
+    margin-bottom: 5px;
+    margin-right: 90px;
+
+}
+
+.category-rate {
+    display: block;
+    margin-top: 5px;
+    font-size: 14px;
+    margin-right: 90px;
+
+}
+
+.category-price {
+    font-weight: 500;
+    color: var(--color-green-darkest);
+    font-size: 16px;
+    margin-right: 90px;
+    
+} */
+
+
+.details {
+    text-align: center;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+}
+
+.cat-name {
+    font-weight: 600;
+    font-size: 20px;
+    color: var(--color-green-darkest);
+    display: inline-block;
+    border-bottom: 2px solid #97a97c;
+    padding-bottom: 3px;
+    margin-right: 50PX;
+}
+
+.category-rate {
+    font-size: 14px;
+    color: #666;
+    margin-right: 50PX;
+}
+
+.category-price {
+    font-weight: 500;
+    color: var(--color-green-darkest);
+    font-size: 16px;
+    margin-right: 50PX;
+}
+
+.stock {
+    margin-left: 6px;
+    color: #97a97c;
+    font-size: 15px;
+}
+
+
+/* 🔹 زر Add to Cart على الصورة */
+.add-cart-btn {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(151, 169, 124, 0.95);
+    color: white;
+    border: none;
+
+    padding: 10px 20px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.image-container:hover .add-cart-btn {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.add-cart-btn:hover {
+    background-color: #485935;
+    transform: translateX(-50%) scale(1.05);
+}
+
+.cart-icon {
+    font-size: 1rem;
+}
+
+/* 🔹 الأسهم */
+.arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    background-color: rgba(45, 87, 44, 0.9);
+    color: white;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.arrow:hover {
+    background-color: #2d572c;
+}
+
+.arrow.prev {
+    left: 10px;
+}
+
+.arrow.next {
+    right: 10px;
+}
