@@ -72,11 +72,40 @@ const ordersSlice = createSlice({
         state.currentOrder.status = action.payload.status;
       }
     },
+    removeOrder: (state, action: { payload: string }) => {
+      state.orders = state.orders.filter(order => order.id !== action.payload);
+      // إذا كان الطلب المحذوف هو الطلب الحالي، امسحه
+      if (state.currentOrder?.id === action.payload) {
+        state.currentOrder = null;
+      }
+    },
     clearCurrentOrder: (state) => {
       state.currentOrder = null;
+    },
+    clearAllOrders: (state) => {
+      state.orders = [];
+      state.currentOrder = null;
+      localStorage.removeItem("orders_state");
     },
   },
 });
 
-export const { addOrder, setCurrentOrder, updateOrderStatus, clearCurrentOrder } = ordersSlice.actions;
+// Middleware لحفظ الـ state في localStorage
+export const ordersMiddleware = (store: any) => (next: any) => (action: any) => {
+  const result = next(action);
+  
+  // احفظ الـ state بعد أي تغيير في الطلبات
+  if (action.type?.startsWith('orders/')) {
+    const ordersState = store.getState().orders;
+    try {
+      localStorage.setItem("orders_state", JSON.stringify(ordersState));
+    } catch (error) {
+      console.error("Failed to save orders to localStorage:", error);
+    }
+  }
+  
+  return result;
+};
+
+export const { addOrder, setCurrentOrder, updateOrderStatus, removeOrder, clearCurrentOrder, clearAllOrders } = ordersSlice.actions;
 export default ordersSlice.reducer;

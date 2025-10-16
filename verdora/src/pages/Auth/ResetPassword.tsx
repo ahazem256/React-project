@@ -53,7 +53,7 @@ export default function ResetPassword() {
   };
 
   return (
-    <section className="d-flex align-items-center justify-content-center min-vh-100" style={{ backgroundColor: "#fff" }}>
+    <section className="d-flex align-items-center justify-content-center min-vh-100" style={{ backgroundColor: "#fff" , fontFamily: "var(--font-family-form)"}}>
       <div className="row w-100 justify-content-center align-items-center" style={{ maxWidth: "900px" }}>
         <div className="col-md-6">
           <div className="card p-4">
@@ -76,7 +76,7 @@ export default function ResetPassword() {
                 </div>
                 {formState.errors.newPassword && <div className="invalid-feedback d-block">{formState.errors.newPassword.message}</div>}
               </div>
-              <button type="submit" className="btn btn-success w-100" disabled={isLoading}>
+              <button type="submit" className="btn w-100" disabled={isLoading} style={{ backgroundColor: "var(--color-green-darkest)" , color:"#fff"}}>
                 {isLoading ? "Resetting..." : "Reset Password"}
               </button>
             </form>

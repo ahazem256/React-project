@@ -56,7 +56,7 @@ export default function VerifyResetCode() {
   };
 
   return (
-    <section className="d-flex align-items-center justify-content-center min-vh-100" style={{ backgroundColor: "#fff" }}>
+    <section className="d-flex align-items-center justify-content-center min-vh-100" style={{ backgroundColor: "#fff" , fontFamily: "var(--font-family-form)"}}>
       <div className="row w-100 justify-content-center align-items-center" style={{ maxWidth: "900px" }}>
         <div className="col-md-6">
           <div className="card p-4">
@@ -65,7 +65,7 @@ export default function VerifyResetCode() {
               Please enter the reset code sent to your email: <strong>{email}</strong>
             </p>
             <form onSubmit={handleSubmit(onSubmit)}>
-              <div className="mb-3">
+              <div className="mb-3" >
                 <label htmlFor="resetCode" className="form-label fw-semibold">Reset Code</label>
                 <input
                   type="text"
@@ -78,7 +78,7 @@ export default function VerifyResetCode() {
                   <div className="invalid-feedback">{formState.errors.resetCode.message}</div>
                 )}
               </div>
-              <button type="submit" className="btn btn-success w-100" disabled={isLoading}>
+              <button type="submit" className="btn  w-100" disabled={isLoading} style={{ backgroundColor: "var(--color-green-darkest)", color:"#fff"}}>
                 {isLoading ? "Verifying..." : "Verify Code"}
               </button>
               <p className="text-center mt-3 mb-0">

@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { clearAllOrders } from "../../redux/slices/ordersSlice";
 import Logo from "../../assets/logo.png";
 import {
   IoPersonOutline,
@@ -30,6 +32,7 @@ const MainNavbar: React.FC<MainNavbarProps> = ({
   userName,
 }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [activeLink, setActiveLink] = useState<ActiveLinkType>("home");
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
@@ -123,9 +126,14 @@ const MainNavbar: React.FC<MainNavbarProps> = ({
   };
 
   const handleLogout = (): void => {
+    // مش هنمسح الطلبات - هتفضل في localStorage
+    // dispatch(clearAllOrders()); // شيلناها
+    
+    // امسح بس بيانات المستخدم
     localStorage.removeItem("token");
     localStorage.removeItem("userName");
     localStorage.removeItem("cart");
+    
     setStoredName("");
     setCartCount(0);
     onLogout();

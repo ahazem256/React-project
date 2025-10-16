@@ -22,21 +22,22 @@ import NotFound from "./components/common/NotFound";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import { Toaster } from "react-hot-toast";
 import Footer from './components/footer/Footer';
-import Admin from "./pages/admin";
-
-
-
+import Admin from "./pages/Admin";
 
 const AppContent: React.FC = () => {
   const location = useLocation();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(!!localStorage.getItem("token"));
+  const [userRole, setUserRole] = useState<string>(localStorage.getItem("userRole") || "");
   const [userName, setUserName] = useState<string>(localStorage.getItem("userName") || "");
   const [cartCount, setCartCount] = useState<number>(0);
+
   useEffect(() => {
     const checkAuth = () => {
       const token = localStorage.getItem("token");
+      const role = localStorage.getItem("userRole");
       const name = localStorage.getItem("userName");
       setIsAuthenticated(!!token);
+      setUserRole(role || "");
       setUserName(name || "");
     };
 
@@ -45,49 +46,59 @@ const AppContent: React.FC = () => {
     return () => window.removeEventListener("storage", checkAuth);
   }, [location.pathname]);
 
-  const handleLogin = (token: string, name: string): void => {
+  const handleLogin = (token: string, name: string, role: string): void => {
     localStorage.setItem("token", token);
     localStorage.setItem("userName", name);
+    localStorage.setItem("userRole", role);
     setUserName(name);
+    setUserRole(role);
     setIsAuthenticated(true);
   };
 
   const handleLogout = (): void => {
     localStorage.removeItem("token");
     localStorage.removeItem("userName");
+    localStorage.removeItem("userRole");
     setIsAuthenticated(false);
     setUserName("");
+    setUserRole("");
   };
 
   return (
     <>
       <Toaster position="top-right" />
       <div className="app-container">
-        {/* Navbar */}
         {isAuthenticated ? (
           <MainNavbar onLogout={handleLogout} cartCount={cartCount} userName={userName} />
         ) : (
-          <AuthNavbar />
+          <AuthNavbar onLogin={function (): void {
+              throw new Error("Function not implemented.");
+            } }/>
         )}
         <main className="app-content">
           <Routes>
-            {/* Redirect root */}
+            {/* Root Redirect */}
             <Route
               path="/"
-              element={isAuthenticated ? <Navigate to="/home" replace /> : <Navigate to="/auth/signin" replace />}
+              element={
+                isAuthenticated
+                  ? userRole === "admin"
+                    ? <Navigate to="/admin" replace />
+                    : <Navigate to="/home" replace />
+                  : <Navigate to="/auth/signin" replace />
+              }
             />
-
             {/* Auth Routes */}
-           <Route
-  path="/auth/signin"
-  element={
-    isAuthenticated
-      ? localStorage.getItem("userRole") === "admin"
-        ? <Navigate to="/admin" replace />
-        : <Navigate to="/home" replace />
-      : <SignIn onLogin={handleLogin} />
-  }
-/>
+            <Route
+              path="/auth/signin"
+              element={
+                isAuthenticated
+                  ? userRole === "admin"
+                    ? <Navigate to="/admin" replace />
+                    : <Navigate to="/home" replace />
+                  : <SignIn onLogin={handleLogin} />
+              }
+            />
             <Route path="/auth/signup" element={<SignUp />} />
             <Route path="/auth/forget-password" element={<ForgotPassword />} />
             <Route path="/auth/verify-reset-code" element={<VerifyResetCode />} />
@@ -105,8 +116,16 @@ const AppContent: React.FC = () => {
             <Route path="/products" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Products /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Profile /></ProtectedRoute>} />
             <Route path="/checkout" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Checkout /></ProtectedRoute>} />
-            <Route path="/admin" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Admin /></ProtectedRoute>} />
-            
+
+            {/* Admin Route */}
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute isAuthenticated={isAuthenticated} role="admin">
+                  <Admin />
+                </ProtectedRoute>
+              }
+            />
 
             {/* Not Found */}
             <Route path="*" element={<NotFound />} />

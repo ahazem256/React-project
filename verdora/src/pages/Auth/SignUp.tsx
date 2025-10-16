@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import "../../styles/global.css";
 import { Helmet } from "react-helmet";
-import axios from "axios"; // استخدم axios للتعامل مع JSON Server
+import axios from "axios"; 
 
 interface FormValues {
   name: string;
@@ -69,10 +69,9 @@ export default function SignUp() {
     try {
       const { termsAccepted, rePassword, ...userData } = values;
 
-      // اضافة user جديد باستخدام JSON Server
       const response = await axios.post("http://localhost:5000/users", {
         ...userData,
-        role: "user", // كل مستخدم جديد يكون role: user
+        role: "user", 
       });
 
       toast.success(`Registration successful! Welcome ${response.data.name}`);
@@ -193,7 +192,6 @@ export default function SignUp() {
                 </p>
               )}
             </div>
-
             {/* Terms */}
             <div className="mb-3 form-check">
               <input

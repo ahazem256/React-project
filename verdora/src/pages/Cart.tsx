@@ -22,7 +22,7 @@ const Cart: React.FC = () => {
     return (
       <div style={{ textAlign: "center", padding: "100px 20px" }}>
         <h2>Your cart is empty</h2>
-        <Link to="/" style={{ color: "#333", textDecoration: "underline" }}>
+        <Link to="/" style={{ color: "#333", textDecoration: "none" }}>
           Go Shopping
         </Link>
       </div>
