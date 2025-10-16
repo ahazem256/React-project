@@ -3,9 +3,10 @@
     display: flex;
     gap: 80px;
     padding: 80px 60px 40px;
-    background-color: #f8f8f8;
+    background-color: #fff;
     align-items: center;
     justify-content: center;
+    font-family: var(--font-family-serif);
 }
 
 .instagram-grid {
@@ -80,7 +81,7 @@
 .instagram-title {
     font-size: 2.8rem;
     font-weight: 600;
-    color: #2d572c;
+    color: var(--color-text-primary);
     margin-bottom: 25px;
     line-height: 1.2;
 }
@@ -93,11 +94,11 @@
 }
 
 .instagram-button {
-    background-color: #2d572c;
+    background-color: var(--color-green-darkest);
     color: white;
     border: none;
     padding: 15px 40px;
-    font-size: 1rem;
+    font-size: 1.2rem;
     font-weight: 500;
     border-radius: 4px;
     cursor: pointer;

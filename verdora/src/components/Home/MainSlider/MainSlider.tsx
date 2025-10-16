@@ -11,7 +11,7 @@ const MainSlider: React.FC = () => {
                 <h1 className="display-4 fw-bold mb-3">Welcome To Verdora</h1>
                 <p className="fs-5 mb-4">Discover our exclusive collection of rare plants.</p>
                 <Link to="/products" className="btn btn-light btn-lg fw-medium hero-btn">
-                    Shop Now →
+                    Shop Now
                 </Link>
             </div>
         </section>
