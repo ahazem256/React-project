@@ -9,6 +9,7 @@
     text-align: center;
     position: relative;
     font-family: var(--font-family-serif);
+    background-color: #fff;
 }
 
 
@@ -29,7 +30,7 @@
     top: -2px;
     left: -22px;
     height: 35px;
-    width: 18px;
+    width: 13px;
     background: rgba(91, 109, 81, 0.9);
 
     border-radius: 5px;

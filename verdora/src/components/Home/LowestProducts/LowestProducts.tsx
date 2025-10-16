@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Slider from "react-slick";
-import { FaChevronLeft, FaChevronRight, FaShoppingCart } from "react-icons/fa";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import "./LowestProducts.css";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -113,7 +113,7 @@ const LowestPriceSlider: React.FC = () => {
                                     style={{ cursor: "pointer" }}
                                 />
                                 <button className="add-cart-btn" onClick={() => handleAddToCart(p)}>
-                                    <FaShoppingCart className="cart-icon" /> Add to Cart
+                                    Add to Cart
                                 </button>
 
                             </div>

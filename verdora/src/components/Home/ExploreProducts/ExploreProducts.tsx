@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import './ExploreProducts.css';
-import { FaShoppingCart } from "react-icons/fa";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../../../redux/slices/cartSlice";
@@ -79,8 +78,7 @@ const ExploreProducts: React.FC = () => {
                                     e.stopPropagation();
                                     handleAddToCart(product);
                                 }}
-                            >
-                                <FaShoppingCart className="cart-icon" /> Add to Cart
+                            > Add to Cart
                             </button>
 
                         </div>
@@ -95,7 +93,7 @@ const ExploreProducts: React.FC = () => {
             </div>
             <div className='button'>
                 <Link to="/products" className="btn btn-lg fw-medium pro-btn">
-                    View All →
+                    View All
                 </Link></div>
         </div>
     );
