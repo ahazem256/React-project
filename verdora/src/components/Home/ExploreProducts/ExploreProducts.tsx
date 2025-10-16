@@ -3,7 +3,10 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import './ExploreProducts.css';
-import { FaLeaf } from "react-icons/fa";
+import { FaShoppingCart } from "react-icons/fa";
+import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../../../redux/slices/cartSlice";
 
 interface Product {
     id: number;
@@ -42,18 +45,19 @@ const ExploreProducts: React.FC = () => {
         navigate(`/product/${id}`);
     };
 
-    const handleAddToCart = (e: React.MouseEvent, product: Product) => {
-        e.stopPropagation(); // منع الانتقال للصفحة عند الضغط على الزرار
-        alert(`${product.name} added to cart 🛒`);
-    };
+    const dispatch = useDispatch();
 
+    const handleAddToCart = (product: Product) => {
+        dispatch(addToCart({ product, quantity: 1 }));
+        toast.success(`${product.name} added to cart!`);
+    };
     if (loading) {
         return <div className="loading-products">Loading products...</div>;
     }
 
     return (
         <div className="explore-products">
-            <h2 className="explore-title"><FaLeaf size={28} className="footer-leaf" />Explore Our Products</h2>
+            <h2 className="explore-title">Explore Our Products</h2>
 
             <div className="products-grid-explore">
                 {products.map((product) => (
@@ -68,18 +72,23 @@ const ExploreProducts: React.FC = () => {
                                 alt={product.name}
                                 className="product-image-explore"
                             />
+
                             <button
                                 className="add-to-cart-overlay"
-                                onClick={(e) => handleAddToCart(e, product)}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleAddToCart(product);
+                                }}
                             >
-                                Add to Cart
+                                <FaShoppingCart className="cart-icon" /> Add to Cart
                             </button>
+
                         </div>
 
                         <div className="product-info-explore">
                             <h3 className="product-name-explore">{product.name}</h3>
-                            <span className="product-price-explore">{product.price}</span><span className='product-stock-explore'>Stock:{product.stock}</span>
-                            <div className="product-rating-explore">{product.rate}</div>
+                            <span className="product-price-explore">{product.price}</span>
+
                         </div>
                     </div>
                 ))}
