@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import type { RootState, AppDispatch } from "../redux/store";
 import { clearCart } from "../redux/slices/cartSlice";
 import { addOrder } from "../redux/slices/ordersSlice";
+import "../styles/global.css";
 
 const Checkout: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -114,12 +115,12 @@ const Checkout: React.FC = () => {
 
   return (
     <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "40px 20px" }}>
-      <h1 style={{ marginBottom: "32px", textAlign: "center" }}>Checkout</h1>
+      <h1 style={{ marginBottom: "32px", textAlign: "center", color: "var(--color-green-darkest)" }}>Checkout</h1>
       
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "40px" }}>
         {/* Checkout Form */}
         <div>
-          <h2 style={{ marginBottom: "24px" }}>Shipping Information</h2>
+          <h2 style={{ marginBottom: "24px",color:"var(--color-green-darkest)" }}>Shipping Information</h2>
           <form onSubmit={handleSubmit}>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "16px" }}>
               <div>
@@ -266,7 +267,7 @@ const Checkout: React.FC = () => {
               </div>
             </div>
 
-            <h3 style={{ marginBottom: "16px" }}>Payment Method</h3>
+            <h3 style={{ marginBottom: "16px", color: "var(--color-green-darkest)" }}>Payment Method</h3>
             <div style={{ marginBottom: "16px" }}>
               <label style={{ display: "flex", alignItems: "center", marginBottom: "8px" }}>
                 <input
@@ -365,14 +366,23 @@ const Checkout: React.FC = () => {
               style={{
                 width: "100%",
                 padding: "16px",
-                backgroundColor: isProcessing ? "#ccc" : "#007bff",
+                backgroundColor: isProcessing ? "#ccc" : "var(--color-green-darkest)",
                 color: "white",
                 border: "none",
                 borderRadius: "4px",
                 fontSize: "18px",
                 fontWeight: "600",
                 cursor: isProcessing ? "not-allowed" : "pointer",
+                transition: "all 0.3s ease",
               }}
+              onMouseEnter={(e) => {
+              (e.target as HTMLButtonElement).style.backgroundColor = "var(--color-green-dark)";
+              (e.target as HTMLButtonElement).style.transform = "scale(1.05)";
+            }}
+            onMouseLeave={(e) => {
+              (e.target as HTMLButtonElement).style.backgroundColor = "var(--color-green-darkest)";
+              (e.target as HTMLButtonElement).style.transform = "scale(1)";
+            }}
             >
               {isProcessing ? "Processing..." : `Place Order - ${totalPrice.toFixed(2)} ${cartItems.length > 0 && typeof cartItems[0].price === 'string' && cartItems[0].price.includes('EGP') ? 'EGP' : '$'}`}
             </button>
@@ -381,7 +391,7 @@ const Checkout: React.FC = () => {
 
         {/* Order Summary */}
         <div>
-          <h2 style={{ marginBottom: "24px" }}>Order Summary</h2>
+          <h2 style={{ marginBottom: "24px", color: "var(--color-green-darkest)" }}>Order Summary</h2>
           <div style={{ border: "1px solid #ddd", borderRadius: "8px", padding: "20px" }}>
             <div style={{ marginBottom: "20px" }}>
               {cartItems.map((item) => {
@@ -416,7 +426,7 @@ const Checkout: React.FC = () => {
             <div style={{ borderTop: "1px solid #ddd", paddingTop: "16px" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <span style={{ fontSize: "18px", fontWeight: "600" }}>Total:</span>
-                <span style={{ fontSize: "20px", fontWeight: "700", color: "#007bff" }}>
+                <span style={{ fontSize: "20px", fontWeight: "700", color: "var(--color-green-darkest)" }}>
                   {totalPrice.toFixed(2)} {cartItems.length > 0 && typeof cartItems[0].price === 'string' && cartItems[0].price.includes('EGP') ? 'EGP' : '$'}
                 </span>
               </div>
