@@ -1,164 +1,103 @@
-import { useFormik } from "formik";
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import type { SubmitHandler } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useNavigate, useLocation } from "react-router-dom";
+import { toast } from "react-hot-toast";
 import axios from "axios";
-import * as Yup from "yup";
-import { useNavigate } from "react-router-dom";
-import { Helmet } from "react-helmet";
-import auth from '../../assets/download (6).jpeg'
-import "../../styles/global.css"
+import authImg from "../../assets/download (6).jpeg";
+import "../../styles/global.css";
 
-interface VerifyResetCodeValues {
+interface VerifyCodeForm {
   resetCode: string;
 }
 
-interface VerifyResetCodeResponse {
-  status: string;
-  message?: string;
-}
-
-const VerifyResetCode: React.FC = () => {
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+export default function VerifyResetCode() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [isLoading, setIsLoading] = useState(false);
+  const email = location.state?.email;
 
-  const verifyResetCodeSchema = Yup.object({
-    resetCode: Yup.string().required("Reset code is required"),
+  useEffect(() => {
+    if (!email) {
+      toast.error("Email is missing! Redirecting...");
+      navigate("/auth/forget-password");
+    }
+  }, [email, navigate]);
+
+  const schema = z.object({
+    resetCode: z.string().length(6, "Reset code must be 6 digits"),
   });
 
-  const formik = useFormik<VerifyResetCodeValues>({
-    initialValues: {
-      resetCode: "",
-    },
-    validationSchema: verifyResetCodeSchema,
-    onSubmit: (values) => {
-      verifyResetCode(values);
-    },
+  const { register, handleSubmit, formState } = useForm<VerifyCodeForm>({
+    resolver: zodResolver(schema),
+    defaultValues: { resetCode: "" },
   });
 
-  async function verifyResetCode(values: VerifyResetCodeValues): Promise<void> {
+  const onSubmit: SubmitHandler<VerifyCodeForm> = async ({ resetCode }) => {
     setIsLoading(true);
-    setErrorMsg(null); // Clear previous errors
-    
     try {
-      const { data } = await axios.post<VerifyResetCodeResponse>(
-        "https://ecommerce.routemisr.com/api/v1/auth/verifyResetCode",
-        values
-      );
+      const res = await axios.get(`http://localhost:5000/users?email=${email}`);
+      const user = res.data[0];
 
-      if (data.status === "Success") {
-        navigate("/auth/reset-password");
+      if (user.resetCode !== resetCode) {
+        toast.error("Invalid reset code!");
+        return;
       }
-    } catch (error: any) {
-      setErrorMsg(error.response?.data?.message || "Something went wrong");
+
+      toast.success("Code verified successfully!");
+      navigate("/auth/reset-password", { state: { email } });
+    } catch {
+      toast.error("Something went wrong");
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   return (
-    <>
-      <Helmet>
-        <link rel="stylesheet" href="/path/to/Nib.woff2" />
-        <title>Verdora - Verify Reset Code</title>
-      </Helmet>
-
-      <section
-        className="d-flex align-items-center justify-content-center min-vh-100"
-        style={{ backgroundColor: "#fff" }}
-      >
-        <div
-          className="row w-100 justify-content-center align-items-center"
-          style={{ maxWidth: "900px" }}
-        >
-          {/* Form */}
-          <div className="col-md-6">
-            <div className="card p-4" style={{ border: "none", fontFamily: "var(--font-family-form)" }}>
-              <h2 className="text-center mb-3 fw-bold">Verify Reset Code</h2>
-              <p className="text-center text-muted mb-4">
-                Please enter the reset code sent to your email.
-              </p>
-              <form onSubmit={formik.handleSubmit}>
-                {/* Reset Code Field */}
-                <div className="mb-3">
-                  <label htmlFor="resetCode" className="form-label fw-semibold">
-                    Reset Code
-                  </label>
-                  <input
-                    type="text"
-                    id="resetCode"
-                    name="resetCode"
-                    className={`form-control ${
-                      formik.touched.resetCode && formik.errors.resetCode
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    value={formik.values.resetCode}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    style={{ fontFamily: "var(--font-family-form)" }}
-                    placeholder="Enter the 6-digit code"
-                  />
-                  {formik.touched.resetCode && formik.errors.resetCode && (
-                    <div className="invalid-feedback" style={{ fontFamily: "var(--font-family-form)" }}>
-                      {formik.errors.resetCode}
-                    </div>
-                  )}
-                </div>
-
-                {/* Error Message */}
-                {errorMsg && (
-                  <div className="alert alert-danger text-center py-2" style={{ fontFamily: "var(--font-family-form)" }}>
-                    {errorMsg}
-                  </div>
+    <section className="d-flex align-items-center justify-content-center min-vh-100" style={{ backgroundColor: "#fff" }}>
+      <div className="row w-100 justify-content-center align-items-center" style={{ maxWidth: "900px" }}>
+        <div className="col-md-6">
+          <div className="card p-4">
+            <h2 className="text-center mb-3 fw-bold">Verify Reset Code</h2>
+            <p className="text-center text-muted mb-4">
+              Please enter the reset code sent to your email: <strong>{email}</strong>
+            </p>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <div className="mb-3">
+                <label htmlFor="resetCode" className="form-label fw-semibold">Reset Code</label>
+                <input
+                  type="text"
+                  id="resetCode"
+                  className={`form-control ${formState.errors.resetCode ? "is-invalid" : ""}`}
+                  placeholder="Enter 6-digit code"
+                  {...register("resetCode")}
+                />
+                {formState.errors.resetCode && (
+                  <div className="invalid-feedback">{formState.errors.resetCode.message}</div>
                 )}
-
-                {/* Submit Button */}
-                <button
-                  type="submit"
-                  className="btn btn-success w-100"
-                  disabled={isLoading || !(formik.dirty && formik.isValid)}
-                  style={{ fontFamily: "var(--font-family-form)" }}
+              </div>
+              <button type="submit" className="btn btn-success w-100" disabled={isLoading}>
+                {isLoading ? "Verifying..." : "Verify Code"}
+              </button>
+              <p className="text-center mt-3 mb-0">
+                Didn't receive a code?{" "}
+                <span
+                  onClick={() => navigate("/auth/forget-password")}
+                  className="fw-semibold text-success"
+                  style={{ cursor: "pointer", textDecoration: "none" }}
                 >
-                  {isLoading ? (
-                    <>
-                      <span
-                        className="spinner-border spinner-border-sm me-2"
-                        role="status"
-                        aria-hidden="true"
-                      ></span>
-                      Verifying...
-                    </>
-                  ) : (
-                    "Verify Code"
-                  )}
-                </button>
-
-                {/* Request New Code Link */}
-                <p className="text-center mt-3 mb-0" style={{ fontFamily: "var(--font-family-form)" }}>
-                  Didn't receive a code?{" "}
-                  <a
-                    onClick={() => navigate("/auth/forget-password")}
-                    className="fw-semibold text-success"
-                    style={{ cursor: "pointer", textDecoration: "none" }}
-                  >
-                    Request a new one
-                  </a>
-                </p>
-              </form>
-            </div>
-          </div>
-          {/* Image */}
-          <div className="col-md-6 d-md-block">
-            <img
-              src={auth}
-              alt="Verify Reset Code"
-              className="img-fluid rounded"
-            />
+                  Request a new one
+                </span>
+              </p>
+            </form>
           </div>
         </div>
-      </section>
-    </>
+        <div className="col-md-6 d-md-block">
+          <img src={authImg} alt="Verify Reset Code" className="img-fluid rounded" />
+        </div>
+      </div>
+    </section>
   );
-};
-
-export default VerifyResetCode;
+}

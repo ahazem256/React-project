@@ -4,10 +4,10 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { toast } from "react-hot-toast";
 import "../../styles/global.css";
 import { Helmet } from "react-helmet";
+import axios from "axios"; // استخدم axios للتعامل مع JSON Server
 
 interface FormValues {
   name: string;
@@ -21,7 +21,6 @@ interface FormValues {
 export default function SignUp() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  // const [apiError, setAPIError] = useState <string>("");
 
   const schema = z
     .object({
@@ -45,13 +44,11 @@ export default function SignUp() {
         message: "You must accept the terms and conditions",
       }),
     })
-
     .refine((obj) => obj.password === obj.rePassword, {
       message: "Passwords do not match",
       path: ["rePassword"],
     });
 
-  console.log("render SignUp");
   const form = useForm<FormValues>({
     defaultValues: {
       name: "",
@@ -66,34 +63,25 @@ export default function SignUp() {
 
   const { register, handleSubmit, formState } = form;
 
-  const handleRegister: SubmitHandler<FormValues> = async (
-    values: FormValues
-  ) => {
+  const handleRegister: SubmitHandler<FormValues> = async (values) => {
     setIsLoading(true);
 
-    // const { termsAccepted, ...payload } = values;
-
     try {
-      const result = await axios.post(
-        `https://ecommerce.routemisr.com/api/v1/auth/signup`,
-        values
+      const { termsAccepted, rePassword, ...userData } = values;
+
+      // اضافة user جديد باستخدام JSON Server
+      const response = await axios.post("http://localhost:5000/users", {
+        ...userData,
+        role: "user", // كل مستخدم جديد يكون role: user
+      });
+
+      toast.success(`Registration successful! Welcome ${response.data.name}`);
+      navigate("/auth/signin");
+    } catch (error: any) {
+      toast.error(
+        error.response?.data?.message || "Something went wrong during registration"
       );
-      console.log(result.data.message);
-      if (result.data.message == "success") {
-        toast.success("Registration successful!");
-        navigate("/auth/signin");
-      }
-      setIsLoading(false);
-    } catch (error: unknown) {
-      if (axios.isAxiosError(error)) {
-        const message =
-          error.response?.data?.message ||
-          error.message ||
-          "Something went wrong!";
-        toast.error(message);
-      } else {
-        toast.error("Unexpected error!");
-      }
+    } finally {
       setIsLoading(false);
     }
   };
@@ -102,7 +90,6 @@ export default function SignUp() {
     <>
       <Helmet>
         <title>Verdora - Register</title>
-        <link rel="stylesheet" href="/path/to/Nib.woff2" />
         <meta name="description" content="Register page for Verdora" />
       </Helmet>
 
@@ -130,102 +117,101 @@ export default function SignUp() {
             >
               Sign up
             </h1>
+
             {/* Name */}
             <div className="mb-3">
               <input
                 type="text"
                 className="form-control p-3 rounded-0"
-                id="name"
                 placeholder="Enter your name"
                 {...register("name")}
               />
-              {formState.errors.name && formState.touchedFields.name ? (
+              {formState.errors.name && formState.touchedFields.name && (
                 <p className="alert alert-danger p-1 mt-1">
                   {formState.errors.name.message}
                 </p>
-              ) : null}
+              )}
             </div>
+
             {/* Email */}
             <div className="mb-3">
               <input
                 type="email"
                 className="form-control p-3 rounded-0"
-                id="email"
                 placeholder="Enter your email"
                 {...register("email")}
               />
-              {formState.errors.email && formState.touchedFields.email ? (
+              {formState.errors.email && formState.touchedFields.email && (
                 <p className="alert alert-danger p-1 mt-1">
                   {formState.errors.email.message}
                 </p>
-              ) : null}
+              )}
             </div>
+
             {/* Password */}
             <div className="mb-3">
               <input
                 type="password"
                 className="form-control p-3 rounded-0"
-                id="password"
                 placeholder="Enter your password"
                 {...register("password")}
               />
-              {formState.errors.password && formState.touchedFields.password ? (
+              {formState.errors.password && formState.touchedFields.password && (
                 <p className="alert alert-danger p-1 mt-1">
                   {formState.errors.password.message}
                 </p>
-              ) : null}
+              )}
             </div>
+
             {/* Repassword */}
             <div className="mb-3">
               <input
                 type="password"
                 className="form-control p-3 rounded-0"
-                id="rePassword"
                 placeholder="Re-enter your password"
                 {...register("rePassword")}
               />
               {formState.errors.rePassword &&
-              formState.touchedFields.rePassword ? (
-                <p className="alert alert-danger p-1 mt-1">
-                  {formState.errors.rePassword.message}
-                </p>
-              ) : null}
+                formState.touchedFields.rePassword && (
+                  <p className="alert alert-danger p-1 mt-1">
+                    {formState.errors.rePassword.message}
+                  </p>
+                )}
             </div>
 
+            {/* Phone */}
             <div className="mb-3">
               <input
                 type="tel"
                 className="form-control p-3 rounded-0"
-                id="phone"
                 placeholder="Enter your phone"
                 {...register("phone")}
               />
-              {formState.errors.phone && formState.touchedFields.phone ? (
+              {formState.errors.phone && formState.touchedFields.phone && (
                 <p className="alert alert-danger p-1 mt-1">
                   {formState.errors.phone.message}
                 </p>
-              ) : null}
+              )}
             </div>
 
+            {/* Terms */}
             <div className="mb-3 form-check">
               <input
                 type="checkbox"
                 className="form-check-input"
-                id="exampleCheck1"
                 {...register("termsAccepted")}
               />
               <label
                 className="form-check-label"
-                htmlFor="exampleCheck1"
                 style={{ display: "block", textAlign: "left" }}
               >
-                I agree to all the statments
+                I agree to all the statements
               </label>
-              {formState.errors.termsAccepted ? (
+              {formState.errors.termsAccepted && (
                 <p className="alert alert-danger p-1 mt-1">
                   {formState.errors.termsAccepted.message}
                 </p>
-              ) : null}
+              )}
             </div>
 
             {/* Submit Button */}

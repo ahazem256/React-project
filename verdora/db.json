@@ -1,0 +1,30 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "name": "Admin",
+      "email": "admin@gmail.com",
+      "password": "Admin123",
+      "role": "admin",
+      "resetCode": null
+    },
+    {
+      "id": "ac7e",
+      "name": "tete",
+      "email": "tete2@gmail.com",
+      "password": "Me1478963",
+      "phone": "01017468802",
+      "role": "user",
+      "resetCode": null
+    },
+    {
+      "id": "faf3",
+      "name": "toka osama",
+      "email": "tokaosamaelqersh@gmail.com",
+      "password": "Tete12369",
+      "phone": "01016796606",
+      "role": "user",
+      "resetCode": null
+    }
+  ]
+}

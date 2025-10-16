@@ -1,151 +1,106 @@
-import { useFormik } from "formik";
-import React, { useState } from "react";
-import axios from "axios";
-import * as Yup from "yup";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import type { SubmitHandler } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
 import { Helmet } from "react-helmet";
-import auth from '../../assets/download (6).jpeg'
-import "../../styles/global.css"
+import axios from "axios";
+import emailjs from "@emailjs/browser";
+import authImg from "../../assets/download (6).jpeg";
+import "../../styles/global.css";
 
-interface ForgotPasswordValues {
+interface ForgotPasswordForm {
   email: string;
 }
 
-// Interface for API response
-interface ForgotPasswordResponse {
-  statusMsg: string;
-  message?: string;
-}
+const SERVICE_ID = "service_ecijs9p";
+const TEMPLATE_ID = "template_mnsja1g";
+const PUBLIC_KEY = "Iymd-va1Y_ys9tFw1";
 
-const ForgetPassword: React.FC = () => {
-  const [errorMsg, setErrorMsg] = useState<string>("");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+export default function ForgetPassword() {
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const ForgotPasswordSchema = Yup.object({
-    email: Yup.string()
-      .email("Invalid email format")
-      .required("Email is required"),
+  const schema = z.object({
+    email: z.string().email("Invalid email").nonempty("Email is required"),
   });
 
-  const formik = useFormik<ForgotPasswordValues>({
-    initialValues: { email: "" },
-    validationSchema: ForgotPasswordSchema,
-    onSubmit: (values) => forgotPassword(values),
+  const { register, handleSubmit, formState } = useForm<ForgotPasswordForm>({
+    resolver: zodResolver(schema),
+    defaultValues: { email: "" },
   });
 
-  async function forgotPassword(values: ForgotPasswordValues): Promise<void> {
+  const onSubmit: SubmitHandler<ForgotPasswordForm> = async ({ email }) => {
     setIsLoading(true);
-    setErrorMsg(""); // Clear previous errors
-    
     try {
-      const { data } = await axios.post<ForgotPasswordResponse>(
-        "https://ecommerce.routemisr.com/api/v1/auth/forgotPasswords",
-        values
-      );
-      
-      if (data.statusMsg === "success") {
-        navigate("/auth/verify-reset-code");
+      const res = await axios.get(`http://localhost:5000/users?email=${email}`);
+      if (!res.data.length) {
+        toast.error("Email not found!");
+        return;
       }
-    } catch (error: unknown) {
-      if (axios.isAxiosError(error)) {
-        setErrorMsg(error.response?.data?.message || "Something went wrong");
-      } else {
-        setErrorMsg("Something went wrong");
-      }
+
+      const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
+      const userId = res.data[0].id;
+
+      await axios.patch(`http://localhost:5000/users/${userId}`, { resetCode });
+
+      await emailjs.send(SERVICE_ID, TEMPLATE_ID, { email, resetCode }, PUBLIC_KEY);
+
+      toast.success("Reset code sent! Check your email.");
+      navigate("/auth/verify-reset-code", { state: { email } });
+    } catch {
+      toast.error("Something went wrong");
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   return (
     <>
       <Helmet>
-        <link rel="stylesheet" href="/path/to/Nib.woff2" />
         <title>Verdora - Forgot Password</title>
       </Helmet>
-      <section
-        className="d-flex align-items-center justify-content-center min-vh-100"
-        style={{ backgroundColor: "#fff" }}
-      >
-        <div
-          className="row w-100 justify-content-center align-items-center"
-          style={{ maxWidth: "900px" }}
-        >
-          {/* Form*/}
+      <section className="d-flex align-items-center justify-content-center min-vh-100" style={{ backgroundColor: "#fff" }}>
+        <div className="row w-100 justify-content-center align-items-center" style={{ maxWidth: "900px" }}>
           <div className="col-md-6">
             <div className="card p-4" style={{ border: "none", fontFamily: "var(--font-family-form)" }}>
-              <h2 className="text-center mb-3 fw-bold">Reset Password</h2>
-              <p className="text-center text-muted mb-4">
-                You will receive an email to reset your password.
-              </p>
-
-              <form onSubmit={formik.handleSubmit}>
+              <h2 className="text-center mb-3 fw-bold">Forgot Password</h2>
+              <p className="text-center text-muted mb-4">Enter your email to receive a reset code.</p>
+              <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="mb-3">
-                  <label htmlFor="email" className="form-label fw-semibold">
-                    Email Address
-                  </label>
+                  <label htmlFor="email" className="form-label fw-semibold">Email Address</label>
                   <input
                     type="email"
                     id="email"
-                    name="email"
-                    className={`form-control ${
-                      formik.touched.email && formik.errors.email
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    value={formik.values.email}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    style={{ fontFamily: "var(--font-family-form)" }}
+                    className={`form-control ${formState.errors.email ? "is-invalid" : ""}`}
+                    placeholder="Enter your email"
+                    {...register("email")}
                   />
-                  {formik.touched.email && formik.errors.email && (
-                    <div className="invalid-feedback" style={{ fontFamily: "var(--font-family-form)" }}>
-                      {formik.errors.email}
-                    </div>
-                  )}
+                  {formState.errors.email && <div className="invalid-feedback">{formState.errors.email.message}</div>}
                 </div>
-
-                {errorMsg && (
-                  <div className="alert alert-danger text-center py-2" style={{ fontFamily: "var(--font-family-form)" }}>
-                    {errorMsg}
-                  </div>
-                )}
-
                 <button
                   type="submit"
-                  className="btn w-100 "
-                  disabled={isLoading || !(formik.dirty && formik.isValid)}
-                  style={{ fontFamily: "var(--font-family-form)", backgroundColor:" var(--color-green-darkest)"}}
+                  className="btn w-100"
+                  disabled={isLoading}
+                  style={{ backgroundColor: "var(--color-green-darkest)", color: "#fff" }}
                 >
                   {isLoading ? (
                     <>
-                      <span
-                        className="spinner-border spinner-border-sm me-2"
-                        role="status"
-                        aria-hidden="true"
-                      ></span>
+                      <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                       Sending...
                     </>
-                  ) : (
-                    "Reset Password"
-                  )}
+                  ) : "Send Reset Code"}
                 </button>
               </form>
             </div>
           </div>
-          {/* Img */}
-          <div className="col-md-6 d-md-block ">
-            <img
-              src={auth}
-              alt="Forgot Password"
-              className="img-fluid rounded"
-            />
+          <div className="col-md-6 d-md-block">
+            <img src={authImg} alt="Forgot Password" className="img-fluid rounded" />
           </div>
         </div>
       </section>
     </>
   );
-};
-
-export default ForgetPassword;
+}

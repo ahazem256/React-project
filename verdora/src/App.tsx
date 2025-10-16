@@ -22,6 +22,8 @@ import NotFound from "./components/common/NotFound";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import { Toaster } from "react-hot-toast";
 import Footer from './components/footer/Footer';
+import Admin from "./pages/admin";
+
 
 
 
@@ -76,10 +78,16 @@ const AppContent: React.FC = () => {
             />
 
             {/* Auth Routes */}
-            <Route
-              path="/auth/signin"
-              element={isAuthenticated ? <Navigate to="/home" replace /> : <SignIn onLogin={handleLogin} />}
-            />
+           <Route
+  path="/auth/signin"
+  element={
+    isAuthenticated
+      ? localStorage.getItem("userRole") === "admin"
+        ? <Navigate to="/admin" replace />
+        : <Navigate to="/home" replace />
+      : <SignIn onLogin={handleLogin} />
+  }
+/>
             <Route path="/auth/signup" element={<SignUp />} />
             <Route path="/auth/forget-password" element={<ForgotPassword />} />
             <Route path="/auth/verify-reset-code" element={<VerifyResetCode />} />
@@ -97,7 +105,8 @@ const AppContent: React.FC = () => {
             <Route path="/products" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Products /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Profile /></ProtectedRoute>} />
             <Route path="/checkout" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Checkout /></ProtectedRoute>} />
-
+            <Route path="/admin" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Admin /></ProtectedRoute>} />
+            
 
             {/* Not Found */}
             <Route path="*" element={<NotFound />} />
