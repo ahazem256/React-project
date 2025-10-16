@@ -29,7 +29,7 @@ const ExploreProducts: React.FC = () => {
                 const res = await axios.get("https://api.jsonbin.io/v3/b/68e56de5d0ea881f4098eaa4/latest");
                 const allProducts = res.data.record.products;
 
-                // عرض أول 8 منتجات
+
                 setProducts(allProducts.slice(0, 8));
                 setLoading(false);
             } catch (err) {

@@ -24,7 +24,6 @@
 
 .hero-btn:hover {
     background-color: var(--color-green-darkest);
-    /* لون أخضر جميل */
     color: white;
 }
 

@@ -30,7 +30,7 @@ const LowestPriceSlider: React.FC = () => {
 
                 const products = res.data.record.products;
 
-                // ترتيب المنتجات حسب السعر
+
                 const sorted = products
                     .filter((p: Product) => p.price)
                     .map((p: Product) => ({
@@ -39,7 +39,7 @@ const LowestPriceSlider: React.FC = () => {
                     }))
                     .sort((a: any, b: any) => a.numericPrice - b.numericPrice);
 
-                // أول 8 منتجات فقط
+
                 setLowestProducts(sorted.slice(0, 8));
             } catch (err) {
                 console.error("Error fetching products:", err);
@@ -49,7 +49,7 @@ const LowestPriceSlider: React.FC = () => {
         fetchProducts();
     }, []);
 
-    // الأسهم
+
     const NextArrow = (props: any) => {
         const { onClick } = props;
         return (
@@ -109,7 +109,7 @@ const LowestPriceSlider: React.FC = () => {
                                     src={p.image}
                                     alt={p.name}
                                     className="category-image"
-                                    onClick={() => navigate(`/product/${p.id}`)} // ← هنا بنروح لصفحة التفاصيل
+                                    onClick={() => navigate(`/product/${p.id}`)}
                                     style={{ cursor: "pointer" }}
                                 />
                                 <button className="add-cart-btn" onClick={() => handleAddToCart(p)}>
