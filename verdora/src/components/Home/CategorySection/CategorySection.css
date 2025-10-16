@@ -1,14 +1,29 @@
 .categories {
-    padding: 30px 20px;
+    padding: 80px 40px;
     width: 100%;
+    font-family: var(--font-family-serif);
 }
 
 .categories-title {
-    font-size: 2rem;
+    font-size: 1.8rem;
     font-weight: bold;
-    color: #2d572c;
-    margin-bottom: 40px;
+    color: var(--color-text-primary);
+    margin-bottom: 25px;
     text-align: left;
+    position: relative;
+    margin-left: 1.5rem;
+}
+
+.categories-title::before {
+    position: absolute;
+    content: "";
+    top: -2px;
+    left: -22px;
+    height: 35px;
+    width: 18px;
+    background: rgba(91, 109, 81, 0.9);
+    ;
+    border-radius: 5px;
 }
 
 .categories-grid {
@@ -18,42 +33,48 @@
 }
 
 .category-card {
-    background-color: #fff;
-    border: 1px solid #e8e8e8;
-    border-radius: 12px;
-    padding: 40px 20px;
-    text-align: center;
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    box-shadow: none;
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease;
 }
+
 
 .category-card:hover {
     transform: translateY(-8px);
     box-shadow: 0 8px 20px rgba(45, 87, 44, 0.15);
-    border-color: #97a97c;
 }
 
 .category-icon-container {
-    margin-bottom: 20px;
+    width: 100%;
+    height: 250px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
 }
 
-.category-icon {
-    font-size: 4rem;
-    display: block;
+.category-icon-container:hover {
+    transform: scale(1.05);
 }
+
+
 
 .category-name {
-
-    color: #333;
-    margin-left: 0 auto;
-    font-weight: 600;
-    font-size: 20px;
+    color: var(--body-background) !important;
+    font-weight: 300;
+    font-size: 35px;
+    text-align: center;
+    opacity: .4;
     color: var(--color-green-darkest);
-    display: inline-block;
-    border-bottom: 2px solid #97a97c;
-    padding-bottom: 3px;
+    transform: translateY(100px);
+}
 
+.category-icon-container:hover .category-name {
+    opacity: 1;
 }
 
 /* Responsive */

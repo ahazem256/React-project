@@ -1,25 +1,40 @@
 .categories-container {
-    padding: 30px 20px;
+    padding: 80px 40px;
     max-width: 1200px;
     margin: 0 auto;
 }
 
 .category-slider {
-    padding: 40px 20px;
+    padding: 80px 40px;
     text-align: center;
     position: relative;
-    font-family: var(-font-family-serif);
+    font-family: var(--font-family-serif);
 }
 
 
 .category-slider-title {
     font-size: 1.8rem;
     margin-bottom: 25px;
-    color: #2d572c;
+    color: var(--color-text-primary);
     font-weight: bold;
     display: flex;
-    align-items: start;
+    position: relative;
+    margin-left: 1.5rem;
 }
+
+
+.category-slider-title::before {
+    position: absolute;
+    content: "";
+    top: -2px;
+    left: -22px;
+    height: 35px;
+    width: 18px;
+    background: rgba(91, 109, 81, 0.9);
+
+    border-radius: 5px;
+}
+
 
 .category-slide {
     display: flex;
@@ -32,61 +47,32 @@
     position: relative;
 }
 
-.category-slide:hover {
-    transform: translateY(-5px);
+
+
+.category-slide:hover .category-image {
+    transform: scale(1.05);
 }
+
+
 
 .image-container {
     position: relative;
-    width: 85%;
+    width: 100%;
+    height: 320px;
+    overflow: hidden;
+    background-color: #f5f5f5;
 }
 
 .category-image {
     width: 100%;
-    height: 250px;
-    object-fit: contain;
-    border-radius: 12px;
+    height: 100%;
+    object-fit: cover;
     transition: transform 0.3s ease;
-    background-color: #f9f9f9;
 }
 
 .category-image:hover {
     transform: scale(1.05);
 }
-
-/* .details {
-    text-align: center;
-
-    width: 100%;
-}
-
-.category-name {
-    font-weight: 600;
-    font-size: 20px;
-    color: var(--color-green-darkest);
-    display: inline-block;
-    border-bottom: 2px solid #97a97c;
-    padding-bottom: 3px;
-    margin-bottom: 5px;
-    margin-right: 90px;
-
-}
-
-.category-rate {
-    display: block;
-    margin-top: 5px;
-    font-size: 14px;
-    margin-right: 90px;
-
-}
-
-.category-price {
-    font-weight: 500;
-    color: var(--color-green-darkest);
-    font-size: 16px;
-    margin-right: 90px;
-    
-} */
 
 
 .details {
@@ -103,50 +89,38 @@
     font-size: 20px;
     color: var(--color-green-darkest);
     display: inline-block;
-    border-bottom: 2px solid #97a97c;
+    border-bottom: 2px solid var(--color-green-medium);
     padding-bottom: 3px;
     margin-right: 50PX;
 }
 
-.category-rate {
-    font-size: 14px;
-    color: #666;
-    margin-right: 50PX;
-}
+
 
 .category-price {
     font-weight: 500;
-    color: var(--color-green-darkest);
-    font-size: 16px;
+    color: var(--color-green-medium);
+    font-size: 18px;
     margin-right: 50PX;
 }
 
-.stock {
-    margin-left: 6px;
-    color: #97a97c;
-    font-size: 15px;
-}
 
 
-/* 🔹 زر Add to Cart على الصورة */
+
 .add-cart-btn {
     position: absolute;
-    bottom: 15px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: rgba(151, 169, 124, 0.95);
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: var(--color-green-medium);
     color: white;
     border: none;
-
-    padding: 10px 20px;
-    font-size: 0.9rem;
+    padding: 15px;
+    font-size: 1rem;
+    font-weight: 500;
     cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    opacity: 0;
-    pointer-events: none;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+    opacity: 1;
 }
 
 .image-container:hover .add-cart-btn {
@@ -154,23 +128,28 @@
     pointer-events: auto;
 }
 
-.add-cart-btn:hover {
-    background-color: #485935;
-    transform: translateX(-50%) scale(1.05);
+.category-slide:hover .add-cart-btn {
+    transform: translateY(0);
 }
+
+.add-cart-btn:hover {
+    background-color: var(--color-green-darkest);
+}
+
 
 .cart-icon {
     font-size: 1rem;
+    margin-right: 6px;
 }
 
-/* 🔹 الأسهم */
+
 .arrow {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
     z-index: 2;
-    background-color: rgba(45, 87, 44, 0.9);
-    color: white;
+    background-color: rgba(91, 109, 81, 0.9);
+    color: var(--body-background);
     border-radius: 50%;
     width: 40px;
     height: 40px;
@@ -182,7 +161,7 @@
 }
 
 .arrow:hover {
-    background-color: #2d572c;
+    background-color: var(--color-green-darkest);
 }
 
 .arrow.prev {

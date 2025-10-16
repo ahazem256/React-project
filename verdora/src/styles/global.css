@@ -36,7 +36,6 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  /* يغطي طول الشاشة بالكامل */
   background-color: #f8f9fa;
 }
 
@@ -127,17 +126,15 @@ footer {
   }
 }
 
-/* Smooth Scrolling */
+
 html {
   scroll-behavior: smooth;
 }
 
-/* لو عايزة تخلي السكرول أكثر سلاسة */
 * {
   scroll-behavior: smooth;
 }
 
-/* Optional: تحسين السكرول في المتصفحات المختلفة */
 body {
   -webkit-overflow-scrolling: touch;
 }

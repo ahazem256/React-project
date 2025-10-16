@@ -7,6 +7,7 @@
     align-items: center;
     justify-content: flex-start;
     padding-left: 8%;
+    font-family: var(--font-family-serif);
 }
 
 .hero-overlay {
@@ -23,7 +24,6 @@
 
 .hero-btn:hover {
     background-color: var(--color-green-darkest);
-    /* لون أخضر جميل */
     color: white;
 }
 

@@ -1,9 +1,9 @@
-// AboutInstagram.tsx
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './about.css';
 
-// Import الصور بالطريقة الصحيحة
+
 import img1 from '../../../assets/img1.jpg';
 import img2 from '../../../assets/img2.jpg';
 import img3 from '../../../assets/img3.jpg';

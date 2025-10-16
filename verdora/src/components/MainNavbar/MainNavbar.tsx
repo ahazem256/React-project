@@ -48,15 +48,15 @@ const MainNavbar: React.FC<MainNavbarProps> = ({
     { name: "Bonsai & Miniature Plants", path: "/categories/bonsai_miniature" },
   ];
 
-  // دالة لتحديث عدد السلة
+
   const updateCartCount = (): void => {
     const cart = JSON.parse(localStorage.getItem("cart") || "[]");
     const previousCount = cartCount;
     const newCount = cart.length;
-    
+
     setCartCount(newCount);
-    
-    // تأثير عند إضافة منتج جديد
+
+
     if (newCount > previousCount) {
       setIsCartAnimating(true);
       setTimeout(() => setIsCartAnimating(false), 600);
@@ -70,28 +70,27 @@ const MainNavbar: React.FC<MainNavbarProps> = ({
     updateCartCount();
   }, []);
 
-  // Listen to cart updates - طريقة أفضل
   useEffect(() => {
-    // فحص السلة كل ثانية للتحديثات
+
     const interval = setInterval(() => {
       updateCartCount();
     }, 1000);
 
-    // أيضًا استمع للتغييرات في localStorage
+
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === "cart") {
         updateCartCount();
       }
     };
 
-    // استمع لأي حدث تحديث سلة من المكونات الأخرى
+
     const handleCartUpdate = () => {
       updateCartCount();
     };
 
     window.addEventListener("storage", handleStorageChange);
     window.addEventListener("cartUpdated", handleCartUpdate);
-    
+
     return () => {
       clearInterval(interval);
       window.removeEventListener("storage", handleStorageChange);
@@ -148,8 +147,8 @@ const MainNavbar: React.FC<MainNavbarProps> = ({
     <nav className="navbar navbar-light shadow-sm">
       <div className="container-fluid px-4">
         <div className="navbar-container">
-          <Link 
-            className="navbar-brand d-flex align-items-center" 
+          <Link
+            className="navbar-brand d-flex align-items-center"
             to="/home"
             onClick={() => handleLinkClick("home")}
           >
@@ -158,33 +157,33 @@ const MainNavbar: React.FC<MainNavbarProps> = ({
 
           {/* Desktop Nav */}
           <div className="navbar-nav-desktop">
-            <Link 
-              className={`main-navbar ${activeLink === "home" ? "active" : ""}`} 
-              to="/home" 
+            <Link
+              className={`main-navbar ${activeLink === "home" ? "active" : ""}`}
+              to="/home"
               onClick={() => handleLinkClick("home")}
             >
               Home
             </Link>
-            <Link 
-              className={`main-navbar ${activeLink === "products" ? "active" : ""}`} 
-              to="/products" 
+            <Link
+              className={`main-navbar ${activeLink === "products" ? "active" : ""}`}
+              to="/products"
               onClick={() => handleLinkClick("products")}
             >
               Products
             </Link>
-            <div 
-              ref={categoriesDropdownRef} 
+            <div
+              ref={categoriesDropdownRef}
               className="nav-item dropdown"
               onMouseEnter={() => setIsDropdownOpen(true)}
               onMouseLeave={() => setIsDropdownOpen(false)}
             >
-              <Link 
-                to="#" 
+              <Link
+                to="#"
                 className={`main-navbar d-flex align-items-center ${activeLink === "categories" ? "active" : ""}`}
-                onClick={(e) => { 
-                  e.preventDefault(); 
-                  setIsDropdownOpen(prev => !prev); 
-                  handleLinkClick("categories"); 
+                onClick={(e) => {
+                  e.preventDefault();
+                  setIsDropdownOpen(prev => !prev);
+                  handleLinkClick("categories");
                 }}
               >
                 Categories <RiArrowDropDownLine size={22} />
@@ -192,10 +191,10 @@ const MainNavbar: React.FC<MainNavbarProps> = ({
               {isDropdownOpen && (
                 <div className="dropdown-menu show">
                   {categories.map((cat: Category) => (
-                    <Link 
-                      key={cat.path} 
-                      to={cat.path} 
-                      className="dropdown-item" 
+                    <Link
+                      key={cat.path}
+                      to={cat.path}
+                      className="dropdown-item"
                       onClick={() => handleCategoryClick(cat.path)}
                     >
                       {cat.name}
@@ -214,10 +213,10 @@ const MainNavbar: React.FC<MainNavbarProps> = ({
               </span>
             )}
 
-            {/* زر لتحديث السلة يدويًا (للتست فقط) */}
-           
-            <Link 
-              to="/cart" 
+
+
+            <Link
+              to="/cart"
               className={`btn position-relative btn-cart ${isCartAnimating ? 'cart-animate' : ''}`}
             >
               <IoCartOutline size={26} />
@@ -231,15 +230,15 @@ const MainNavbar: React.FC<MainNavbarProps> = ({
             <Link to="/order" className="btn btn-orders">
               <GoHistory size={26} />
             </Link>
-            
+
             <Link to="/profile" className="btn position-relative btn-cart">
               <IoPersonOutline size={26} />
             </Link>
 
-            <button 
-              onClick={handleLogout} 
-              className="btn btn-logout" 
-              type="button" 
+            <button
+              onClick={handleLogout}
+              className="btn btn-logout"
+              type="button"
               title="Logout"
             >
               <IoLogOutOutline size={26} />
@@ -247,9 +246,9 @@ const MainNavbar: React.FC<MainNavbarProps> = ({
           </div>
 
           {/* Mobile Toggle */}
-          <button 
-            className="menu-toggle-btn" 
-            onClick={toggleMenu} 
+          <button
+            className="menu-toggle-btn"
+            onClick={toggleMenu}
             type="button"
           >
             <CiMenuFries size={28} />
@@ -259,58 +258,58 @@ const MainNavbar: React.FC<MainNavbarProps> = ({
         {/* Mobile Menu */}
         {isMenuOpen && (
           <div className="mobile-menu-overlay" onClick={closeMenu}>
-            <div 
-              className="mobile-menu-content" 
-              ref={mobileMenuRef} 
+            <div
+              className="mobile-menu-content"
+              ref={mobileMenuRef}
               onClick={(e: React.MouseEvent) => e.stopPropagation()}
             >
-              <button 
-                className="close-menu-btn" 
-                onClick={closeMenu} 
+              <button
+                className="close-menu-btn"
+                onClick={closeMenu}
                 type="button"
               >
                 <IoClose size={32} />
               </button>
-              
+
               <div className="mobile-nav-links">
-                <Link 
-                  className={`main-navbar-mobile ${activeLink === "home" ? "active" : ""}`} 
-                  to="/home" 
+                <Link
+                  className={`main-navbar-mobile ${activeLink === "home" ? "active" : ""}`}
+                  to="/home"
                   onClick={closeMenu}
                 >
                   Home
                 </Link>
-                
-                <Link 
-                  className={`main-navbar-mobile ${activeLink === "products" ? "active" : ""}`} 
-                  to="/products" 
+
+                <Link
+                  className={`main-navbar-mobile ${activeLink === "products" ? "active" : ""}`}
+                  to="/products"
                   onClick={closeMenu}
                 >
                   Products
                 </Link>
-                
+
                 <div className="nav-item dropdown">
-                  <div 
+                  <div
                     className={`main-navbar-mobile d-flex align-items-center justify-content-between ${activeLink === "categories" ? "active" : ""}`}
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                   >
                     Categories
-                    <RiArrowDropDownLine 
-                      size={25} 
-                      style={{ 
-                        transform: isDropdownOpen ? "rotate(180deg)" : "rotate(0deg)", 
-                        transition: "transform 0.3s ease" 
-                      }} 
+                    <RiArrowDropDownLine
+                      size={25}
+                      style={{
+                        transform: isDropdownOpen ? "rotate(180deg)" : "rotate(0deg)",
+                        transition: "transform 0.3s ease"
+                      }}
                     />
                   </div>
-                  
+
                   {isDropdownOpen && (
                     <div className="mobile-dropdown-menu">
                       {categories.map((cat: Category) => (
-                        <Link 
-                          key={cat.path} 
-                          to={cat.path} 
-                          className="dropdown-item" 
+                        <Link
+                          key={cat.path}
+                          to={cat.path}
+                          className="dropdown-item"
                           onClick={() => handleCategoryClick(cat.path)}
                         >
                           {cat.name}
@@ -327,10 +326,10 @@ const MainNavbar: React.FC<MainNavbarProps> = ({
                     Welcome, {storedName}
                   </p>
                 )}
-                
-                <Link 
-                  to="/cart" 
-                  className={`mobile-cart-btn ${isCartAnimating ? 'cart-animate' : ''}`} 
+
+                <Link
+                  to="/cart"
+                  className={`mobile-cart-btn ${isCartAnimating ? 'cart-animate' : ''}`}
                   onClick={closeMenu}
                 >
                   <IoCartOutline size={30} /> Cart
@@ -340,29 +339,29 @@ const MainNavbar: React.FC<MainNavbarProps> = ({
                     </span>
                   )}
                 </Link>
-                
-                <Link 
-                  to="/order" 
-                  className="mobile-order-btn" 
+
+                <Link
+                  to="/order"
+                  className="mobile-order-btn"
                   onClick={closeMenu}
                 >
                   <GoHistory size={25} /> Orders
                 </Link>
-                
-                <Link 
-                  to="/profile" 
-                  className="mobile-profile-btn" 
+
+                <Link
+                  to="/profile"
+                  className="mobile-profile-btn"
                   onClick={closeMenu}
                 >
                   <IoPersonOutline size={25} /> Profile
                 </Link>
-                
-                <button 
-                  onClick={() => { 
-                    handleLogout(); 
-                    closeMenu(); 
-                  }} 
-                  className="mobile-logout-btn" 
+
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    closeMenu();
+                  }}
+                  className="mobile-logout-btn"
                   type="button"
                 >
                   <IoLogOutOutline size={25} /> Logout

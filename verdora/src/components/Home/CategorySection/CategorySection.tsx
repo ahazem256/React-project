@@ -1,12 +1,12 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './CategorySection.css';
-import { FaLeaf } from "react-icons/fa";
+import Bonsaie from '../../../assets/bonsoi.jpg';
 
 interface Category {
     id: number;
     name: string;
-    icon: string;
+    backgroundImage: string;
     path: string;
 }
 
@@ -17,26 +17,26 @@ const CategoriesSection: React.FC = () => {
     const categories: Category[] = [
         {
             id: 1,
-            name: 'Indoor',
-            icon: '🪴',
+            name: 'Indoor Plants',
+            backgroundImage: "url('https://i.pinimg.com/1200x/98/85/f3/9885f38dc02d4aad94ffe92bfc728894.jpg')",
             path: '/categories/Indoor'
         },
         {
             id: 2,
-            name: 'Outdoor',
-            icon: '🌳',
+            name: 'Outdoor Plants',
+            backgroundImage: "url('https://i.pinimg.com/1200x/9c/66/90/9c6690ba911eb325a088e28ed710b4f4.jpg')",
             path: '/categories/Outdoor'
         },
         {
             id: 3,
             name: 'Flowering Plants',
-            icon: '🌺',
+            backgroundImage: "url('https://i.pinimg.com/1200x/75/6f/ed/756fed349a15e9513c7cd2d1cdc0a544.jpg')",
             path: '/categories/Flowering'
         },
         {
             id: 4,
-            name: 'Bonsai & Miniature Plants',
-            icon: '🎋',
+            name: 'Bonsai Plants',
+            backgroundImage: `url(${Bonsaie})`,
             path: '/categories/Bonsai_miniature'
         }
     ];
@@ -47,7 +47,7 @@ const CategoriesSection: React.FC = () => {
 
     return (
         <div className="categories">
-            <h2 className="categories-title"><FaLeaf size={28} className="footer-leaf" />Browse By Categories</h2>
+            <h2 className="categories-title">  Browse By Categories</h2>
             <div className="categories-grid">
                 {categories.map((category) => (
                     <div
@@ -55,10 +55,14 @@ const CategoriesSection: React.FC = () => {
                         className="category-card"
                         onClick={() => handleCategoryClick(category.path)}
                     >
-                        <div className="category-icon-container">
-                            <span className="category-icon">{category.icon}</span>
+                        <div
+                            className="category-icon-container"
+                            style={{ backgroundImage: category.backgroundImage }}
+                        >
+                            <h3 className="category-name">{category.name}</h3>
                         </div>
-                        <h3 className="category-name">{category.name}</h3>
+
+
                     </div>
                 ))}
             </div>

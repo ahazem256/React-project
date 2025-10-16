@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Slider from "react-slick";
-import { FaChevronLeft, FaChevronRight, FaShoppingCart, FaLeaf } from "react-icons/fa";
+import { FaChevronLeft, FaChevronRight, FaShoppingCart } from "react-icons/fa";
 import "./LowestProducts.css";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../../../redux/slices/cartSlice";
 
 
 interface Product {
@@ -27,7 +30,7 @@ const LowestPriceSlider: React.FC = () => {
 
                 const products = res.data.record.products;
 
-                // ترتيب المنتجات حسب السعر
+
                 const sorted = products
                     .filter((p: Product) => p.price)
                     .map((p: Product) => ({
@@ -36,7 +39,7 @@ const LowestPriceSlider: React.FC = () => {
                     }))
                     .sort((a: any, b: any) => a.numericPrice - b.numericPrice);
 
-                // أول 8 منتجات فقط
+
                 setLowestProducts(sorted.slice(0, 8));
             } catch (err) {
                 console.error("Error fetching products:", err);
@@ -46,7 +49,7 @@ const LowestPriceSlider: React.FC = () => {
         fetchProducts();
     }, []);
 
-    // الأسهم
+
     const NextArrow = (props: any) => {
         const { onClick } = props;
         return (
@@ -81,8 +84,12 @@ const LowestPriceSlider: React.FC = () => {
         ],
     };
 
+
+    const dispatch = useDispatch();
+
     const handleAddToCart = (product: Product) => {
-        alert(`${product.name} added to cart 🛒`);
+        dispatch(addToCart({ product, quantity: 1 }));
+        toast.success(`${product.name} added to cart!`);
     };
     const navigate = useNavigate();
     const handleProductClick = (id: number) => {
@@ -92,7 +99,7 @@ const LowestPriceSlider: React.FC = () => {
 
     return (
         <div className="category-container category-slider">
-            <h2 className="category-slider-title"><FaLeaf size={28} className="footer-leaf" />Lowest Priced Products</h2>
+            <h2 className="category-slider-title">Lowest Priced Products</h2>
             {lowestProducts.length > 0 ? (
                 <Slider {...settings}>
                     {lowestProducts.map((p) => (
@@ -102,18 +109,18 @@ const LowestPriceSlider: React.FC = () => {
                                     src={p.image}
                                     alt={p.name}
                                     className="category-image"
-                                    onClick={() => navigate(`/product/${p.id}`)} // ← هنا بنروح لصفحة التفاصيل
+                                    onClick={() => navigate(`/product/${p.id}`)}
                                     style={{ cursor: "pointer" }}
                                 />
-
                                 <button className="add-cart-btn" onClick={() => handleAddToCart(p)}>
                                     <FaShoppingCart className="cart-icon" /> Add to Cart
                                 </button>
+
                             </div>
                             <div className="details">
                                 <span className="cat-name">{p.name} </span> <br />
-                                <span className="category-rate"> {p.rate}</span><br />
-                                <span className="category-price">{p.price}  <span className="stock"> Stock:{p.stock}</span></span>
+
+                                <span className="category-price">{p.price} </span>
 
                             </div>
 
