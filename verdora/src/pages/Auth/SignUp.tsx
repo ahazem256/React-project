@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import "../../styles/global.css";
 import { Helmet } from "react-helmet";
-import axios from "axios"; 
+import axios from "axios";
 
 interface FormValues {
   name: string;
@@ -25,11 +25,12 @@ export default function SignUp() {
   const schema = z
     .object({
       name: z.string().min(1, "Name is required").max(10, "Max length is 10"),
-      email: z.string().email("Invalid email"),
+      email: z.string().min(1, "Email is required").email("Invalid email"),
       password: z
         .string()
+        .min(1, "Password is required")
         .regex(/^(?=.*[A-Za-z])(?=.*\d).{6,}$/, "Invalid password"),
-      rePassword: z.string(),
+      rePassword: z.string().min(1, "confirm your pssword is required"),
       phone: z
         .string()
         .min(1, "Phone number is required")
@@ -71,14 +72,15 @@ export default function SignUp() {
 
       const response = await axios.post("http://localhost:5000/users", {
         ...userData,
-        role: "user", 
+        role: "user",
       });
 
       toast.success(`Registration successful! Welcome ${response.data.name}`);
       navigate("/auth/signin");
     } catch (error: any) {
       toast.error(
-        error.response?.data?.message || "Something went wrong during registration"
+        error.response?.data?.message ||
+          "Something went wrong during registration"
       );
     } finally {
       setIsLoading(false);
@@ -93,148 +95,154 @@ export default function SignUp() {
       </Helmet>
 
       <div
-        className="register-page"
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          minHeight: "100vh",
-        }}
+        className="d-flex align-items-center justify-content-center min-vh-100 mt-5"
+        style={{ backgroundColor: "#fff" }}
       >
-        <div className="mt-5" style={{ fontFamily: "var(--font-family-form)" }}>
-          <form
-            style={{ width: "25vw", padding: "30px" }}
-            onSubmit={handleSubmit(handleRegister)}
-          >
-            <h1
-              style={{
-                display: "block",
-                textAlign: "center",
-                color: "#030303ff",
-              }}
-              className="mb-5"
-            >
-              Sign up
-            </h1>
+        <div
+          className="row w-100 justify-content-center align-items-center"
+          style={{ maxWidth: "900px", fontFamily: "var(--font-family-form)" }}
+        >
+          {/*Form */}
+          <div className="col-md-6">
+            <div className="card p-4" style={{ border: "none" }}>
+              <h2 className="text-center mb-3">Sign Up</h2>
+              <p className="text-center text-muted mb-4">
+                Create your account and join us today!
+              </p>
 
-            {/* Name */}
-            <div className="mb-3">
-              <input
-                type="text"
-                className="form-control p-3 rounded-0"
-                placeholder="Enter your name"
-                {...register("name")}
-              />
-              {formState.errors.name && formState.touchedFields.name && (
-                <p className="alert alert-danger p-1 mt-1">
-                  {formState.errors.name.message}
-                </p>
-              )}
-            </div>
-
-            {/* Email */}
-            <div className="mb-3">
-              <input
-                type="email"
-                className="form-control p-3 rounded-0"
-                placeholder="Enter your email"
-                {...register("email")}
-              />
-              {formState.errors.email && formState.touchedFields.email && (
-                <p className="alert alert-danger p-1 mt-1">
-                  {formState.errors.email.message}
-                </p>
-              )}
-            </div>
-
-            {/* Password */}
-            <div className="mb-3">
-              <input
-                type="password"
-                className="form-control p-3 rounded-0"
-                placeholder="Enter your password"
-                {...register("password")}
-              />
-              {formState.errors.password && formState.touchedFields.password && (
-                <p className="alert alert-danger p-1 mt-1">
-                  {formState.errors.password.message}
-                </p>
-              )}
-            </div>
-
-            {/* Repassword */}
-            <div className="mb-3">
-              <input
-                type="password"
-                className="form-control p-3 rounded-0"
-                placeholder="Re-enter your password"
-                {...register("rePassword")}
-              />
-              {formState.errors.rePassword &&
-                formState.touchedFields.rePassword && (
-                  <p className="alert alert-danger p-1 mt-1">
-                    {formState.errors.rePassword.message}
-                  </p>
-                )}
-            </div>
-
-            {/* Phone */}
-            <div className="mb-3">
-              <input
-                type="tel"
-                className="form-control p-3 rounded-0"
-                placeholder="Enter your phone"
-                {...register("phone")}
-              />
-              {formState.errors.phone && formState.touchedFields.phone && (
-                <p className="alert alert-danger p-1 mt-1">
-                  {formState.errors.phone.message}
-                </p>
-              )}
-            </div>
-            {/* Terms */}
-            <div className="mb-3 form-check">
-              <input
-                type="checkbox"
-                className="form-check-input"
-                {...register("termsAccepted")}
-              />
-              <label
-                className="form-check-label"
-                style={{ display: "block", textAlign: "left" }}
-              >
-                I agree to all the statements
-              </label>
-              {formState.errors.termsAccepted && (
-                <p className="alert alert-danger p-1 mt-1">
-                  {formState.errors.termsAccepted.message}
-                </p>
-              )}
-            </div>
-
-            {/* Submit Button */}
-            <button
-              type="submit"
-              className="btn btn-success w-100 rounded-3 p-3 fs-5"
-              disabled={isLoading}
-              style={{ background: "var(--color-green-darkest)" }}
-            >
-              {isLoading ? (
-                <div className="spinner-border" role="status">
-                  <span className="visually-hidden">Loading...</span>
+              <form onSubmit={handleSubmit(handleRegister)}>
+                {/* Name */}
+                <div className="mb-3">
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Full Name"
+                    {...register("name")}
+                  />
+                  {formState.errors.name && formState.touchedFields.name && (
+                    <p className="alert alert-danger p-1 mt-1">
+                      {formState.errors.name.message}
+                    </p>
+                  )}
                 </div>
-              ) : (
-                "Register"
-              )}
-            </button>
-          </form>
-        </div>
 
-        <div style={{ flexShrink: 0 }}>
-          <img
-            src={Fabricimag}
-            style={{ height: "100%", objectFit: "cover", marginTop: "-30px" }}
-          />
+                {/* Email */}
+                <div className="mb-3">
+                  <input
+                    type="email"
+                    className="form-control"
+                    placeholder="Enter your email"
+                    {...register("email")}
+                  />
+                  {formState.errors.email && formState.touchedFields.email && (
+                    <p className="alert alert-danger p-1 mt-1">
+                      {formState.errors.email.message}
+                    </p>
+                  )}
+                </div>
+
+                {/* Password */}
+                <div className="mb-3">
+                  <input
+                    type="password"
+                    className="form-control"
+                    placeholder="Enter your password"
+                    {...register("password")}
+                  />
+                  {formState.errors.password &&
+                    formState.touchedFields.password && (
+                      <p className="alert alert-danger p-1 mt-1">
+                        {formState.errors.password.message}
+                      </p>
+                    )}
+                </div>
+
+                {/* Re-password */}
+                <div className="mb-3">
+                  <input
+                    type="password"
+                    className="form-control"
+                    placeholder="Confirm your password"
+                    {...register("rePassword")}
+                  />
+                  {formState.errors.rePassword &&
+                    formState.touchedFields.rePassword && (
+                      <p className="alert alert-danger p-1 mt-1">
+                        {formState.errors.rePassword.message}
+                      </p>
+                    )}
+                </div>
+
+                {/* Phone */}
+                <div className="mb-3">
+                  <input
+                    type="tel"
+                    className="form-control"
+                    placeholder="Enter your phone"
+                    {...register("phone")}
+                  />
+                  {formState.errors.phone && formState.touchedFields.phone && (
+                    <p className="alert alert-danger p-1 mt-1">
+                      {formState.errors.phone.message}
+                    </p>
+                  )}
+                </div>
+
+                {/* Terms */}
+                <div className="mb-3 form-check">
+                  <input
+                    type="checkbox"
+                    className="form-check-input"
+                    {...register("termsAccepted")}
+                  />
+                  <label className="form-check-label">
+                    I agree to all the statements
+                  </label>
+                  {formState.errors.termsAccepted && (
+                    <p className="alert alert-danger p-1 mt-1">
+                      {formState.errors.termsAccepted.message}
+                    </p>
+                  )}
+                </div>
+
+                {/* Submit */}
+                <button
+                  type="submit"
+                  className="btn w-100 rounded-2 fs-6 text-light"
+                  disabled={isLoading}
+                  style={{ backgroundColor: "var(--color-green-darkest)" }}
+                >
+                  {isLoading ? "Registering..." : "Register"}
+                </button>
+              </form>
+
+              <p className="text-center mt-3 mb-0">
+                Already have an account?{" "}
+                <span
+                  onClick={() => navigate("/auth/signin")}
+                  className="fw-semibold text-success"
+                  style={{ cursor: "pointer" }}
+                >
+                  Sign In
+                </span>
+              </p>
+            </div>
+          </div>
+
+          {/* Image */}
+          <div className="col-md-6 d-none d-md-block text-center">
+            <img
+              src={Fabricimag}
+              alt="Register"
+              className="img-fluid rounded"
+              style={{
+                width: "100%",
+                height: "auto",
+                objectFit: "cover",
+                marginTop: "70px",
+              }}
+            />
+          </div>
         </div>
       </div>
     </>

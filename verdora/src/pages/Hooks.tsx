@@ -14,6 +14,7 @@ interface Product {
   image?: string;
   rate?: string;
   category: string;
+  oldprice: string;
   [key: string]: unknown;
 
 
