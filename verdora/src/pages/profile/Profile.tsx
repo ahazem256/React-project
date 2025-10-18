@@ -97,12 +97,16 @@ const UserProfile: React.FC = () => {
   return (
     <div className="profile-container" style={styles.container}>
       <div style={styles.imageContainer}>
-        <div style={styles.imageContainer}>
-          <img
-            src={formData.image || "https://via.placeholder.com/150"}
-            alt="User Avatar"
-            style={styles.avatar}
-          />
+        <div style={styles.avatarContainer}>
+          {formData.image ? (
+            <img
+              src={formData.image}
+              alt="User Avatar"
+              style={styles.avatarImage}
+            />
+          ) : (
+            <div style={styles.avatarPlaceholder}></div>
+          )}
 
           {editMode && (
             <>
@@ -111,14 +115,15 @@ const UserProfile: React.FC = () => {
                 type="file"
                 accept="image/*"
                 onChange={handleImageChange}
-                style={{ display: "none" }} // نخفي الـ input
+                style={{ display: "none" }}
               />
               <label htmlFor="imageUpload" style={styles.cameraIcon}>
-                <IoCameraOutline size={24} />
+                <IoCameraOutline size={22} />
               </label>
             </>
           )}
         </div>
+
 
 
       </div>
@@ -194,6 +199,28 @@ const styles: { [key: string]: React.CSSProperties } = {
     objectFit: "cover",
     border: "3px solid #eee",
   },
+  avatarContainer: {
+    position: "relative",
+    width: "130px",
+    height: "130px",
+  },
+
+  avatarImage: {
+    width: "130px",
+    height: "130px",
+    borderRadius: "50%",
+    objectFit: "cover",
+    border: "3px solid #eee",
+  },
+
+  avatarPlaceholder: {
+    width: "130px",
+    height: "130px",
+    borderRadius: "50%",
+    backgroundColor: "#f0f0f0",
+    border: "2px dashed #ccc",
+  },
+
   info: { width: "100%", display: "flex", flexDirection: "column", gap: "10px", color: "var(--color-green-darkest)" },
   input: {
     padding: "10px",

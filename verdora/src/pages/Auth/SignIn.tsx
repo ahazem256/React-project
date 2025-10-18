@@ -47,8 +47,7 @@ export default function SignIn({ onLogin }: SignInProps) {
 
       const token = `mock-token-${user.id}-${Date.now()}`;
       localStorage.setItem("token", token);
-      localStorage.setItem("userName", user.name);
-      localStorage.setItem("userRole", user.role);
+      localStorage.setItem("loggedInUser", JSON.stringify(user));
 
       onLogin(token, user.name, user.role);
 
@@ -69,7 +68,7 @@ export default function SignIn({ onLogin }: SignInProps) {
         <title>Verdora - Sign In</title>
       </Helmet>
       <div className="d-flex align-items-center justify-content-center min-vh-100" style={{ backgroundColor: "#fff" }}>
-        <div className="row w-100 justify-content-center align-items-center" style={{ maxWidth: "900px"  ,  fontFamily: "var(--font-family-form)"}}>
+        <div className="row w-100 justify-content-center align-items-center" style={{ maxWidth: "900px", fontFamily: "var(--font-family-form)" }}>
           <div className="col-md-6">
             <div className="card p-4" style={{ border: "none" }}>
               <h2 className="text-center mb-3">Sign In</h2>
@@ -102,7 +101,7 @@ export default function SignIn({ onLogin }: SignInProps) {
                     Forgot password?
                   </span>
                 </div>
-                <button type="submit" className="btn w-100" disabled={isLoading} style={{ backgroundColor: "var(--color-green-darkest)", color: "#fff"  }}>
+                <button type="submit" className="btn w-100" disabled={isLoading} style={{ backgroundColor: "var(--color-green-darkest)", color: "#fff" }}>
                   {isLoading ? "Signing in..." : "Sign In"}
                 </button>
               </form>
