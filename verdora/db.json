@@ -107,6 +107,12 @@
       "password": "mohamed12",
       "phone": "01123465789",
       "role": "user"
+    },
+    {
+      "id": "0c99",
+      "name": "meka",
+      "email": "meka@gmail.com",
+      "role": "user"
     }
   ]
 }

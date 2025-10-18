@@ -16,13 +16,21 @@ const UsersTable: React.FC = () => {
     show: false,
     user: null
   });
-  const [addModal, setAddModal] = useState(false);
-  const [newUser, setNewUser] = useState({ name: "", email: "", role: "user" as "user" | "admin" });
+  const [addModal, setAddModal] = useState<boolean>(false);
+  const [newUser, setNewUser] = useState<{ name: string; email: string; role: "user" | "admin" }>({ 
+    name: "", 
+    email: "", 
+    role: "user" 
+  });
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [usersPerPage] = useState<number>(5);
 
   useEffect(() => {
     const controller = new AbortController();
 
-    const fetchUsers = async () => {
+    const fetchUsers = async (): Promise<void> => {
       try {
         setLoading(true);
         setError("");
@@ -35,7 +43,7 @@ const UsersTable: React.FC = () => {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         
-        const data = await response.json();
+        const data: UserType[] = await response.json();
         setUsers(data);
       } catch (err: any) {
         if (err.name === 'AbortError') {
@@ -55,11 +63,11 @@ const UsersTable: React.FC = () => {
     };
   }, []);
 
-  const handleDeleteClick = (user: UserType) => {
+  const handleDeleteClick = (user: UserType): void => {
     setDeleteModal({ show: true, user });
   };
 
-  const handleDeleteConfirm = async () => {
+  const handleDeleteConfirm = async (): Promise<void> => {
     if (!deleteModal.user) return;
 
     try {
@@ -70,6 +78,10 @@ const UsersTable: React.FC = () => {
       if (response.ok) {
         setUsers(users.filter(u => u.id !== deleteModal.user!.id));
         setDeleteModal({ show: false, user: null });
+        // Reset to first page if current page becomes empty
+        if (filteredUsers.length === 1 && currentPage > 1) {
+          setCurrentPage(currentPage - 1);
+        }
       } else {
         alert("Failed to delete customer");
       }
@@ -79,7 +91,7 @@ const UsersTable: React.FC = () => {
     }
   };
 
-  const handleAddUser = async () => {
+  const handleAddUser = async (): Promise<void> => {
     if (!newUser.name || !newUser.email) {
       alert("Please fill in all fields");
       return;
@@ -95,10 +107,13 @@ const UsersTable: React.FC = () => {
       });
 
       if (response.ok) {
-        const addedUser = await response.json();
+        const addedUser: UserType = await response.json();
         setUsers([...users, addedUser]);
         setAddModal(false);
         setNewUser({ name: "", email: "", role: "user" });
+        // Go to last page to see the new user
+        const totalPages = Math.ceil((users.length + 1) / usersPerPage);
+        setCurrentPage(totalPages);
       } else {
         alert("Failed to add customer");
       }
@@ -108,10 +123,45 @@ const UsersTable: React.FC = () => {
     }
   };
 
+  // Filter users based on search term
   const filteredUsers = users.filter(user =>
     user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // Pagination logic
+  const indexOfLastUser: number = currentPage * usersPerPage;
+  const indexOfFirstUser: number = indexOfLastUser - usersPerPage;
+  const currentUsers: UserType[] = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+  const totalPages: number = Math.ceil(filteredUsers.length / usersPerPage);
+
+  // Change page
+  const paginate = (pageNumber: number): void => setCurrentPage(pageNumber);
+
+  // Go to next page
+  const nextPage = (): void => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  // Go to previous page
+  const prevPage = (): void => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  // Reset to first page when search term changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
+
+  // Generate page numbers for pagination
+  const pageNumbers: number[] = [];
+  for (let i = 1; i <= totalPages; i++) {
+    pageNumbers.push(i);
+  }
 
   if (loading) {
     return (
@@ -266,7 +316,7 @@ const UsersTable: React.FC = () => {
                     className="form-control form-control-lg border-0 ps-5"
                     placeholder="🔍 Search customers by name or email..."
                     value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
                     style={{ 
                       paddingLeft: '50px',
                       background: 'white',
@@ -305,107 +355,175 @@ const UsersTable: React.FC = () => {
                 </div>
               </div>
             ) : (
-              <div className="card border-0 shadow-sm" style={{ borderRadius: '20px', overflow: 'hidden' }}>
-                <div className="table-responsive">
-                  <table className="table table-hover mb-0 align-middle">
-                    <thead style={{ background: 'linear-gradient(135deg, #2e7d32 0%, #388e3c 100%)' }}>
-                      <tr>
-                        <th className="py-3 px-4 text-white fw-semibold border-0">ID</th>
-                        <th className="py-3 px-4 text-white fw-semibold border-0">Customer</th>
-                        <th className="py-3 px-4 text-white fw-semibold border-0">Email</th>
-                        <th className="py-3 px-4 text-white fw-semibold border-0">Role</th>
-                        <th className="py-3 px-4 text-white fw-semibold border-0 text-center">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody style={{ background: 'white' }}>
-                      {filteredUsers.map((user, index) => (
-                        <tr key={user.id} style={{ 
-                          borderBottom: '1px solid #f0f0f0'
-                        }}>
-                          <td className="py-3 px-4">
-                            <span className="badge bg-success-subtle text-success px-3 py-2 fw-bold">
-                              #{user.id}
-                            </span>
-                          </td>
-                          <td className="py-3 px-4">
-                            <div className="d-flex align-items-center gap-3">
-                              <div 
-                                className="d-flex align-items-center justify-content-center text-white fw-bold shadow-sm"
-                                style={{ 
-                                  width: '48px', 
-                                  height: '48px',
+              <>
+                <div className="card border-0 shadow-sm" style={{ borderRadius: '20px', overflow: 'hidden' }}>
+                  <div className="table-responsive">
+                    <table className="table table-hover mb-0 align-middle">
+                      <thead style={{ background: 'linear-gradient(135deg, #2e7d32 0%, #388e3c 100%)' }}>
+                        <tr>
+                          <th className="py-3 px-4 text-white fw-semibold border-0">ID</th>
+                          <th className="py-3 px-4 text-white fw-semibold border-0">Customer</th>
+                          <th className="py-3 px-4 text-white fw-semibold border-0">Email</th>
+                          <th className="py-3 px-4 text-white fw-semibold border-0">Role</th>
+                          <th className="py-3 px-4 text-white fw-semibold border-0 text-center">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody style={{ background: 'white' }}>
+                        {currentUsers.map((user: UserType) => (
+                          <tr key={user.id} style={{ 
+                            borderBottom: '1px solid #f0f0f0'
+                          }}>
+                            <td className="py-3 px-4">
+                              <span className="badge bg-success-subtle text-success px-3 py-2 fw-bold">
+                                #{user.id}
+                              </span>
+                            </td>
+                            <td className="py-3 px-4">
+                              <div className="d-flex align-items-center gap-3">
+                                <div 
+                                  className="d-flex align-items-center justify-content-center text-white fw-bold shadow-sm"
+                                  style={{ 
+                                    width: '48px', 
+                                    height: '48px',
+                                    background: user.role === "admin" 
+                                      ? 'linear-gradient(135deg, #fbc02d 0%, #f9a825 100%)' 
+                                      : 'linear-gradient(135deg, #66bb6a 0%, #43a047 100%)',
+                                    borderRadius: '12px',
+                                    fontSize: '1.3rem'
+                                  }}
+                                >
+                                  {user.role === "admin" ? "👑" : "🌱"}
+                                </div>
+                                <div>
+                                  <div className="fw-bold" style={{ color: '#2e7d32' }}>{user.name}</div>
+                                  <small className="text-muted">
+                                    <i className="bi bi-calendar-check me-1"></i>
+                                    Member since 2024
+                                  </small>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="py-3 px-4">
+                              <i className="bi bi-envelope-fill me-2" style={{ color: '#81c784' }}></i>
+                              <span className="text-muted">{user.email}</span>
+                            </td>
+                            <td className="py-3 px-4">
+                              <span 
+                                className="badge px-3 py-2 fw-semibold"
+                                style={{
                                   background: user.role === "admin" 
-                                    ? 'linear-gradient(135deg, #fbc02d 0%, #f9a825 100%)' 
-                                    : 'linear-gradient(135deg, #66bb6a 0%, #43a047 100%)',
-                                  borderRadius: '12px',
-                                  fontSize: '1.3rem'
+                                    ? 'linear-gradient(135deg, #fff9c4 0%, #fff59d 100%)'
+                                    : 'linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%)',
+                                  color: user.role === "admin" ? '#f57f17' : '#1b5e20',
+                                  border: user.role === "admin" ? '2px solid #fbc02d' : '2px solid #66bb6a',
+                                  borderRadius: '10px'
                                 }}
                               >
-                                {user.role === "admin" ? "👑" : "🌱"}
+                                {user.role === "admin" ? (
+                                  <>
+                                    <i className="bi bi-star-fill me-1"></i>
+                                    Admin
+                                  </>
+                                ) : (
+                                  <>
+                                    <i className="bi bi-person-fill me-1"></i>
+                                    Customer
+                                  </>
+                                )}
+                              </span>
+                            </td>
+                            <td className="py-3 px-4 text-center">
+                              <div className="btn-group shadow-sm" role="group">
+                                <button 
+                                  className="btn btn-sm btn-success"
+                                  title="Edit"
+                                  style={{ borderRadius: '8px 0 0 8px' }}
+                                >
+                                  <i className="bi bi-pencil-square"></i>
+                                </button>
+                                <button 
+                                  className="btn btn-sm btn-danger"
+                                  onClick={() => handleDeleteClick(user)}
+                                  title="Delete"
+                                  style={{ borderRadius: '0 8px 8px 0' }}
+                                >
+                                  <i className="bi bi-trash-fill"></i>
+                                </button>
                               </div>
-                              <div>
-                                <div className="fw-bold" style={{ color: '#2e7d32' }}>{user.name}</div>
-                                <small className="text-muted">
-                                  <i className="bi bi-calendar-check me-1"></i>
-                                  Member since 2024
-                                </small>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="py-3 px-4">
-                            <i className="bi bi-envelope-fill me-2" style={{ color: '#81c784' }}></i>
-                            <span className="text-muted">{user.email}</span>
-                          </td>
-                          <td className="py-3 px-4">
-                            <span 
-                              className="badge px-3 py-2 fw-semibold"
-                              style={{
-                                background: user.role === "admin" 
-                                  ? 'linear-gradient(135deg, #fff9c4 0%, #fff59d 100%)'
-                                  : 'linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%)',
-                                color: user.role === "admin" ? '#f57f17' : '#1b5e20',
-                                border: user.role === "admin" ? '2px solid #fbc02d' : '2px solid #66bb6a',
-                                borderRadius: '10px'
-                              }}
-                            >
-                              {user.role === "admin" ? (
-                                <>
-                                  <i className="bi bi-star-fill me-1"></i>
-                                  Admin
-                                </>
-                              ) : (
-                                <>
-                                  <i className="bi bi-person-fill me-1"></i>
-                                  Customer
-                                </>
-                              )}
-                            </span>
-                          </td>
-                          <td className="py-3 px-4 text-center">
-                            <div className="btn-group shadow-sm" role="group">
-                              <button 
-                                className="btn btn-sm btn-success"
-                                title="Edit"
-                                style={{ borderRadius: '8px 0 0 8px' }}
-                              >
-                                <i className="bi bi-pencil-square"></i>
-                              </button>
-                              <button 
-                                className="btn btn-sm btn-danger"
-                                onClick={() => handleDeleteClick(user)}
-                                title="Delete"
-                                style={{ borderRadius: '0 8px 8px 0' }}
-                              >
-                                <i className="bi bi-trash-fill"></i>
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
-              </div>
+
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <div className="card border-0 shadow-sm mt-3" style={{ borderRadius: '15px' }}>
+                    <div className="card-body p-3">
+                      <div className="d-flex justify-content-between align-items-center">
+                        <div className="text-muted small">
+                          Showing {indexOfFirstUser + 1} to {Math.min(indexOfLastUser, filteredUsers.length)} of {filteredUsers.length} customers
+                        </div>
+                        <nav aria-label="Page navigation">
+                          <ul className="pagination mb-0">
+                            <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                              <button 
+                                className="page-link" 
+                                onClick={prevPage}
+                                style={{ 
+                                  borderRadius: '10px',
+                                  margin: '0 2px',
+                                  border: '1px solid #c8e6c9',
+                                  color: '#2e7d32'
+                                }}
+                              >
+                                <i className="bi bi-chevron-left"></i>
+                              </button>
+                            </li>
+                            
+                            {pageNumbers.map((number: number) => (
+                              <li key={number} className={`page-item ${currentPage === number ? 'active' : ''}`}>
+                                <button 
+                                  className="page-link" 
+                                  onClick={() => paginate(number)}
+                                  style={{ 
+                                    borderRadius: '10px',
+                                    margin: '0 2px',
+                                    border: '1px solid #c8e6c9',
+                                    color: currentPage === number ? 'white' : '#2e7d32',
+                                    background: currentPage === number 
+                                      ? 'linear-gradient(135deg, #2e7d32 0%, #388e3c 100%)' 
+                                      : 'transparent'
+                                  }}
+                                >
+                                  {number}
+                                </button>
+                              </li>
+                            ))}
+                            
+                            <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                              <button 
+                                className="page-link" 
+                                onClick={nextPage}
+                                style={{ 
+                                  borderRadius: '10px',
+                                  margin: '0 2px',
+                                  border: '1px solid #c8e6c9',
+                                  color: '#2e7d32'
+                                }}
+                              >
+                                <i className="bi bi-chevron-right"></i>
+                              </button>
+                            </li>
+                          </ul>
+                        </nav>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>
@@ -503,7 +621,7 @@ const UsersTable: React.FC = () => {
                         className="form-control form-control-lg"
                         placeholder="Enter customer name..."
                         value={newUser.name}
-                        onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewUser({ ...newUser, name: e.target.value })}
                         style={{ borderRadius: '12px', border: '2px solid #c8e6c9' }}
                       />
                     </div>
@@ -518,7 +636,7 @@ const UsersTable: React.FC = () => {
                         className="form-control form-control-lg"
                         placeholder="customer@email.com"
                         value={newUser.email}
-                        onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewUser({ ...newUser, email: e.target.value })}
                         style={{ borderRadius: '12px', border: '2px solid #c8e6c9' }}
                       />
                     </div>
@@ -531,7 +649,7 @@ const UsersTable: React.FC = () => {
                       <select
                         className="form-select form-select-lg"
                         value={newUser.role}
-                        onChange={(e) => setNewUser({ ...newUser, role: e.target.value as "user" | "admin" })}
+                        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setNewUser({ ...newUser, role: e.target.value as "user" | "admin" })}
                         style={{ borderRadius: '12px', border: '2px solid #c8e6c9' }}
                       >
                         <option value="user">🌱 Customer</option>
