@@ -1,279 +1,235 @@
 import React, { useState, useEffect } from "react";
-import { IoCallOutline, IoSaveOutline } from "react-icons/io5";
-import { MdEdit, MdCancel } from "react-icons/md";
-import { FaRegAddressCard } from "react-icons/fa";
-import { MdOutlineDriveFileRenameOutline } from "react-icons/md";
-import "./Profile.css";
+import { IoCallOutline, IoLocationOutline, IoSaveOutline, IoCameraOutline } from "react-icons/io5";
+import { FaRegEdit } from "react-icons/fa";
+import { toast } from "react-hot-toast";
 
-interface UserData {
+
+
+interface User {
   id: number;
+  name: string;
   address: string;
-  name: {
-    Name: string;
-  };
   phone: string;
+  image: string;
+  email: string;
+  password: string;
 }
 
 const UserProfile: React.FC = () => {
-  const [userData, setUserData] = useState<UserData | null>(null);
-  const [isEditing, setIsEditing] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [editMode, setEditMode] = useState(false);
+  const [formData, setFormData] = useState<Partial<User>>({});
 
-  const [formData, setFormData] = useState({
-    Name: "",
-    address: "",
-    phone: "",
-  });
-
+  // ✅ لما الصفحة تفتح
   useEffect(() => {
-    const savedUser = localStorage.getItem("userData");
-    const savedImage = localStorage.getItem("profileImage");
+    const storedUser = localStorage.getItem("loggedInUser");
+    if (storedUser) {
+      const userData = JSON.parse(storedUser);
 
-    if (savedImage) setProfileImage(savedImage);
+      // ✅ نحط قيم فاضية للحقول اللى ممكن تكون مش موجودة
+      const fullData = {
+        address: "",
+        phone: "",
+        image: "",
+        ...userData,
+      };
 
-    if (savedUser) {
-      const parsed = JSON.parse(savedUser);
-      setUserData(parsed);
-      setFormData({
-        Name: parsed.name?.Name || "",
-        address: parsed.address || "",
-        phone: parsed.phone || "",
-      });
-      setLoading(false);
-    } else {
-      fetchUserData();
+      setUser(fullData);
+      setFormData(fullData);
     }
   }, []);
 
-  const fetchUserData = async () => {
-    try {
-      setLoading(true);
-      const userId = localStorage.getItem("userId") || "1";
-      const response = await fetch(`https://fakestoreapi.com/users/${userId}`);
 
-      if (!response.ok) throw new Error("Failed to fetch user data");
-
-      const data: UserData = await response.json();
-      setUserData(data);
-      setFormData({
-        Name: data.name.Name,
-        address: data.address,
-        phone: data.phone,
-      });
-    } catch (err) {
-      setError("Failed to load user data");
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // ✅ لما المستخدم يعدل أى حاجة
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // ✅ لتحديث الصورة
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        const base64 = reader.result as string;
-        setProfileImage(base64);
-        localStorage.setItem("profileImage", base64);
+        setFormData((prev) => ({ ...prev, image: reader.result as string }));
       };
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(file); // ✅ يحوّل الصورة لـ Base64
     }
   };
 
-  const handleEdit = () => {
-    setIsEditing(true);
-    setError("");
-    setSuccess("");
-  };
 
-  const handleCancel = () => {
-    setIsEditing(false);
-    if (userData) {
-      setFormData({
-        Name: userData.name.Name,
-        address: userData.address,
-        phone: userData.phone,
-      });
-    }
-    setError("");
-    setSuccess("");
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setSuccess("");
+  // ✅ حفظ التعديلات
+  const handleSave = async () => {
+    if (!user) return;
 
     try {
-      setSaving(true);
-      const userId = localStorage.getItem("userId") || "1";
-
-      const updateData = {
-        address: formData.address,
-        name: { Name: formData.Name },
-        phone: formData.phone,
-      };
-
-      const response = await fetch(`https://fakestoreapi.com/users/${userId}`, {
+      const response = await fetch(`http://localhost:5000/users/${user.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updateData),
+        body: JSON.stringify(formData),
       });
 
-      if (!response.ok) throw new Error("Failed to update profile");
+      if (!response.ok) throw new Error("Error updating user");
 
-      // تحديث البيانات في localStorage بدون أي معلومات حساسة
-      const newUserData = {
-        id: userId,
-        name: { Name: formData.Name },
-        address: formData.address,
-        phone: formData.phone,
-        profileImage: profileImage || "",
-      };
+      const updatedUser = await response.json();
 
-      setUserData(newUserData);
-      localStorage.setItem("userData", JSON.stringify(newUserData));
-      localStorage.setItem("userName", formData.Name); // لتحديث الاسم في النافبار
+      // ✅ نحدث الداتا كلها هنا
+      setUser(updatedUser);
+      localStorage.setItem("loggedInUser", JSON.stringify(updatedUser));
 
-      setSuccess("Profile updated successfully!");
-      setIsEditing(false);
-    } catch (err) {
-      setError("Failed to update profile. Please try again.");
-    } finally {
-      setSaving(false);
+      // ✅ نعمل تحديث للناف بار
+      window.dispatchEvent(new Event("storage"));
+
+      setEditMode(false);
+      toast.success("data is saved");
+
+    } catch (error) {
+      console.error("Error saving user data:", error);
+      toast.error("Error");
+
     }
   };
 
-  if (loading) {
-    return (
-      <div className="profile-container">
-        <div className="loading-spinner">
-          <div className="spinner"></div>
-          <p>Loading profile...</p>
-        </div>
-      </div>
-    );
-  }
+
+  if (!user) return <p>Data is loading...</p>;
 
   return (
-    <div className="profile-container">
-      <div className="profile-card">
-        <div className="profile-header">
-          <div className="profile-avatar">
-            {profileImage ? (
-              <img src={profileImage} alt="Profile" className="avatar-image" />
-            ) : (
-              <div className="avatar-placeholder">+</div>
-            )}
+    <div className="profile-container" style={styles.container}>
+      <div style={styles.imageContainer}>
+        <div style={styles.imageContainer}>
+          <img
+            src={formData.image || "https://via.placeholder.com/150"}
+            alt="User Avatar"
+            style={styles.avatar}
+          />
 
-            {isEditing && (
+          {editMode && (
+            <>
               <input
+                id="imageUpload"
                 type="file"
                 accept="image/*"
-                onChange={handleImageUpload}
-                className="upload-input"
+                onChange={handleImageChange}
+                style={{ display: "none" }} // نخفي الـ input
               />
-            )}
-          </div>
-          <h2>{userData?.name.Name}</h2>
+              <label htmlFor="imageUpload" style={styles.cameraIcon}>
+                <IoCameraOutline size={24} />
+              </label>
+            </>
+          )}
         </div>
 
-        {error && <div className="alert alert-error">{error}</div>}
-        {success && <div className="alert alert-success">{success}</div>}
 
-        <form onSubmit={handleSubmit} className="profile-form">
-          <div className="form-group">
-            <label htmlFor="Name">
-              <MdOutlineDriveFileRenameOutline /> Name
-            </label>
-            <input
-              type="text"
-              id="Name"
-              name="Name"
-              value={formData.Name}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-              required
-            />
-          </div>
+      </div>
 
-          <div className="form-group">
-            <label htmlFor="address">
-              <FaRegAddressCard /> Address
-            </label>
-            <input
-              type="text"
-              id="address"
-              name="address"
-              value={formData.address}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-              required
-            />
-          </div>
 
-          <div className="form-group">
-            <label htmlFor="phone">
-              <IoCallOutline /> Phone Number
-            </label>
-            <input
-              type="tel"
-              id="phone"
-              name="phone"
-              value={formData.phone}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-              required
-            />
-          </div>
+      <div style={styles.info}>
+        <label><FaRegEdit /> Name</label>
+        <input
+          type="text"
+          name="name"
+          value={formData.name || ""}
+          onChange={handleChange}
+          disabled={!editMode}
+          style={styles.input}
+        />
 
-          <div className="form-actions">
-            {!isEditing ? (
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={handleEdit}
-              >
-                <MdEdit size={20} /> Edit Profile
-              </button>
-            ) : (
-              <>
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={handleCancel}
-                >
-                  <MdCancel size={20} /> Cancel
-                </button>
-                <button type="submit" className="btn btn-success">
-                  {saving ? (
-                    "Saving..."
-                  ) : (
-                    <>
-                      <IoSaveOutline size={20} /> Save
-                    </>
-                  )}
-                </button>
-              </>
-            )}
-          </div>
-        </form>
+        <label><IoLocationOutline /> Address</label>
+        <input
+          type="text"
+          name="address"
+          value={formData.address || ""}
+          onChange={handleChange}
+          disabled={!editMode}
+          style={styles.input}
+        />
+
+        <label><IoCallOutline /> Phone Number</label>
+        <input
+          type="text"
+          name="phone"
+          value={formData.phone || ""}
+          onChange={handleChange}
+          disabled={!editMode}
+          style={styles.input}
+        />
+
+        {!editMode ? (
+          <button onClick={() => setEditMode(true)} style={styles.button}>
+            Edit Profile
+          </button>
+        ) : (
+          <button onClick={handleSave} style={styles.saveButton}>
+            <IoSaveOutline /> Save
+          </button>
+        )}
       </div>
     </div>
   );
 };
 
 export default UserProfile;
+
+
+const styles: { [key: string]: React.CSSProperties } = {
+  container: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    marginTop: "50px",
+    background: "#ffff",
+    padding: "30px",
+    borderRadius: "20px",
+    maxWidth: "400px",
+    margin: "50px auto",
+    boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
+
+  },
+  imageContainer: { position: "relative", marginBottom: "20px" },
+  avatar: {
+    width: "130px",
+    height: "130px",
+    borderRadius: "50%",
+    objectFit: "cover",
+    border: "3px solid #eee",
+  },
+  info: { width: "100%", display: "flex", flexDirection: "column", gap: "10px", color: "var(--color-green-darkest)" },
+  input: {
+    padding: "10px",
+    border: "1px solid #ccc",
+    borderRadius: "8px",
+  },
+  cameraIcon: {
+    position: "absolute",
+    bottom: "10px",
+    right: "15px",
+    background: "#474343ff",
+    color: "#fff",
+    borderRadius: "50%",
+    padding: "5px",
+    cursor: "pointer",
+    boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
+    transition: "0.3s",
+  },
+
+  button: {
+    background: "var(--color-green-darkest)",
+    color: "#fff",
+    border: "none",
+    padding: "10px",
+    borderRadius: "10px",
+    cursor: "pointer",
+    marginTop: "10px",
+  },
+
+  saveButton: {
+    background: "var(--color-green-darkest)",
+    color: "#fff",
+    border: "none",
+    padding: "10px",
+    borderRadius: "10px",
+    cursor: "pointer",
+    marginTop: "10px",
+  },
+};
