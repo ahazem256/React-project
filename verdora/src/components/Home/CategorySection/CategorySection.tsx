@@ -1,7 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './CategorySection.css';
-import Bonsaie from '../../../assets/bonsoi.jpg';
 
 interface Category {
     id: number;
@@ -36,7 +35,7 @@ const CategoriesSection: React.FC = () => {
         {
             id: 4,
             name: 'Bonsai Plants',
-            backgroundImage: `url(${Bonsaie})`,
+            backgroundImage: `url(https://i.pinimg.com/1200x/2a/87/be/2a87be0f62dea3adc5922cfeb3db6538.jpg)`,
             path: '/categories/Bonsai_miniature'
         }
     ];
