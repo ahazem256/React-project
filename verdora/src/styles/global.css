@@ -1,3 +1,7 @@
+body{
+  background-color: #ffffff;
+}
+
 :root {
   /* Color Variables */
   --color-green-lightest: #E9F5DB;
@@ -7,7 +11,7 @@
   --color-green-dark: #87986A;
   --color-green-darker: #718355;
   --color-green-darkest: #485935;
-  --body-background: #ffff;
+  --body-background: #ffffff;
 
   /* Semantic Color Roles */
   --body: var(--body-background);

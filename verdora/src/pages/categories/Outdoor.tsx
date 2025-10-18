@@ -26,7 +26,7 @@ const categoryProducts = displayedProducts.filter(
     <h1 className="text-light mr-sm-5" style={{fontSize: "60px", fontFamily: "var(--font-family-serif)"}}>OUTDOOR PLANTS</h1>
     </div>
 
-  <div className="container"  style={{ backgroundColor: "#fff" }}>
+  <div className="container"  >
          <div  className={` search-bar-wrapper mt-3 mb-3 ${searchOpen ? "open-margin" : ""}`}     
           >
            <select
@@ -46,7 +46,7 @@ const categoryProducts = displayedProducts.filter(
            
            </select>
  
-           <div className="search-container">
+           <div className="search-container" >
    <button
      className="search-icon-btn"
      onClick={() => setSearchOpen(!searchOpen)}
@@ -64,7 +64,7 @@ const categoryProducts = displayedProducts.filter(
          </div>
        </div>
 
-<div className="contaier p-5">
+<div className="contaier p-5" style={{backgroundColor: "#ffffff"}}>
 <div className="row gy-3">
   {categoryProducts.length ? categoryProducts.map((product: Product) => (
 <ProductsCard product={product} key={product.id} onClick={() => goToDetails(product.id)} />

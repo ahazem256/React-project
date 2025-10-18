@@ -35,6 +35,7 @@ import User from "./pages/AdminDashbord/User";
 import Productsadmin from "./pages/AdminDashbord/Productsadmin";
 import Orderadmin from "./pages/AdminDashbord/Orderadmin";
 import Reports from "./pages/AdminDashbord/Reports";
+import DashboardPage from "./pages/AdminDashbord/DashboardPage";
 
 const AppContent: React.FC = () => {
   const location = useLocation();
@@ -82,22 +83,28 @@ const AppContent: React.FC = () => {
     setUserRole("");
   };
 
+  // التحقق لو المستخدم داخل على صفحة أدمن
+  const isAdminPage = location.pathname.startsWith("/admin");
+
   return (
     <>
       <Toaster position="top-right" />
       <div className="app-container">
-        {isAuthenticated ? (
-          <MainNavbar
-            onLogout={handleLogout}
-            cartCount={cartCount}
-            userName={userName}
-          />
-        ) : (
-          <AuthNavbar
-            onLogin={function (): void {
-              throw new Error("Function not implemented.");
-            }}
-          />
+        {/* Navbar فقط لو مش في صفحة الأدمن */}
+        {!isAdminPage && (
+          isAuthenticated ? (
+            <MainNavbar
+              onLogout={handleLogout}
+              cartCount={cartCount}
+              userName={userName}
+            />
+          ) : (
+            <AuthNavbar
+              onLogin={function (): void {
+                throw new Error("Function not implemented.");
+              }}
+            />
+          )
         )}
 
         <main className="app-content">
@@ -240,6 +247,7 @@ const AppContent: React.FC = () => {
                 </ProtectedRoute>
               }
             >
+              <Route path="dashboard" element={<DashboardPage/>} />
               <Route path="users" element={<User />} />
               <Route path="products" element={<Productsadmin />} />
               <Route path="orders" element={<Orderadmin />} />
@@ -251,7 +259,10 @@ const AppContent: React.FC = () => {
           </Routes>
         </main>
 
-        {isAuthenticated && !location.pathname.startsWith("/auth") && <Footer />}
+        {/* Footer فقط لو مش في صفحة الأدمن */}
+        {isAuthenticated && !location.pathname.startsWith("/auth") && !isAdminPage && (
+          <Footer />
+        )}
       </div>
     </>
   );

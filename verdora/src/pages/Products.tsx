@@ -55,22 +55,21 @@ export default function Products() {
         }}
       >
         <h1
-          className="text-light"
-          style={{ fontSize: "60px", fontFamily: "var(--font-family-serif)" }}
+          className="text-light "
+          style={{ fontSize: "60px", fontFamily: "var(--font-family-serif)"  }}
         >
           HOUSE PLANTS
         </h1>
       </div>
-
-      <div className="container"  style={{ backgroundColor: "#fff" }}>
-        <div  className={` search-bar-wrapper mt-3 mb-3 ${searchOpen ? "open-margin" : ""}`}     
+      <div className="container">
+        <div  className={` search-bar-wrapper mt-3 mb-3   ${searchOpen ? "open-margin" : ""}`}     
          >
           <select
-            style={{ height: "30px", borderRadius: "5px" }}
+            style={{ height: "30px", borderRadius: "5px" , backgroundColor: "#ffffff" }}
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
 
-            className="custom-select cuustom"
+            className="custom-select cuustom" 
           >
             
             <option value="">Select</option>
@@ -100,7 +99,7 @@ export default function Products() {
         </div>
       </div>
 
-      <div className="contaier p-5">
+      <div className="contaier p-5" style={{ backgroundColor: "#ffffff" }}>
         <div className="row">
           {currentProducts.length
             ? currentProducts.map((product: Product) => (
