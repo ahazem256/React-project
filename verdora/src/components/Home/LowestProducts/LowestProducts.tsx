@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React from "react";
 import Slider from "react-slick";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import "./LowestProducts.css";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import ClipLoader from "react-spinners/ClipLoader";
 import { addToCart } from "../../../redux/slices/cartSlice";
-
+import "./LowestProducts.css";
 
 interface Product {
     id: number;
@@ -19,35 +20,38 @@ interface Product {
     stock: string;
 }
 
+
+const fetchProducts = async (): Promise<Product[]> => {
+    const res = await axios.get("https://api.jsonbin.io/v3/b/68e56de5d0ea881f4098eaa4/latest");
+    const products = res.data.record.products;
+
+
+    const sorted = products
+        .filter((p: Product) => p.price)
+        .map((p: Product) => ({
+            ...p,
+            numericPrice: parseFloat(p.price.replace(" EGP", "")),
+        }))
+        .sort((a: any, b: any) => a.numericPrice - b.numericPrice);
+
+    return sorted.slice(0, 8);
+};
+
 const LowestPriceSlider: React.FC = () => {
-    const [lowestProducts, setLowestProducts] = useState<Product[]>([]);
-
-    useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const res = await axios.get("https://api.jsonbin.io/v3/b/68e56de5d0ea881f4098eaa4/latest");
-                console.log("API response:", res.data);
-
-                const products = res.data.record.products;
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
 
-                const sorted = products
-                    .filter((p: Product) => p.price)
-                    .map((p: Product) => ({
-                        ...p,
-                        numericPrice: parseFloat(p.price.replace(" EGP", "")),
-                    }))
-                    .sort((a: any, b: any) => a.numericPrice - b.numericPrice);
+    const { data: lowestProducts, isLoading, isError } = useQuery<Product[]>({
+        queryKey: ["lowestProducts"],
+        queryFn: fetchProducts,
+        staleTime: 1000 * 60 * 5,
+    });
 
-
-                setLowestProducts(sorted.slice(0, 8));
-            } catch (err) {
-                console.error("Error fetching products:", err);
-            }
-        };
-
-        fetchProducts();
-    }, []);
+    const handleAddToCart = (product: Product) => {
+        dispatch(addToCart({ product, quantity: 1 }));
+        toast.success(`${product.name} added to cart!`);
+    };
 
 
     const NextArrow = (props: any) => {
@@ -68,6 +72,7 @@ const LowestPriceSlider: React.FC = () => {
         );
     };
 
+
     const settings = {
         dots: true,
         infinite: true,
@@ -85,49 +90,46 @@ const LowestPriceSlider: React.FC = () => {
     };
 
 
-    const dispatch = useDispatch();
+    if (isLoading) {
+        return (
+            <div className="loading-container">
+                <ClipLoader color="#5b6d51" size={60} />
+                <p>Loading products...</p>
+            </div>
+        );
+    }
 
-    const handleAddToCart = (product: Product) => {
-        dispatch(addToCart({ product, quantity: 1 }));
-        toast.success(`${product.name} added to cart!`);
-    };
-    const navigate = useNavigate();
-    const handleProductClick = (id: number) => {
-        navigate(`/product/${id}`);
-    };
 
+    if (isError) {
+        return <p className="error-message">Failed to load products. Please try again later.</p>;
+    }
 
     return (
         <div className="category-container category-slider">
             <h2 className="category-slider-title">Lowest Priced Products</h2>
-            {lowestProducts.length > 0 ? (
-                <Slider {...settings}>
-                    {lowestProducts.map((p) => (
-                        <div key={p.id} className="category-slide">
-                            <div className="image-container">
-                                <img
-                                    src={p.image}
-                                    alt={p.name}
-                                    className="category-image"
-                                    onClick={() => navigate(`/product/${p.id}`)}
-                                    style={{ cursor: "pointer" }}
-                                />
-                                <button className="add-cart-btn" onClick={() => handleAddToCart(p)}>
-                                    Add to Cart
-                                </button>
 
-                            </div>
-                            <div className="details">
-                                <h3 className="name-explore">{p.name}</h3>
-                                <p className="price-explore">{p.price}</p>
-                            </div>
-
+            <Slider {...settings}>
+                {lowestProducts?.map((p) => (
+                    <div key={p.id} className="category-slide">
+                        <div className="image-container">
+                            <img
+                                src={p.image}
+                                alt={p.name}
+                                className="category-image"
+                                onClick={() => navigate(`/product/${p.id}`)}
+                                style={{ cursor: "pointer" }}
+                            />
+                            <button className="add-cart-btn" onClick={() => handleAddToCart(p)}>
+                                Add to Cart
+                            </button>
                         </div>
-                    ))}
-                </Slider>
-            ) : (
-                <p>Loading products...</p>
-            )}
+                        <div className="details">
+                            <h3 className="name-explore">{p.name}</h3>
+                            <p className="price-explore">{p.price}</p>
+                        </div>
+                    </div>
+                ))}
+            </Slider>
         </div>
     );
 };
