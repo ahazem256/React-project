@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./MainSlider.css";
-import img1 from "../../../assets/mainslider.jpg";
 import img2 from "../../../assets/mainslider2.jpg";
+import img1 from "../../../assets/mainslider.jpg";
 import img3 from "../../../assets/mainslider3.jpg";
 
 const MainSlider: React.FC = () => {
