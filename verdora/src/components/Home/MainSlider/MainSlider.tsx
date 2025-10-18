@@ -3,11 +3,12 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./MainSlider.css";
 import img2 from "../../../assets/mainslider2.jpg";
-import img1 from "../../../assets/mainslider.jpg";
 import img3 from "../../../assets/mainslider3.jpg";
+import img4 from "../../../assets/main5.webp";
+import img6 from "../../../assets/mainslider6.jpg";
 
 const MainSlider: React.FC = () => {
-    const images = [img1, img2, img3];
+    const images = [ img2 ,img4 ,img3, img6];
     const [currentIndex, setCurrentIndex] = useState(0);
     const [nextIndex, setNextIndex] = useState(0);
 
