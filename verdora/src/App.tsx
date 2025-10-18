@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+} from "react-router-dom";
 import AuthNavbar from "./components/AuthNavbar/AuthNavbar";
 import MainNavbar from "./components/MainNavbar/MainNavbar";
 import ResetPassword from "./pages/Auth/ResetPassword";
@@ -21,14 +27,26 @@ import Bonsai_miniature from "./pages/categories/Bonsai_miniature";
 import NotFound from "./components/common/NotFound";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import { Toaster } from "react-hot-toast";
-import Footer from './components/footer/Footer';
-import Admin from "./pages/Admin";
+import Footer from "./components/footer/Footer";
+
+// Admin pages
+import Admin from "./pages/AdminDashbord/Admin";
+import User from "./pages/AdminDashbord/User";
+import Productsadmin from "./pages/AdminDashbord/Productsadmin";
+import Orderadmin from "./pages/AdminDashbord/Orderadmin";
+import Reports from "./pages/AdminDashbord/Reports";
 
 const AppContent: React.FC = () => {
   const location = useLocation();
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(!!localStorage.getItem("token"));
-  const [userRole, setUserRole] = useState<string>(localStorage.getItem("userRole") || "");
-  const [userName, setUserName] = useState<string>(localStorage.getItem("userName") || "");
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
+    !!localStorage.getItem("token")
+  );
+  const [userRole, setUserRole] = useState<string>(
+    localStorage.getItem("userRole") || ""
+  );
+  const [userName, setUserName] = useState<string>(
+    localStorage.getItem("userName") || ""
+  );
   const [cartCount, setCartCount] = useState<number>(0);
 
   useEffect(() => {
@@ -42,7 +60,7 @@ const AppContent: React.FC = () => {
     };
 
     window.addEventListener("storage", checkAuth);
-    checkAuth(); // initial check
+    checkAuth();
     return () => window.removeEventListener("storage", checkAuth);
   }, [location.pathname]);
 
@@ -69,55 +87,151 @@ const AppContent: React.FC = () => {
       <Toaster position="top-right" />
       <div className="app-container">
         {isAuthenticated ? (
-          <MainNavbar onLogout={handleLogout} cartCount={cartCount} userName={userName} />
+          <MainNavbar
+            onLogout={handleLogout}
+            cartCount={cartCount}
+            userName={userName}
+          />
         ) : (
-          <AuthNavbar onLogin={function (): void {
+          <AuthNavbar
+            onLogin={function (): void {
               throw new Error("Function not implemented.");
-            } }/>
+            }}
+          />
         )}
+
         <main className="app-content">
           <Routes>
             {/* Root Redirect */}
             <Route
               path="/"
               element={
-                isAuthenticated
-                  ? userRole === "admin"
-                    ? <Navigate to="/admin" replace />
-                    : <Navigate to="/home" replace />
-                  : <Navigate to="/auth/signin" replace />
+                isAuthenticated ? (
+                  userRole === "admin" ? (
+                    <Navigate to="/admin" replace />
+                  ) : (
+                    <Navigate to="/home" replace />
+                  )
+                ) : (
+                  <Navigate to="/auth/signin" replace />
+                )
               }
             />
+
             {/* Auth Routes */}
             <Route
               path="/auth/signin"
               element={
-                isAuthenticated
-                  ? userRole === "admin"
-                    ? <Navigate to="/admin" replace />
-                    : <Navigate to="/home" replace />
-                  : <SignIn onLogin={handleLogin} />
+                isAuthenticated ? (
+                  userRole === "admin" ? (
+                    <Navigate to="/admin" replace />
+                  ) : (
+                    <Navigate to="/home" replace />
+                  )
+                ) : (
+                  <SignIn onLogin={handleLogin} />
+                )
               }
             />
             <Route path="/auth/signup" element={<SignUp />} />
             <Route path="/auth/forget-password" element={<ForgotPassword />} />
-            <Route path="/auth/verify-reset-code" element={<VerifyResetCode />} />
+            <Route
+              path="/auth/verify-reset-code"
+              element={<VerifyResetCode />}
+            />
             <Route path="/auth/reset-password" element={<ResetPassword />} />
 
-            {/* Protected Routes */}
-            <Route path="/home" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Home /></ProtectedRoute>} />
-            <Route path="/categories/indoor" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Indoor /></ProtectedRoute>} />
-            <Route path="/categories/outdoor" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Outdoor /></ProtectedRoute>} />
-            <Route path="/categories/flowering" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Flowering /></ProtectedRoute>} />
-            <Route path="/categories/bonsai_miniature" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Bonsai_miniature /></ProtectedRoute>} />
-            <Route path="/cart" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Cart /></ProtectedRoute>} />
-            <Route path="/order" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Order /></ProtectedRoute>} />
-            <Route path="/product/:id" element={<ProtectedRoute isAuthenticated={isAuthenticated}><ProductDetails /></ProtectedRoute>} />
-            <Route path="/products" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Products /></ProtectedRoute>} />
-            <Route path="/profile" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Profile /></ProtectedRoute>} />
-            <Route path="/checkout" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Checkout /></ProtectedRoute>} />
+            {/* Protected User Routes */}
+            <Route
+              path="/home"
+              element={
+                <ProtectedRoute isAuthenticated={isAuthenticated}>
+                  <Home />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/categories/indoor"
+              element={
+                <ProtectedRoute isAuthenticated={isAuthenticated}>
+                  <Indoor />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/categories/outdoor"
+              element={
+                <ProtectedRoute isAuthenticated={isAuthenticated}>
+                  <Outdoor />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/categories/flowering"
+              element={
+                <ProtectedRoute isAuthenticated={isAuthenticated}>
+                  <Flowering />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/categories/bonsai_miniature"
+              element={
+                <ProtectedRoute isAuthenticated={isAuthenticated}>
+                  <Bonsai_miniature />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/cart"
+              element={
+                <ProtectedRoute isAuthenticated={isAuthenticated}>
+                  <Cart />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/order"
+              element={
+                <ProtectedRoute isAuthenticated={isAuthenticated}>
+                  <Order />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/product/:id"
+              element={
+                <ProtectedRoute isAuthenticated={isAuthenticated}>
+                  <ProductDetails />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/products"
+              element={
+                <ProtectedRoute isAuthenticated={isAuthenticated}>
+                  <Products />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute isAuthenticated={isAuthenticated}>
+                  <Profile />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/checkout"
+              element={
+                <ProtectedRoute isAuthenticated={isAuthenticated}>
+                  <Checkout />
+                </ProtectedRoute>
+              }
+            />
 
-            {/* Admin Route */}
+            {/* Admin Routes */}
             <Route
               path="/admin"
               element={
@@ -125,12 +239,18 @@ const AppContent: React.FC = () => {
                   <Admin />
                 </ProtectedRoute>
               }
-            />
+            >
+              <Route path="users" element={<User />} />
+              <Route path="products" element={<Productsadmin />} />
+              <Route path="orders" element={<Orderadmin />} />
+              <Route path="reports" element={<Reports />} />
+            </Route>
 
             {/* Not Found */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
+
         {isAuthenticated && !location.pathname.startsWith("/auth") && <Footer />}
       </div>
     </>
