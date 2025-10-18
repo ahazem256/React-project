@@ -1,4 +1,4 @@
-body{
+body {
   background-color: #ffffff;
 }
 
@@ -40,7 +40,7 @@ body{
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: #f8f9fa;
+  background-color: #ffff;
 }
 
 .app-content {
@@ -148,7 +148,7 @@ body {
   appearance: none;
   border: none;
   background-color: #fff;
-  padding:  6px 30px 6px 10px;
+  padding: 6px 30px 6px 10px;
   font-family: var(--font-family-serif);
   color: #5ca508;
   cursor: pointer;
@@ -249,7 +249,7 @@ body {
 }
 
 .onsale {
-  background-color: #e63946; 
+  background-color: #e63946;
   left: 10px;
 }
 
@@ -270,8 +270,3 @@ body {
   z-index: 20 !important;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
-
-
-
-
-

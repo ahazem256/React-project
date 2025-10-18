@@ -20,13 +20,15 @@ const UserProfile: React.FC = () => {
   const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState<Partial<User>>({});
 
-  // ✅ لما الصفحة تفتح
+
   useEffect(() => {
+
+
     const storedUser = localStorage.getItem("loggedInUser");
     if (storedUser) {
       const userData = JSON.parse(storedUser);
 
-      // ✅ نحط قيم فاضية للحقول اللى ممكن تكون مش موجودة
+
       const fullData = {
         address: "",
         phone: "",
@@ -37,16 +39,18 @@ const UserProfile: React.FC = () => {
       setUser(fullData);
       setFormData(fullData);
     }
+
   }, []);
 
 
-  // ✅ لما المستخدم يعدل أى حاجة
+
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // ✅ لتحديث الصورة
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -54,12 +58,12 @@ const UserProfile: React.FC = () => {
       reader.onloadend = () => {
         setFormData((prev) => ({ ...prev, image: reader.result as string }));
       };
-      reader.readAsDataURL(file); // ✅ يحوّل الصورة لـ Base64
+      reader.readAsDataURL(file);
     }
   };
 
 
-  // ✅ حفظ التعديلات
+
   const handleSave = async () => {
     if (!user) return;
 
@@ -74,11 +78,11 @@ const UserProfile: React.FC = () => {
 
       const updatedUser = await response.json();
 
-      // ✅ نحدث الداتا كلها هنا
+
       setUser(updatedUser);
       localStorage.setItem("loggedInUser", JSON.stringify(updatedUser));
 
-      // ✅ نعمل تحديث للناف بار
+
       window.dispatchEvent(new Event("storage"));
 
       setEditMode(false);
@@ -160,6 +164,16 @@ const UserProfile: React.FC = () => {
           style={styles.input}
         />
 
+
+        <label>Email</label>
+        <input
+          type="email"
+          name="email"
+          value={formData.email || ""}
+          disabled
+          style={{ ...styles.input, backgroundColor: "#f5f5f5", color: "#555" }}
+        />
+
         {!editMode ? (
           <button onClick={() => setEditMode(true)} style={styles.button}>
             Edit Profile
@@ -170,6 +184,7 @@ const UserProfile: React.FC = () => {
           </button>
         )}
       </div>
+
     </div>
   );
 };
@@ -183,7 +198,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     flexDirection: "column",
     alignItems: "center",
     marginTop: "50px",
-    background: "#ffff",
+    background: "#F8F9FA",
     padding: "30px",
     borderRadius: "20px",
     maxWidth: "400px",
