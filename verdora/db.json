@@ -51,14 +51,6 @@
       "role": "user"
     },
     {
-      "id": "c6d2",
-      "name": "mohamed",
-      "email": "mohamed@gmail.com",
-      "password": "mohamed123",
-      "phone": "01123465789",
-      "role": "user"
-    },
-    {
       "id": "49d5",
       "name": "rana",
       "email": "rana@gmail.com",
@@ -114,22 +106,6 @@
       "email": "mohamed@gmail.com",
       "password": "mohamed12",
       "phone": "01123465789",
-      "role": "user"
-    },
-    {
-      "id": "4fcb",
-      "name": "ahlam",
-      "email": "ahlam@gmail.com",
-      "password": "rererere1999@",
-      "phone": "01032456788",
-      "role": "user"
-    },
-    {
-      "id": "7e1b",
-      "name": "laila",
-      "email": "laila@gmail.com",
-      "password": "laila12",
-      "phone": "01254378908",
       "role": "user"
     }
   ]
