@@ -9,13 +9,10 @@
       "resetCode": null
     },
     {
-      "id": "ac7e",
-      "name": "tete",
+      "name": "teta",
       "email": "tete2@gmail.com",
-      "password": "Me1478963",
-      "phone": "01017468802",
       "role": "user",
-      "resetCode": null
+      "id": "ac7e"
     },
     {
       "id": "faf3",
