@@ -9,16 +9,67 @@ const OrdersPage: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const allOrders = useSelector((state: RootState) => state.orders.orders);
+  
+  // const userOrders = allOrders.filter(order => order.userId === currentUser); 
+const currentUserEmail = localStorage.getItem("userEmail");
+const userOrders = allOrders.filter(order => order.shippingInfo.email.toLowerCase().trim()  === currentUserEmail);
 
-  const handleDeleteOrder = (orderId: string) => {
+
+
+
+const handleDeleteOrder = async (orderId: string) => {
+  try {
+    const orderRes = await fetch(`http://localhost:5005/orders/${orderId}`);
+    
+    if (!orderRes.ok) {
+      console.error("Order not found on server");
+      return;
+    }
+
+    const orderData = await orderRes.json(); 
+
+ 
+    const deleteRes = await fetch(`http://localhost:5005/orders/${orderData.id}`, {
+      method: "DELETE",
+    });
+
+    if (!deleteRes.ok) {
+      console.error("Failed to delete order on server");
+      return;
+    }
+
+  
     dispatch(removeOrder(orderId));
-  };
 
-  const sortedOrders = [...allOrders].sort(
+
+    for (const item of orderData.items) {
+      const res = await fetch(`http://localhost:5005/products/${item.id}`);
+      if (!res.ok) continue;
+
+      const product = await res.json();
+      const updatedStock = (product.stock ?? 0) + item.quantity;
+
+      await fetch(`http://localhost:5005/products/${item.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ stock: updatedStock }),
+      });
+    }
+
+    console.log("Order deleted and stock updated successfully!");
+  } catch (err) {
+    console.error("Failed to delete order:", err);
+  }
+};
+
+
+
+
+  const sortedOrders = [...userOrders].sort(
     (a, b) => new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime()
   );
 
-  if (allOrders.length === 0) {
+  if (userOrders.length === 0) {
     return (
       <div className="orders-empty">
         <h2>No orders yet</h2>
@@ -33,7 +84,7 @@ const OrdersPage: React.FC = () => {
   return (
     <div className="orders-container">
       <h1>Order History</h1>
-      <p>You have {allOrders.length} order{allOrders.length !== 1 ? "s" : ""}</p>
+      <p>You have {userOrders.length} order{userOrders.length !== 1 ? "s" : ""}</p>
 
       {sortedOrders.map((order) => (
         <div key={order.id} className="order-card">
@@ -81,6 +132,8 @@ const OrdersPage: React.FC = () => {
             </div>
           </div>
 
+         
+
           <div className="order-actions">
             <button className="btn bg-dark text-light" onClick={() => alert(`Order #${order.id}\nTotal: ${order.total.toFixed(2)}`)}>
               View Details
@@ -99,11 +152,11 @@ const OrdersPage: React.FC = () => {
         <h3>Order Summary</h3>
         <p>
           <span>Total Orders:</span>
-          <span>{allOrders.length}</span>
+          <span>{userOrders.length}</span>
         </p>
         <p>
           <span>Total Spent:</span>
-          <span>${allOrders.reduce((sum, o) => sum + o.total, 0).toFixed(2)}</span>
+          <span>${userOrders.reduce((sum, o) => sum + o.total, 0).toFixed(2)}</span>
         </p>
         <button className="btn btn-success" onClick={() => navigate("/")}>
           Continue Shopping

@@ -47,7 +47,12 @@ export default function SignIn({ onLogin }: SignInProps) {
 
       const token = `mock-token-${user.id}-${Date.now()}`;
       localStorage.setItem("token", token);
+
       localStorage.setItem("loggedInUser", JSON.stringify(user));
+      localStorage.setItem("userName", user.name);
+      localStorage.setItem("userRole", user.role);
+      localStorage.setItem("userEmail", user.email);
+
 
       onLogin(token, user.name, user.role);
 
