@@ -126,17 +126,23 @@ const MainNavbar: React.FC<MainNavbarProps> = ({
   };
 
   const handleLogout = (): void => {
-    // مش هنمسح الطلبات - هتفضل في localStorage
-    // dispatch(clearAllOrders()); // شيلناها
-    
-    // امسح بس بيانات المستخدم
+
     localStorage.removeItem("token");
     localStorage.removeItem("userName");
+    localStorage.removeItem("userEmail");
+    localStorage.removeItem("loggedInUser");
     localStorage.removeItem("cart");
-    
+    localStorage.removeItem("orders_state");
+    localStorage.removeItem("cart_items");
+
+
+
     setStoredName("");
     setCartCount(0);
+
     onLogout();
+
+
     navigate("/auth/signin", { replace: true });
   };
 

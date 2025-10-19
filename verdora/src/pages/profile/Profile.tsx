@@ -22,25 +22,21 @@ const UserProfile: React.FC = () => {
 
 
   useEffect(() => {
+    const loggedInUser = localStorage.getItem("loggedInUser");
 
-
-    const storedUser = localStorage.getItem("loggedInUser");
-    if (storedUser) {
-      const userData = JSON.parse(storedUser);
-
-
-      const fullData = {
-        address: "",
-        phone: "",
-        image: "",
-        ...userData,
-      };
-
-      setUser(fullData);
-      setFormData(fullData);
+    if (loggedInUser) {
+      const parsedUser = JSON.parse(loggedInUser);
+      setUser(parsedUser);
+      setFormData({
+        name: parsedUser.name || "",
+        email: parsedUser.email || "",
+        phone: parsedUser.phone || "",
+        address: parsedUser.address || "",
+        image: parsedUser.image || "",
+      });
     }
-
   }, []);
+
 
 
 
@@ -68,32 +64,39 @@ const UserProfile: React.FC = () => {
     if (!user) return;
 
     try {
+<<<<<<< HEAD
+=======
+      // 🟩 تأكدي إن الباسورد القديم متضاف في الفورم قبل الإرسال
+      const updatedData = {
+        ...formData,
+        password: user.password, // 🔥 رجّع الباسورد القديم
+      };
+
+>>>>>>> 441eb57502a51af6f129696ff832920fe9bfeeab
       const response = await fetch(`http://localhost:5005/users/${user.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(updatedData),
       });
 
       if (!response.ok) throw new Error("Error updating user");
 
       const updatedUser = await response.json();
 
-
       setUser(updatedUser);
+      setFormData(updatedUser);
+
       localStorage.setItem("loggedInUser", JSON.stringify(updatedUser));
-
-
       window.dispatchEvent(new Event("storage"));
 
       setEditMode(false);
-      toast.success("data is saved");
-
+      toast.success("Data is saved successfully!");
     } catch (error) {
       console.error("Error saving user data:", error);
-      toast.error("Error");
-
+      toast.error("Error saving data");
     }
   };
+
 
 
   if (!user) return <p>Data is loading...</p>;
