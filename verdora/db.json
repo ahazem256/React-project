@@ -185,6 +185,14 @@
       "password": "ha12369",
       "phone": "01017468802",
       "role": "user"
+    },
+    {
+      "id": "6616",
+      "name": "pata",
+      "email": "pata@gmail.com",
+      "password": "pa1478963",
+      "phone": "01017468802",
+      "role": "user"
     }
   ],
   "products": [

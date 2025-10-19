@@ -64,15 +64,11 @@ const UserProfile: React.FC = () => {
     if (!user) return;
 
     try {
-<<<<<<< HEAD
-=======
       // 🟩 تأكدي إن الباسورد القديم متضاف في الفورم قبل الإرسال
       const updatedData = {
         ...formData,
         password: user.password, // 🔥 رجّع الباسورد القديم
       };
-
->>>>>>> 441eb57502a51af6f129696ff832920fe9bfeeab
       const response = await fetch(`http://localhost:5005/users/${user.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
