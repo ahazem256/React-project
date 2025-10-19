@@ -25,7 +25,7 @@ interface Order {
   status: 'pending' | 'confirmed' | 'shipped' | 'delivered';
 }
 
-interface OrdersState {
+export interface OrdersState {
   orders: Order[];
   currentOrder: Order | null;
 }
@@ -52,8 +52,8 @@ const ordersSlice = createSlice({
     addOrder: (state, action: { payload: Omit<Order, 'id' | 'orderDate' | 'status'> }) => {
       const newOrder: Order = {
         ...action.payload,
-        id: `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        orderDate: new Date().toISOString(),
+        //  id: `ORD-${Date.now()}`,
+         orderDate: new Date().toISOString(),
         status: 'pending',
       };
       state.orders.push(newOrder);

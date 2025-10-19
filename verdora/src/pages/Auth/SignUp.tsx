@@ -96,7 +96,6 @@ export default function SignUp() {
 
       <div
         className="d-flex align-items-center justify-content-center min-vh-100 mt-5"
-        style={{ backgroundColor: "#fff" }}
       >
         <div
           className="row w-100 justify-content-center align-items-center"

@@ -63,21 +63,50 @@ const Checkout: React.FC = () => {
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       // Store order data before clearing cart
-      dispatch(addOrder({
-        items: cartItems,
-        shippingInfo: {
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          email: formData.email,
-          phone: formData.phone,
-          address: formData.address,
-          city: formData.city,
-          zipCode: formData.zipCode,
-        },
-        paymentMethod: formData.paymentMethod,
-        total: totalPrice,
-      }));
-      
+      const orderData = {
+    id: `ORD-${Date.now()}`,
+   items: cartItems,
+  shippingInfo: {
+    firstName: formData.firstName,
+    lastName: formData.lastName,
+    email: formData.email,
+    phone: formData.phone,
+    address: formData.address,
+    city: formData.city,
+    zipCode: formData.zipCode,
+  },
+  paymentMethod: formData.paymentMethod,
+  total: totalPrice,
+  createdAt: new Date().toISOString(),
+};
+
+const response = await fetch("http://localhost:5005/orders", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(orderData),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to save order on server");
+  
+  }
+const savedOrder = await response.json();
+dispatch(addOrder(savedOrder));
+
+
+for (const item of cartItems) {
+  const res = await fetch(`http://localhost:5005/products/${item.id}`);
+  const product = await res.json();
+
+  const updatedStock = (product.stock ?? 0) - item.quantity;
+
+  await fetch(`http://localhost:5005/products/${item.id}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ stock: updatedStock }),
+  });
+}
+
       // Clear cart after storing order
       dispatch(clearCart());
       
@@ -111,6 +140,7 @@ const Checkout: React.FC = () => {
         </button>
       </div>
     );
+
   }
 
   return (
