@@ -35,10 +35,10 @@ export default function ResetPassword() {
   const onSubmit: SubmitHandler<ResetPasswordForm> = async ({ newPassword }) => {
     setIsLoading(true);
     try {
-      const res = await axios.get(`http://localhost:5000/users?email=${email}`);
+      const res = await axios.get(`http://localhost:5005/users?email=${email}`);
       const user = res.data[0];
 
-      await axios.patch(`http://localhost:5000/users/${user.id}`, {
+      await axios.patch(`http://localhost:5005/users/${user.id}`, {
         password: newPassword,
         resetCode: null,
       });

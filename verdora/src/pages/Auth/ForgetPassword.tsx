@@ -35,7 +35,7 @@ export default function ForgetPassword() {
   const onSubmit: SubmitHandler<ForgotPasswordForm> = async ({ email }) => {
     setIsLoading(true);
     try {
-      const res = await axios.get(`http://localhost:5000/users?email=${email}`);
+      const res = await axios.get(`http://localhost:5005/users?email=${email}`);
       if (!res.data.length) {
         toast.error("Email not found!");
         return;
@@ -44,7 +44,7 @@ export default function ForgetPassword() {
       const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
       const userId = res.data[0].id;
 
-      await axios.patch(`http://localhost:5000/users/${userId}`, { resetCode });
+      await axios.patch(`http://localhost:5005/users/${userId}`, { resetCode });
 
       await emailjs.send(SERVICE_ID, TEMPLATE_ID, { email, resetCode }, PUBLIC_KEY);
 

@@ -9,61 +9,45 @@ const OrdersPage: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const allOrders = useSelector((state: RootState) => state.orders.orders);
-  
-  // const userOrders = allOrders.filter(order => order.userId === currentUser); 
-const currentUserEmail = localStorage.getItem("userEmail");
-const userOrders = allOrders.filter(order => order.shippingInfo.email.toLowerCase().trim()  === currentUserEmail);
 
+  const currentUserEmail = localStorage.getItem("userEmail");
+  const userOrders = allOrders.filter(
+    order => order.shippingInfo.email.toLowerCase().trim() === currentUserEmail
+  );
 
+  const handleDeleteOrder = async (orderId: string) => {
+    try {
+      const orderRes = await fetch(`http://localhost:5005/orders/${orderId}`);
+      if (!orderRes.ok) return console.error("Order not found on server");
 
+      const orderData = await orderRes.json();
 
-const handleDeleteOrder = async (orderId: string) => {
-  try {
-    const orderRes = await fetch(`http://localhost:5005/orders/${orderId}`);
-    
-    if (!orderRes.ok) {
-      console.error("Order not found on server");
-      return;
-    }
-
-    const orderData = await orderRes.json(); 
-
- 
-    const deleteRes = await fetch(`http://localhost:5005/orders/${orderData.id}`, {
-      method: "DELETE",
-    });
-
-    if (!deleteRes.ok) {
-      console.error("Failed to delete order on server");
-      return;
-    }
-
-  
-    dispatch(removeOrder(orderId));
-
-
-    for (const item of orderData.items) {
-      const res = await fetch(`http://localhost:5005/products/${item.id}`);
-      if (!res.ok) continue;
-
-      const product = await res.json();
-      const updatedStock = (product.stock ?? 0) + item.quantity;
-
-      await fetch(`http://localhost:5005/products/${item.id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ stock: updatedStock }),
+      const deleteRes = await fetch(`http://localhost:5005/orders/${orderData.id}`, {
+        method: "DELETE",
       });
+      if (!deleteRes.ok) return console.error("Failed to delete order on server");
+
+      dispatch(removeOrder(orderId));
+
+      for (const item of orderData.items) {
+        const res = await fetch(`http://localhost:5005/products/${item.id}`);
+        if (!res.ok) continue;
+
+        const product = await res.json();
+        const updatedStock = (product.stock ?? 0) + item.quantity;
+
+        await fetch(`http://localhost:5005/products/${item.id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ stock: updatedStock }),
+        });
+      }
+
+      console.log("Order deleted and stock updated successfully!");
+    } catch (err) {
+      console.error("Failed to delete order:", err);
     }
-
-    console.log("Order deleted and stock updated successfully!");
-  } catch (err) {
-    console.error("Failed to delete order:", err);
-  }
-};
-
-
-
+  };
 
   const sortedOrders = [...userOrders].sort(
     (a, b) => new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime()
@@ -94,7 +78,9 @@ const handleDeleteOrder = async (orderId: string) => {
               <p>{new Date(order.orderDate).toLocaleString()}</p>
               <p>Total: ${order.total.toFixed(2)}</p>
             </div>
-            <span className={`status ${order.status}`}>{order.status.toUpperCase()}</span>
+            <span className={`status ${order.status ?? 'pending'}`}>
+              {(order.status ?? 'pending').toUpperCase()}
+            </span>
           </div>
 
           <div className="order-details">
@@ -114,13 +100,7 @@ const handleDeleteOrder = async (orderId: string) => {
               <ul>
                 {order.items.map((item) => (
                   <li key={item.id}>
-                    {item.image && (
-                      <img 
-                        src={item.image} 
-                        alt={item.name}
-                        className="order-item-image"
-                      />
-                    )}
+                    {item.image && <img src={item.image} alt={item.name} className="order-item-image" />}
                     <div className="order-item-details">
                       <span className="order-item-name">{item.name}</span>
                       <span className="order-item-quantity">Quantity: {item.quantity}</span>
@@ -132,16 +112,14 @@ const handleDeleteOrder = async (orderId: string) => {
             </div>
           </div>
 
-         
-
           <div className="order-actions">
             <button className="btn bg-dark text-light" onClick={() => alert(`Order #${order.id}\nTotal: ${order.total.toFixed(2)}`)}>
               View Details
             </button>
-            <button className="btn bg-dark text-light " onClick={() => navigate("/")}>
+            <button className="btn bg-dark text-light" onClick={() => navigate("/")}>
               Shop Again
             </button>
-            <button className="btn bg-dark text-light " onClick={() => handleDeleteOrder(order.id)}>
+            <button className="btn bg-dark text-light" onClick={() => handleDeleteOrder(order.id)}>
               Delete Order
             </button>
           </div>
