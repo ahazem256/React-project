@@ -177,6 +177,14 @@
       "password": "re1478963",
       "phone": "01017468802",
       "role": "user"
+    },
+    {
+      "id": "3c45",
+      "name": "hams",
+      "email": "hams@gmail.com",
+      "password": "ha12369",
+      "phone": "01017468802",
+      "role": "user"
     }
   ],
   "products": [
@@ -633,7 +641,7 @@
       "category": "Indoor",
       "name": "Aloe Vera",
       "price": "50 EGP",
-      "stock": 40,
+      "stock": 39,
       "image": "https://i.postimg.cc/bJry8Y4X/id15.png",
       "bestseller": true,
       "oldprice": "60 EGP",
@@ -857,7 +865,7 @@
       "category": "Outdoor",
       "name": "Marigold",
       "price": "50 EGP",
-      "stock": 54,
+      "stock": 53,
       "image": "https://i.postimg.cc/1305rjpy/id22.png",
       "bestseller": true,
       "oldprice": "60 EGP",
@@ -2457,7 +2465,6 @@
       "createdAt": "2025-10-19T16:10:23.943Z"
     },
     {
-
       "items": [
         {
           "id": 15,
@@ -2538,7 +2545,8 @@
       },
       "paymentMethod": "cash-on-delivery",
       "total": 100,
-      "createdAt": "2025-10-19T16:13:58.726Z"
+      "createdAt": "2025-10-19T16:13:58.726Z",
+      "id": "24e9"
     },
     {
       "id": "ORD-1760890693517",
@@ -2624,6 +2632,91 @@
       "paymentMethod": "cash-on-delivery",
       "total": 105,
       "createdAt": "2025-10-19T16:18:13.517Z"
+    },
+    {
+      "id": "ORD-1760891783382",
+      "items": [
+        {
+          "id": 15,
+          "category": "Indoor",
+          "name": "Aloe Vera",
+          "price": "50 EGP",
+          "stock": 40,
+          "image": "https://i.postimg.cc/bJry8Y4X/id15.png",
+          "bestseller": true,
+          "oldprice": "60 EGP",
+          "rate": "⭐⭐⭐⭐⭐",
+          "description": "Succulent indoor plant known for its healing properties.",
+          "review": "Perfect for sunny windowsills.",
+          "discount": "10%",
+          "isNew": false,
+          "scientificName": "Aloe vera",
+          "nativeRegion": "Arabian Peninsula",
+          "lifeCycle": "Perennial succulent; slow growth; valued for medicinal gel in leaves.",
+          "genus": "Aloe",
+          "type": "Succulent",
+          "climate": "Tropical, warm, dry",
+          "soilType": "Sandy, well-draining soil",
+          "wateringNeeds": "Low; allow soil to dry completely between waterings",
+          "sunlight": "Bright indirect to direct light",
+          "humidity": "Low",
+          "growthRate": "Slow",
+          "propagation": "Offsets (pups)",
+          "toxicity": "Mildly toxic to pets if ingested",
+          "careTips": "Avoid overwatering, place in sunny spot, remove dead leaves.",
+          "floweringSeason": "Rarely flowers indoors",
+          "height": "0.3 - 0.6 m",
+          "containerType": "Small pot",
+          "numericPrice": 50,
+          "quantity": 1
+        },
+        {
+          "id": 22,
+          "category": "Outdoor",
+          "name": "Marigold",
+          "price": "50 EGP",
+          "stock": 50,
+          "image": "https://i.postimg.cc/1305rjpy/id22.png",
+          "bestseller": true,
+          "oldprice": "60 EGP",
+          "rate": "⭐⭐⭐⭐☆",
+          "description": "Bright flowering plant, perfect choice for colorful garden beds.",
+          "review": "Easy to grow and maintain.",
+          "discount": "10%",
+          "isNew": false,
+          "scientificName": "Tagetes spp.",
+          "nativeRegion": "Americas",
+          "lifeCycle": "Annual flowering plant; fast growth; produces vibrant blooms.",
+          "genus": "Tagetes",
+          "type": "Flowering annual",
+          "climate": "Sunny, warm",
+          "soilType": "Well-draining soil",
+          "wateringNeeds": "Moderate; avoid waterlogging",
+          "sunlight": "Full sun",
+          "humidity": "Low to moderate",
+          "growthRate": "Fast",
+          "propagation": "Seeds",
+          "toxicity": "Non-toxic to pets",
+          "careTips": "Deadhead spent flowers, provide full sun, keep soil moderately moist.",
+          "floweringSeason": "Spring to Autumn",
+          "height": "0.3 - 0.6 m",
+          "containerType": "Garden bed or pot",
+          "numericPrice": 50,
+          "quantity": 1
+        }
+      ],
+      "shippingInfo": {
+        "firstName": "hams",
+        "lastName": "elqersh",
+        "email": "hams@gmail.com",
+        "phone": "01017468802",
+        "address": "el slam st",
+        "city": "tokyou",
+        "zipCode": "12312"
+      },
+      "paymentMethod": "cash-on-delivery",
+      "total": 100,
+      "createdAt": "2025-10-19T16:36:23.382Z"
     }
   ]
 }

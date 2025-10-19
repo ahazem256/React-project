@@ -1,382 +1,320 @@
-import React, { useState, useEffect } from "react";
-import { Helmet } from "react-helmet";
-import { Link, useNavigate } from "react-router-dom";
-import {
-  LayoutDashboard,
-  Users,
-  Package,
-  ShoppingCart,
-  BarChart3,
-  ArrowLeftCircle,
-  Menu,
-  X,
-} from "lucide-react";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import "../../styles/global.css";
+import React, { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
-/* ---------- Types ---------- */
 interface UserType {
   id: number;
   name: string;
   email: string;
   role: "user" | "admin";
 }
-type ModalMode = "add" | "edit" | "delete";
-type FormData = {
-  name: string;
-  email: string;
-  role: "user" | "admin";
+
+const fetchUsers = async (): Promise<UserType[]> => {
+  const res = await fetch("http://localhost:5005/users");
+  if (!res.ok) throw new Error("Failed to fetch users");
+  return res.json();
 };
 
-/* ---------- Validation Schema ---------- */
-const userSchema = yup.object({
-  name: yup.string().required("Name is required").min(2, "Name must be at least 2 characters"),
-  email: yup.string().email("Please enter a valid email").required("Email is required"),
-  role: yup.mixed<"user" | "admin">().oneOf(["user", "admin"]).required(),
-});
+const UsersTable: React.FC = () => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const usersPerPage = 6;
 
-/* ---------- Modal Component ---------- */
-interface UserModalProps {
-  show: boolean;
-  mode: ModalMode;
-  user: UserType | null;
-  defaultValues: FormData;
-  onClose: () => void;
-  onAdd: (data: FormData) => Promise<void>;
-  onEdit: (data: FormData) => Promise<void>;
-  onDelete: () => Promise<void>;
-}
-const UserModal: React.FC<UserModalProps> = ({
-  show,
-  mode,
-  user,
-  defaultValues,
-  onClose,
-  onAdd,
-  onEdit,
-  onDelete,
-}) => {
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors, isSubmitting },
-    setError,
-  } = useForm<FormData>({
-    resolver: yupResolver(userSchema),
-    defaultValues,
+  const { data: users = [], isLoading, isError } = useQuery({
+    queryKey: ["users"],
+    queryFn: fetchUsers,
   });
 
-  useEffect(() => {
-    if (show) reset(defaultValues);
-  }, [show, defaultValues, reset]);
+  const filteredUsers = users.filter(
+    (u) =>
+      u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      u.email.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-  if (!show) return null;
+  const indexOfLastUser = currentPage * usersPerPage;
+  const indexOfFirstUser = indexOfLastUser - usersPerPage;
+  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+  const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
 
-  const title = mode === "add" ? "Add New Customer" : mode === "edit" ? "Edit Customer" : "Confirm Delete";
-  const confirmBtnText = mode === "add" ? "Add Customer" : mode === "edit" ? "Update Customer" : "Delete";
+  if (isLoading)
+    return (
+      <div className="d-flex justify-content-center align-items-center min-vh-100">
+        <div className="text-center">
+          <div className="spinner-border" style={{ color: "#071835", width: "3rem", height: "3rem" }} role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+          <p className="mt-3 fw-bold" style={{ color: "#071835" }}>Loading users...</p>
+        </div>
+      </div>
+    );
 
-  const onSubmit = async (data: FormData) => {
-    try {
-      if (mode === "add") await onAdd(data);
-      if (mode === "edit") await onEdit(data);
-    } catch (err: any) {
-      setError("name", { type: "manual", message: err?.message || "Operation failed" });
-    }
-  };
+  if (isError)
+    return (
+      <div className="d-flex justify-content-center align-items-center min-vh-100">
+        <div className="text-center">
+          <div className="mb-3" style={{ fontSize: "3rem" }}>⚠️</div>
+          <p className="text-danger fw-bold fs-5">Failed to fetch users</p>
+          <button className="btn btn-primary mt-3" onClick={() => window.location.reload()}>
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
 
   return (
-    <div className="modal show d-block" style={{ backgroundColor: "#ffffffd4" }}>
-      <div className="modal-dialog modal-dialog-centered">
-        <div className="modal-content border-0 shadow">
-          <div className="modal-header border-0">
-            <h5 className="modal-title fw-bold">{title}</h5>
-            <button type="button" className="btn-close" onClick={onClose}></button>
-          </div>
-          <div className="modal-body">
-            {mode === "delete" ? (
-              <div className="text-center py-4">
-                <div className="text-warning mb-3">
-                  <i className="bi bi-exclamation-triangle" style={{ fontSize: "3rem" }}></i>
-                </div>
-                <h6>Delete {user?.name}?</h6>
-                <p className="text-muted">This action cannot be undone.</p>
-              </div>
-            ) : (
-              <>
-                {errors.name?.message && (
-                  <div className="alert alert-danger py-2">{errors.name.message}</div>
-                )}
-                <form onSubmit={handleSubmit(onSubmit)}>
-                  <div className="mb-3">
-                    <label className="form-label fw-semibold">Full Name</label>
-                    <input
-                      type="text"
-                      className={`form-control ${errors.name ? "is-invalid" : ""}`}
-                      placeholder="Enter customer name"
-                      {...register("name")}
-                    />
-                    {errors.name && <div className="invalid-feedback">{errors.name.message}</div>}
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label fw-semibold">Email</label>
-                    <input
-                      type="email"
-                      className={`form-control ${errors.email ? "is-invalid" : ""}`}
-                      placeholder="customer@email.com"
-                      {...register("email")}
-                    />
-                    {errors.email && <div className="invalid-feedback">{errors.email.message}</div>}
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label fw-semibold">Role</label>
-                    <select className={`form-select ${errors.role ? "is-invalid" : ""}`} {...register("role")}>
-                      <option value="user">Customer</option>
-                      <option value="admin">Admin</option>
-                    </select>
-                    {errors.role && <div className="invalid-feedback">{errors.role.message as string}</div>}
-                  </div>
-                  <div className="modal-footer border-0">
-                    <button type="button" className="btn btn-outline-secondary" onClick={onClose} disabled={isSubmitting}>
-                      Cancel
-                    </button>
-                    <button type="submit" className="btn btn-success" disabled={isSubmitting}>
-                      {confirmBtnText}
-                    </button>
-                  </div>
-                </form>
-              </>
-            )}
-            {mode === "delete" && (
-              <div className="modal-footer border-0">
-                <button className="btn btn-outline-secondary" onClick={onClose}>Cancel</button>
-                <button className="btn btn-danger" onClick={onDelete}>{confirmBtnText}</button>
-              </div>
+    <div className="container-fluid px-2 px-md-4 py-3 py-md-5">
+      {/* Header Section */}
+      <div className="row align-items-center mb-3 mb-md-4 g-3">
+        <div className="col-12 col-md-6">
+          <h3 className="fw-bold mb-0" style={{ color: "#071835" }}>
+            Users List
+          </h3>
+          <p className="text-muted mb-0 small d-none d-md-block">
+            Total: <span className="fw-bold">{users.length}</span> users
+          </p>
+        </div>
+        <div className="col-12 col-md-6">
+          <div className="input-group">
+            <span className="input-group-text bg-white" style={{ border: "1px solid #071835", borderRadius: "10px 0 0 10px" }}>
+              <svg width="16" height="16" fill="#071835" viewBox="0 0 16 16">
+                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+              </svg>
+            </span>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Search by name or email..."
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setCurrentPage(1);
+              }}
+              style={{
+                border: "1px solid #071835",
+                borderLeft: "none",
+                borderRadius: "0 10px 10px 0",
+                fontSize: "0.95rem"
+              }}
+            />
+            {searchTerm && (
+              <button
+                className="btn btn-link position-absolute end-0 top-50 translate-middle-y"
+                style={{ zIndex: 10 }}
+                onClick={() => {
+                  setSearchTerm("");
+                  setCurrentPage(1);
+                }}
+              >
+                <svg width="16" height="16" fill="#071835" viewBox="0 0 16 16">
+                  <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                  <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                </svg>
+              </button>
             )}
           </div>
         </div>
       </div>
-    </div>
-  );
-};
 
-/* ---------- Main Component ---------- */
-const AdminPage: React.FC = () => {
-  const navigate = useNavigate();
-  const [users, setUsers] = useState<UserType[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [usersPerPage] = useState(5);
-  const [toast, setToast] = useState<{ show: boolean; message: string; variant: "success" | "danger" }>({ show: false, message: "", variant: "success" });
-  const [modalState, setModalState] = useState<{ show: boolean; mode: ModalMode; user: UserType | null }>({ show: false, mode: "add", user: null });
-  const [formDefaults, setFormDefaults] = useState<FormData>({ name: "", email: "", role: "user" });
-
-  // sidebar mobile
-  const [isMobile, setIsMobile] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  useEffect(() => {
-    const checkIfMobile = () => setIsMobile(window.innerWidth < 992);
-    checkIfMobile();
-    window.addEventListener("resize", checkIfMobile);
-    return () => window.removeEventListener("resize", checkIfMobile);
-  }, []);
-  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
-  const closeSidebar = () => setIsSidebarOpen(false);
-
-  // fetch users
-  useEffect(() => {
-    const controller = new AbortController();
-    const fetchUsers = async () => {
-      try {
-        setLoading(true);
-        const res = await fetch("http://localhost:5000/users", { signal: controller.signal });
-        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-        const data: UserType[] = await res.json();
-        setUsers(data);
-      } catch (err: any) {
-        if (err.name !== "AbortError") setError("Failed to load customers");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchUsers();
-    return () => controller.abort();
-  }, []);
-
-  // modal handlers
-  const openAddModal = () => { setFormDefaults({ name: "", email: "", role: "user" }); setModalState({ show: true, mode: "add", user: null }); };
-  const openEditModal = (user: UserType) => { setFormDefaults({ name: user.name, email: user.email, role: user.role }); setModalState({ show: true, mode: "edit", user }); };
-  const openDeleteModal = (user: UserType) => setModalState({ show: true, mode: "delete", user });
-  const closeModal = () => { setModalState({ show: false, mode: "add", user: null }); setFormDefaults({ name: "", email: "", role: "user" }); };
-
-  // toast
-  const showToast = (message: string, variant: "success" | "danger" = "success") => { setToast({ show: true, message, variant }); setTimeout(() => setToast((t) => ({ ...t, show: false })), 3000); };
-
-  // CRUD handlers
-  const handleAddUser = async (data: FormData) => {
-    try {
-      const res = await fetch("http://localhost:5000/users", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
-      if (!res.ok) throw new Error("Add failed");
-      const newUser: UserType = await res.json();
-      setUsers([...users, newUser]);
-      closeModal();
-      showToast("User added successfully", "success");
-    } catch { showToast("Failed to add user", "danger"); }
-  };
-  const handleEditConfirm = async (data: FormData) => {
-    if (!modalState.user) return;
-    try {
-      const res = await fetch(`http://localhost:5000/users/${modalState.user.id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
-      if (!res.ok) throw new Error("Update failed");
-      const updatedUser: UserType = await res.json();
-      setUsers(users.map(u => u.id === updatedUser.id ? updatedUser : u));
-      closeModal();
-      showToast("User updated successfully", "success");
-    } catch { showToast("Failed to update user", "danger"); }
-  };
-  const handleDeleteConfirm = async () => {
-    if (!modalState.user) return;
-    try {
-      const res = await fetch(`http://localhost:5000/users/${modalState.user.id}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("Delete failed");
-      setUsers(users.filter(u => u.id !== modalState.user!.id));
-      closeModal();
-      showToast("User deleted", "success");
-    } catch { showToast("Failed to delete user", "danger"); }
-  };
-
-  // filtered & pagination
-  const filteredUsers = users.filter(u => u.name.toLowerCase().includes(searchTerm.toLowerCase()) || u.email.toLowerCase().includes(searchTerm.toLowerCase()));
-  const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
-  const indexOfLastUser = currentPage * usersPerPage;
-  const indexOfFirstUser = indexOfLastUser - usersPerPage;
-  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
-  const paginate = (num: number) => setCurrentPage(num);
-  const nextPage = () => { if (currentPage < totalPages) setCurrentPage(p => p + 1); };
-  const prevPage = () => { if (currentPage > 1) setCurrentPage(p => p - 1); };
-  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
-
-  if (loading) return <div className="d-flex justify-content-center align-items-center min-vh-100"><div className="spinner-border text-success" role="status"><span className="visually-hidden">Loading...</span></div></div>;
-  if (error) return <div className="d-flex justify-content-center align-items-center min-vh-100 text-danger">{error}</div>;
-
-  const navItems = [
-    { name: "Dashboard", path: "#", icon: <LayoutDashboard size={18} /> },
-    { name: "Users", path: "#", icon: <Users size={18} /> },
-    { name: "Products", path: "#", icon: <Package size={18} /> },
-    { name: "Orders", path: "#", icon: <ShoppingCart size={18} /> },
-    { name: "Reports", path: "#", icon: <BarChart3 size={18} /> },
-  ];
-
-  const adminUser = users.find(u => u.role === "admin");
-
-  return (
-    <div className="d-flex" style={{ minHeight: "100vh" }}>
-      <Helmet><title>Admin Dashboard</title></Helmet>
-
-
-      {/* Main content */}
-      <main style={{
-        marginLeft: isMobile ? 0 : "250px", padding: isMobile ? "70px 20px 20px 20px" : "30px", width: isMobile ? "100%" : "calc(100% - 250px)", transition: "0.3s"
-      }}>
-        {/* Toast */}
-        {toast.show && (
-          <div style={{ position: "fixed", top: 16, right: 16, zIndex: 2000 }}>
-            <div className={`toast align-items-center text-bg-${toast.variant === "success" ? "success" : "danger"} border-0 show`} role="alert">
-              <div className="d-flex">
-                <div className="toast-body">{toast.message}</div>
-                <button type="button" className="btn-close btn-close-white me-2 m-auto" onClick={() => setToast(t => ({ ...t, show: false }))}></button>
-              </div>
+      {/* Stats Cards - Mobile Only */}
+      <div className="row g-2 mb-3 d-md-none">
+        <div className="col-4">
+          <div className="card border-0 shadow-sm" style={{ borderRadius: "10px" }}>
+            <div className="card-body p-2 text-center">
+              <div className="fw-bold" style={{ color: "#071835", fontSize: "1.2rem" }}>{users.length}</div>
+              <div className="text-muted" style={{ fontSize: "0.7rem" }}>Total</div>
             </div>
           </div>
-        )}
-
-        {/* Header */}
-        <div className="d-flex justify-content-between align-items-center mb-4">
-          <h1 className="h3 fw-bold text-dark mb-0">Customer Management</h1>
-          <button className="btn" style={{ backgroundColor: "#718355", color: "#fff" }} onClick={openAddModal}>
-            <i className="bi bi-plus-circle me-2"></i> Add Customer
-          </button>
         </div>
-
-        {/* Admin card */}
-        {adminUser && (
-          <div className="card border-0 shadow-sm mb-4" style={{ backgroundColor: "#718355", color: "#fff" }}>
-            <div className="card-body p-4 d-flex justify-content-between align-items-center">
-              <h5 className="mb-0 fw-bold">{adminUser.name}</h5>
-              <div className="text-white-50">Full system access</div>
+        <div className="col-4">
+          <div className="card border-0 shadow-sm" style={{ borderRadius: "10px" }}>
+            <div className="card-body p-2 text-center">
+              <div className="fw-bold text-warning" style={{ fontSize: "1.2rem" }}>{users.filter(u => u.role === 'admin').length}</div>
+              <div className="text-muted" style={{ fontSize: "0.7rem" }}>Admins</div>
             </div>
           </div>
-        )}
-
-        {/* Users table */}
-        <div className="card border-0 shadow-sm p-4">
-          <div className="mb-3 d-flex">
-            <input type="text" className="form-control me-2" placeholder="Search users..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
-            {searchTerm && <button className="btn btn-light" onClick={() => setSearchTerm("")}><i className="bi bi-x"></i></button>}
+        </div>
+        <div className="col-4">
+          <div className="card border-0 shadow-sm" style={{ borderRadius: "10px" }}>
+            <div className="card-body p-2 text-center">
+              <div className="fw-bold text-success" style={{ fontSize: "1.2rem" }}>{users.filter(u => u.role === 'user').length}</div>
+              <div className="text-muted" style={{ fontSize: "0.7rem" }}>Users</div>
+            </div>
           </div>
-          <div className="table-responsive">
-            <table className="table table-hover align-middle">
-              <thead className="bg-light">
-                <tr>
-                  <th>ID</th>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th className="text-end">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {currentUsers.map(u => (
-                  <tr key={u.id}>
-                    <td>{u.id}</td>
-                    <td>{u.name}</td>
-                    <td>{u.email}</td>
-                    <td className="text-end">
-                      <button className="btn btn-sm btn-outline-primary me-2" onClick={() => openEditModal(u)}>Edit</button>
-                      <button className="btn btn-sm btn-outline-danger" onClick={() => openDeleteModal(u)}>Delete</button>
+        </div>
+      </div>
+
+      {/* Desktop Table */}
+      <div className="card shadow-sm border-0 d-none d-md-block" style={{ borderRadius: "12px", overflow: "hidden" }}>
+        <div className="table-responsive">
+          <table className="table table-hover align-middle mb-0">
+            <thead style={{ backgroundColor: "#071835", color: "white" }}>
+              <tr>
+                <th className="py-3 px-3">ID</th>
+                <th className="py-3 px-3">Name</th>
+                <th className="py-3 px-3">Email</th>
+                <th className="py-3 px-3">Role</th>
+              </tr>
+            </thead>
+            <tbody>
+              {currentUsers.length > 0 ? (
+                currentUsers.map((user) => (
+                  <tr key={user.id}>
+                    <td className="px-3">
+                      <span className="badge bg-light text-dark border">#{user.id}</span>
+                    </td>
+                    <td className="px-3">
+                      <div className="d-flex align-items-center">
+                        <div
+                          className="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold me-2"
+                          style={{
+                            width: "35px",
+                            height: "35px",
+                            backgroundColor: "#071835",
+                            fontSize: "0.9rem"
+                          }}
+                        >
+                          {user.name.charAt(0).toUpperCase()}
+                        </div>
+                        <span className="fw-semibold">{user.name}</span>
+                      </div>
+                    </td>
+                    <td className="text-muted px-3">{user.email}</td>
+                    <td className="px-3">
+                      <span
+                        className={`badge ${
+                          user.role === "admin"
+                            ? "bg-warning text-dark"
+                            : "bg-success-subtle text-success"
+                        }`}
+                        style={{ padding: "0.4rem 0.8rem", borderRadius: "8px" }}
+                      >
+                        {user.role}
+                      </span>
                     </td>
                   </tr>
-                ))}
-                {currentUsers.length === 0 && <tr><td colSpan={4} className="text-center text-muted">No users found</td></tr>}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Pagination */}
-          <nav>
-            <ul className="pagination justify-content-center mt-3">
-              <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-                <button className="page-link" onClick={prevPage}>Previous</button>
-              </li>
-              {pageNumbers.map(num => (
-                <li key={num} className={`page-item ${num === currentPage ? "active" : ""}`}>
-                  <button className="page-link" onClick={() => paginate(num)}>{num}</button>
-                </li>
-              ))}
-              <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-                <button className="page-link" onClick={nextPage}>Next</button>
-              </li>
-            </ul>
-          </nav>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={4} className="text-center text-muted py-5">
+                    <div style={{ fontSize: "2rem" }}>🔍</div>
+                    <div className="mt-2">No users found</div>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
-      </main>
+      </div>
 
-      {/* Modal */}
-      <UserModal
-        show={modalState.show}
-        mode={modalState.mode}
-        user={modalState.user}
-        defaultValues={formDefaults}
-        onClose={closeModal}
-        onAdd={handleAddUser}
-        onEdit={handleEditConfirm}
-        onDelete={handleDeleteConfirm}
-      />
+      {/* Mobile Cards */}
+      <div className="d-md-none">
+        {currentUsers.length > 0 ? (
+          currentUsers.map((user) => (
+            <div key={user.id} className="card shadow-sm border-0 mb-2" style={{ borderRadius: "10px" }}>
+              <div className="card-body p-3">
+                <div className="d-flex align-items-center mb-2">
+                  <div
+                    className="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold me-2 flex-shrink-0"
+                    style={{
+                      width: "40px",
+                      height: "40px",
+                      backgroundColor: "#071835",
+                      fontSize: "0.95rem"
+                    }}
+                  >
+                    {user.name.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="flex-grow-1 overflow-hidden">
+                    <div className="d-flex justify-content-between align-items-center mb-1">
+                      <h6 className="mb-0 fw-bold text-truncate me-2">{user.name}</h6>
+                      <span className="badge bg-light text-dark border flex-shrink-0" style={{ fontSize: "0.7rem" }}>#{user.id}</span>
+                    </div>
+                    <p className="text-muted mb-0 small text-truncate">{user.email}</p>
+                  </div>
+                </div>
+                <div className="d-flex justify-content-between align-items-center">
+                  <span
+                    className={`badge ${
+                      user.role === "admin"
+                        ? "bg-warning text-dark"
+                        : "bg-success-subtle text-success"
+                    }`}
+                    style={{ padding: "0.35rem 0.7rem", borderRadius: "8px", fontSize: "0.75rem" }}
+                  >
+                    {user.role}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="card shadow-sm border-0" style={{ borderRadius: "10px" }}>
+            <div className="card-body text-center py-5">
+              <div style={{ fontSize: "2.5rem" }}>🔍</div>
+              <div className="mt-2 text-muted">No users found</div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Pagination */}
+      {filteredUsers.length > usersPerPage && (
+        <div className="d-flex justify-content-center align-items-center gap-1 gap-md-2 mt-3 mt-md-4 flex-wrap">
+          <button
+            onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+            disabled={currentPage === 1}
+            className="btn btn-outline-success px-2 px-md-3"
+            style={{
+              borderRadius: "8px",
+              borderColor: "#071835",
+              color: "#071835",
+              fontSize: "0.9rem"
+            }}
+          >
+            &laquo;
+          </button>
+
+          {Array.from({ length: totalPages }, (_, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrentPage(i + 1)}
+              className={`btn ${
+                currentPage === i + 1 ? "btn-success" : "btn-outline-success"
+              }`}
+              style={{
+                borderRadius: "50%",
+                width: "32px",
+                height: "32px",
+                padding: "0",
+                fontSize: "0.85rem",
+                borderColor: "#071835",
+                backgroundColor:
+                  currentPage === i + 1 ? "#071835" : "transparent",
+                color: currentPage === i + 1 ? "#fff" : "#071835",
+              }}
+            >
+              {i + 1}
+            </button>
+          ))}
+
+          <button
+            onClick={() =>
+              setCurrentPage((p) => Math.min(p + 1, totalPages))
+            }
+            disabled={currentPage === totalPages}
+            className="btn btn-outline-success px-2 px-md-3"
+            style={{
+              borderRadius: "8px",
+              borderColor: "#071835",
+              color: "#071835",
+              fontSize: "0.9rem"
+            }}
+          >
+            &raquo;
+          </button>
+        </div>
+      )}
     </div>
   );
 };
 
-export default AdminPage;
+export default UsersTable;
