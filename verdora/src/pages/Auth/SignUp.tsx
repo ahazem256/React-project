@@ -70,7 +70,7 @@ export default function SignUp() {
     try {
       const { termsAccepted, rePassword, ...userData } = values;
 
-      const response = await axios.post("http://localhost:5000/users", {
+      const response = await axios.post("http://localhost:5005/users", {
         ...userData,
         role: "user",
       });

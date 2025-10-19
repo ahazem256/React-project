@@ -38,7 +38,7 @@ export default function VerifyResetCode() {
   const onSubmit: SubmitHandler<VerifyCodeForm> = async ({ resetCode }) => {
     setIsLoading(true);
     try {
-      const res = await axios.get(`http://localhost:5000/users?email=${email}`);
+      const res = await axios.get(`http://localhost:5005/users?email=${email}`);
       const user = res.data[0];
 
       if (user.resetCode !== resetCode) {
