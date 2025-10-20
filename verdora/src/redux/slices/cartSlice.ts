@@ -30,12 +30,28 @@ const cartSlice = createSlice({
   reducers: {
     addToCart: (state, action: { payload: { product: Product; quantity: number } }) => {
       const { product, quantity } = action.payload;
-      const existingItem = state.items.find(item => item.id === product.id);
-      if (existingItem) {
-        existingItem.quantity += quantity;
-      } else {
-        state.items.push({ ...product, quantity });
-      }
+
+        if (product.stock === 0) {
+    alert("This product is out of stock and cannot be added to the cart.");
+    return; 
+  }
+
+
+     const existingItem = state.items.find(item => item.id === product.id);
+
+  if (existingItem) {
+    if (existingItem.quantity + quantity > product.stock) {
+      alert("Not enough stock available for this product.");
+      return state;
+    }
+    existingItem.quantity += quantity;
+  } else {
+    if (quantity > product.stock) {
+      alert("Not enough stock available for this product.");
+      return state;
+    }
+    state.items.push({ ...product, quantity });
+  }
     },
     removeFromCart: (state, action: { payload: number }) => {
       state.items = state.items.filter(item => item.id !== action.payload);
