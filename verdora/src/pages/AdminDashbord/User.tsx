@@ -1,5 +1,8 @@
-import React, { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+// UsersTable.tsx
+import React, { useEffect, useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { FaEdit, FaTrash, FaPlusCircle, FaTimes, FaUser, FaShoppingCart, FaStar, FaSearch, FaUsers } from "react-icons/fa";
+import * as yup from "yup";
 
 interface UserType {
   id: number;
@@ -8,311 +11,712 @@ interface UserType {
   role: "user" | "admin";
 }
 
+type NewUser = Omit<UserType, "id">;
+
+// Yup validation schema
+const userSchema = yup.object({
+  name: yup
+    .string()
+    .required("Name is required")
+    .min(2, "Name must be at least 2 characters")
+    .max(50, "Name must be less than 50 characters"),
+  email: yup
+    .string()
+    .required("Email is required")
+    .email("Please enter a valid email address"),
+  role: yup
+    .mixed<"user" | "admin">()
+    .oneOf(["user", "admin"], "Role must be either user or admin")
+    .required("Role is required")
+});
+
+const API_BASE = "http://localhost:5005";
+
 const fetchUsers = async (): Promise<UserType[]> => {
-  const res = await fetch("http://localhost:5005/users");
+  const res = await fetch(`${API_BASE}/users`);
   if (!res.ok) throw new Error("Failed to fetch users");
   return res.json();
 };
 
-const UsersTable: React.FC = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const usersPerPage = 6;
+const deleteUser = async (id: number): Promise<void> => {
+  const res = await fetch(`${API_BASE}/users/${id}`, {
+    method: "DELETE",
+  });
+  if (!res.ok) throw new Error("Failed to delete user");
+};
 
+const updateUser = async (user: UserType): Promise<UserType> => {
+  const res = await fetch(`${API_BASE}/users/${user.id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(user),
+  });
+  if (!res.ok) throw new Error("Failed to update user");
+  return res.json();
+};
+
+const createUser = async (user: NewUser): Promise<UserType> => {
+  const res = await fetch(`${API_BASE}/users`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(user),
+  });
+  if (!res.ok) throw new Error("Failed to create user");
+  return res.json();
+};
+
+const PAGE_SIZE = 5;
+const BG = "#E9F5DB";
+const DARK_GREEN = "#6B7D4F";
+const MEDIUM_GREEN = "#8FA872";
+const CARD_BG = "#FFFFFF";
+
+const UsersTable: React.FC = () => {
+  // react-query
+  const queryClient = useQueryClient();
   const { data: users = [], isLoading, isError } = useQuery({
     queryKey: ["users"],
     queryFn: fetchUsers,
   });
 
-  const filteredUsers = users.filter(
+  const deleteMutation = useMutation({
+    mutationFn: deleteUser,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      setShowForm(false);
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: updateUser,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      setShowForm(false);
+      setEditingUser(null);
+      setFormErrors({});
+    },
+  });
+
+  const createMutation = useMutation({
+    mutationFn: createUser,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      setShowForm(false);
+      setNewUser({ name: "", email: "", role: "user" });
+      setCurrentPage(1);
+      setFormErrors({});
+    },
+  });
+
+  // local state
+  const [searchTerm, setSearchTerm] = useState("");
+  const [editingUser, setEditingUser] = useState<UserType | null>(null);
+  const [showForm, setShowForm] = useState(false);
+  const [formType, setFormType] = useState<"add" | "edit">("add");
+  const [userToDelete, setUserToDelete] = useState<number | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
+
+  const [newUser, setNewUser] = useState<NewUser>({ name: "", email: "", role: "user" });
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // filtered and pagination
+  const filtered = users.filter(
     (u) =>
       u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       u.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const indexOfLastUser = currentPage * usersPerPage;
-  const indexOfFirstUser = indexOfLastUser - usersPerPage;
-  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
-  const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  useEffect(() => {
+    // clamp current page if filtered changes
+    setCurrentPage((p) => Math.min(p, totalPages));
+  }, [filtered.length, totalPages]);
 
-  if (isLoading)
-    return (
-      <div className="d-flex justify-content-center align-items-center min-vh-100">
-        <div className="text-center">
-          <div className="spinner-border" style={{ color: "#071835", width: "3rem", height: "3rem" }} role="status">
-            <span className="visually-hidden">Loading...</span>
-          </div>
-          <p className="mt-3 fw-bold" style={{ color: "#071835" }}>Loading users...</p>
-        </div>
-      </div>
-    );
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const currentUsers = filtered.slice(start, start + PAGE_SIZE);
 
-  if (isError)
+  // handlers
+  const onEditClick = (u: UserType) => {
+    setEditingUser({ ...u });
+    setFormType("edit");
+    setShowForm(true);
+    setFormErrors({});
+  };
+
+  const onAddClick = () => {
+    setEditingUser(null);
+    setNewUser({ name: "", email: "", role: "user" });
+    setFormType("add");
+    setShowForm(true);
+    setFormErrors({});
+  };
+
+  const onDeleteClick = (id: number) => {
+    setUserToDelete(id);
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDelete = () => {
+    if (userToDelete != null) {
+      deleteMutation.mutate(userToDelete, {
+        onSuccess: () => {
+          setShowDeleteConfirm(false);
+          setUserToDelete(null);
+        },
+      });
+    }
+  };
+
+  const validateForm = async (data: NewUser | UserType) => {
+    try {
+      await userSchema.validate(data, { abortEarly: false });
+      setFormErrors({});
+      return true;
+    } catch (error) {
+      if (error instanceof yup.ValidationError) {
+        const errors: { [key: string]: string } = {};
+        error.inner.forEach((err) => {
+          if (err.path) {
+            errors[err.path] = err.message;
+          }
+        });
+        setFormErrors(errors);
+      }
+      return false;
+    }
+  };
+
+  const saveEdit = async () => {
+    if (!editingUser) return;
+    
+    const isValid = await validateForm(editingUser);
+    if (isValid) {
+      updateMutation.mutate(editingUser);
+    }
+  };
+
+  const submitNewUser = async () => {
+    const isValid = await validateForm(newUser);
+    if (isValid) {
+      createMutation.mutate(newUser);
+    }
+  };
+
+  const closeForm = () => {
+    setShowForm(false);
+    setEditingUser(null);
+    setNewUser({ name: "", email: "", role: "user" });
+    setFormErrors({});
+  };
+
+  // simple id display like earlier (hex padded)
+  const displayId = (id: number) => `#${id.toString(16).padStart(4, "0")}`;
+
+  // simple icon button component
+  const IconBtn: React.FC<React.ButtonHTMLAttributes<HTMLButtonElement>> = (props) => {
     return (
-      <div className="d-flex justify-content-center align-items-center min-vh-100">
-        <div className="text-center">
-          <div className="mb-3" style={{ fontSize: "3rem" }}>⚠️</div>
-          <p className="text-danger fw-bold fs-5">Failed to fetch users</p>
-          <button className="btn btn-primary mt-3" onClick={() => window.location.reload()}>
-            Try Again
-          </button>
-        </div>
-      </div>
+      <button
+        {...props}
+        className={`btn ${props.className ?? ""}`}
+        style={{
+          ...props.style,
+          borderRadius: 8,
+          padding: "0.35rem 0.7rem",
+          fontSize: "0.85rem",
+        }}
+      />
     );
+  };
 
   return (
-    <div className="container-fluid px-2 px-md-4 py-3 py-md-5">
-      {/* Header Section */}
-      <div className="row align-items-center mb-3 mb-md-4 g-3">
-        <div className="col-12 col-md-6">
-          <h3 className="fw-bold mb-0" style={{ color: "#071835" }}>
-            Users List
-          </h3>
-          <p className="text-muted mb-0 small d-none d-md-block">
-            Total: <span className="fw-bold">{users.length}</span> users
-          </p>
-        </div>
-        <div className="col-12 col-md-6">
-          <div className="input-group">
-            <span className="input-group-text bg-white" style={{ border: "1px solid #071835", borderRadius: "10px 0 0 10px" }}>
-              <svg width="16" height="16" fill="#071835" viewBox="0 0 16 16">
-                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
-              </svg>
-            </span>
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Search by name or email..."
-              value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-                setCurrentPage(1);
-              }}
-              style={{
-                border: "1px solid #071835",
-                borderLeft: "none",
-                borderRadius: "0 10px 10px 0",
-                fontSize: "0.95rem"
-              }}
-            />
-            {searchTerm && (
-              <button
-                className="btn btn-link position-absolute end-0 top-50 translate-middle-y"
-                style={{ zIndex: 10 }}
-                onClick={() => {
-                  setSearchTerm("");
+    <div style={{ backgroundColor: BG, minHeight: "100vh" }}>
+      {/* Page content */}
+      <div className="container-fluid p-2 p-md-4">
+        {/* Header */}
+        <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
+          <div>
+            <h3 className="fw-bold mb-1" style={{ color: DARK_GREEN }}>
+              Customer Management
+            </h3>
+            <p className="text-muted mb-0">Manage your shop customers and administrators</p>
+          </div>
+
+          <div className="d-flex flex-column flex-sm-row gap-2 align-items-stretch align-items-sm-center w-100 w-md-auto">
+            <div className="input-group flex-grow-1" style={{ maxWidth: "100%" }}>
+              <input
+                type="text"
+                className="form-control shadow-sm py-2"
+                placeholder="Search users..."
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
                   setCurrentPage(1);
                 }}
-              >
-                <svg width="16" height="16" fill="#071835" viewBox="0 0 16 16">
-                  <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                  <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
-                </svg>
+                style={{
+                  borderRadius: 8,
+                  border: `1px solid ${MEDIUM_GREEN}`,
+                }}
+              />
+            </div>
+
+            <button
+              className="btn d-flex align-items-center gap-2 justify-content-center"
+              onClick={onAddClick}
+              style={{
+                backgroundColor: DARK_GREEN,
+                color: "#fff",
+                borderRadius: 8,
+                padding: "0.6rem 1rem",
+                border: "none",
+                whiteSpace: "nowrap",
+                minHeight: "44px"
+              }}
+            >
+              <FaPlusCircle size={16} />
+              <span>Add Customer</span>
+            </button>
+          </div>
+        </div>
+
+        {/* User Form (appears below header when active) */}
+        {showForm && (
+          <div className="card border-0 shadow-sm mb-4" style={{ borderRadius: 16, background: CARD_BG }}>
+            <div className="card-header d-flex justify-content-between align-items-center py-3" style={{ backgroundColor: DARK_GREEN, color: "#fff", borderTopLeftRadius: 16, borderTopRightRadius: 16 }}>
+              <h5 className="mb-0 fw-bold">{formType === "add" ? "Add Customer" : "Edit User"}</h5>
+              <button onClick={closeForm} className="btn btn-sm p-1" style={{ color: "#fff", borderRadius: 8 }}>
+                <FaTimes size={18} />
               </button>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Stats Cards - Mobile Only */}
-      <div className="row g-2 mb-3 d-md-none">
-        <div className="col-4">
-          <div className="card border-0 shadow-sm" style={{ borderRadius: "10px" }}>
-            <div className="card-body p-2 text-center">
-              <div className="fw-bold" style={{ color: "#071835", fontSize: "1.2rem" }}>{users.length}</div>
-              <div className="text-muted" style={{ fontSize: "0.7rem" }}>Total</div>
             </div>
-          </div>
-        </div>
-        <div className="col-4">
-          <div className="card border-0 shadow-sm" style={{ borderRadius: "10px" }}>
-            <div className="card-body p-2 text-center">
-              <div className="fw-bold text-warning" style={{ fontSize: "1.2rem" }}>{users.filter(u => u.role === 'admin').length}</div>
-              <div className="text-muted" style={{ fontSize: "0.7rem" }}>Admins</div>
-            </div>
-          </div>
-        </div>
-        <div className="col-4">
-          <div className="card border-0 shadow-sm" style={{ borderRadius: "10px" }}>
-            <div className="card-body p-2 text-center">
-              <div className="fw-bold text-success" style={{ fontSize: "1.2rem" }}>{users.filter(u => u.role === 'user').length}</div>
-              <div className="text-muted" style={{ fontSize: "0.7rem" }}>Users</div>
-            </div>
-          </div>
-        </div>
-      </div>
+            <div className="card-body p-3 p-md-4">
+              <div className="row g-3">
+                <div className="col-12">
+                  <label className="form-label fw-semibold">Name</label>
+                  <input
+                    value={formType === "edit" ? editingUser?.name ?? "" : newUser.name}
+                    onChange={(e) => {
+                      if (formType === "edit") {
+                        setEditingUser(editingUser ? { ...editingUser, name: e.target.value } : null);
+                      } else {
+                        setNewUser({ ...newUser, name: e.target.value });
+                      }
+                      // Clear error when user starts typing
+                      if (formErrors.name) {
+                        setFormErrors(prev => ({ ...prev, name: '' }));
+                      }
+                    }}
+                    className={`form-control ${formErrors.name ? 'is-invalid' : ''}`}
+                    style={{ 
+                      borderRadius: 12,
+                      padding: "12px 16px",
+                      fontSize: "16px" // Prevents zoom on iOS
+                    }}
+                    placeholder="Enter full name"
+                  />
+                  {formErrors.name && (
+                    <div className="invalid-feedback d-block" style={{ fontSize: "14px" }}>
+                      {formErrors.name}
+                    </div>
+                  )}
+                </div>
 
-      {/* Desktop Table */}
-      <div className="card shadow-sm border-0 d-none d-md-block" style={{ borderRadius: "12px", overflow: "hidden" }}>
-        <div className="table-responsive">
-          <table className="table table-hover align-middle mb-0">
-            <thead style={{ backgroundColor: "#071835", color: "white" }}>
-              <tr>
-                <th className="py-3 px-3">ID</th>
-                <th className="py-3 px-3">Name</th>
-                <th className="py-3 px-3">Email</th>
-                <th className="py-3 px-3">Role</th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentUsers.length > 0 ? (
-                currentUsers.map((user) => (
-                  <tr key={user.id}>
-                    <td className="px-3">
-                      <span className="badge bg-light text-dark border">#{user.id}</span>
-                    </td>
-                    <td className="px-3">
-                      <div className="d-flex align-items-center">
-                        <div
-                          className="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold me-2"
-                          style={{
-                            width: "35px",
-                            height: "35px",
-                            backgroundColor: "#071835",
-                            fontSize: "0.9rem"
-                          }}
-                        >
-                          {user.name.charAt(0).toUpperCase()}
-                        </div>
-                        <span className="fw-semibold">{user.name}</span>
-                      </div>
-                    </td>
-                    <td className="text-muted px-3">{user.email}</td>
-                    <td className="px-3">
-                      <span
-                        className={`badge ${
-                          user.role === "admin"
-                            ? "bg-warning text-dark"
-                            : "bg-success-subtle text-success"
-                        }`}
-                        style={{ padding: "0.4rem 0.8rem", borderRadius: "8px" }}
-                      >
-                        {user.role}
-                      </span>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={4} className="text-center text-muted py-5">
-                    <div style={{ fontSize: "2rem" }}>🔍</div>
-                    <div className="mt-2">No users found</div>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+                <div className="col-12">
+                  <label className="form-label fw-semibold">Email</label>
+                  <input
+                    type="email"
+                    value={formType === "edit" ? editingUser?.email ?? "" : newUser.email}
+                    onChange={(e) => {
+                      if (formType === "edit") {
+                        setEditingUser(editingUser ? { ...editingUser, email: e.target.value } : null);
+                      } else {
+                        setNewUser({ ...newUser, email: e.target.value });
+                      }
+                      // Clear error when user starts typing
+                      if (formErrors.email) {
+                        setFormErrors(prev => ({ ...prev, email: '' }));
+                      }
+                    }}
+                    className={`form-control ${formErrors.email ? 'is-invalid' : ''}`}
+                    style={{ 
+                      borderRadius: 12,
+                      padding: "12px 16px",
+                      fontSize: "16px" // Prevents zoom on iOS
+                    }}
+                    placeholder="Enter email address"
+                  />
+                  {formErrors.email && (
+                    <div className="invalid-feedback d-block" style={{ fontSize: "14px" }}>
+                      {formErrors.email}
+                    </div>
+                  )}
+                </div>
 
-      {/* Mobile Cards */}
-      <div className="d-md-none">
-        {currentUsers.length > 0 ? (
-          currentUsers.map((user) => (
-            <div key={user.id} className="card shadow-sm border-0 mb-2" style={{ borderRadius: "10px" }}>
-              <div className="card-body p-3">
-                <div className="d-flex align-items-center mb-2">
-                  <div
-                    className="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold me-2 flex-shrink-0"
-                    style={{
-                      width: "40px",
-                      height: "40px",
-                      backgroundColor: "#071835",
-                      fontSize: "0.95rem"
+                <div className="col-12">
+                  <label className="form-label fw-semibold">Role</label>
+                  <select
+                    value={formType === "edit" ? editingUser?.role ?? "user" : newUser.role}
+                    onChange={(e) => {
+                      if (formType === "edit") {
+                        setEditingUser(editingUser ? { ...editingUser, role: e.target.value as "user" | "admin" } : null);
+                      } else {
+                        setNewUser({ ...newUser, role: e.target.value as "user" | "admin" });
+                      }
+                    }}
+                    className="form-select"
+                    style={{ 
+                      borderRadius: 12,
+                      padding: "12px 16px",
+                      fontSize: "16px" // Prevents zoom on iOS
                     }}
                   >
-                    {user.name.charAt(0).toUpperCase()}
-                  </div>
-                  <div className="flex-grow-1 overflow-hidden">
-                    <div className="d-flex justify-content-between align-items-center mb-1">
-                      <h6 className="mb-0 fw-bold text-truncate me-2">{user.name}</h6>
-                      <span className="badge bg-light text-dark border flex-shrink-0" style={{ fontSize: "0.7rem" }}>#{user.id}</span>
-                    </div>
-                    <p className="text-muted mb-0 small text-truncate">{user.email}</p>
-                  </div>
+                    <option value="user">Customer</option>
+                    <option value="admin">Administrator</option>
+                  </select>
                 </div>
-                <div className="d-flex justify-content-between align-items-center">
-                  <span
-                    className={`badge ${
-                      user.role === "admin"
-                        ? "bg-warning text-dark"
-                        : "bg-success-subtle text-success"
-                    }`}
-                    style={{ padding: "0.35rem 0.7rem", borderRadius: "8px", fontSize: "0.75rem" }}
-                  >
-                    {user.role}
-                  </span>
+
+                <div className="col-12">
+                  <div className="d-flex flex-column flex-sm-row justify-content-end gap-2">
+                    <button 
+                      className="btn btn-secondary order-2 order-sm-1" 
+                      onClick={closeForm} 
+                      style={{ 
+                        borderRadius: 12,
+                        padding: "12px 24px",
+                        border: "none",
+                        fontSize: "16px"
+                      }}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      className="btn order-1 order-sm-2"
+                      onClick={formType === "edit" ? saveEdit : submitNewUser}
+                      disabled={formType === "edit" ? updateMutation.isLoading : createMutation.isLoading}
+                      style={{ 
+                        backgroundColor: DARK_GREEN, 
+                        color: "#fff", 
+                        borderRadius: 12, 
+                        border: "none",
+                        padding: "12px 24px",
+                        fontSize: "16px",
+                        minWidth: "140px"
+                      }}
+                    >
+                      {formType === "edit" 
+                        ? (updateMutation.isLoading ? "Saving..." : "Save Changes")
+                        : (createMutation.isLoading ? "Adding..." : "Add Customer")
+                      }
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-          ))
-        ) : (
-          <div className="card shadow-sm border-0" style={{ borderRadius: "10px" }}>
-            <div className="card-body text-center py-5">
-              <div style={{ fontSize: "2.5rem" }}>🔍</div>
-              <div className="mt-2 text-muted">No users found</div>
+          </div>
+        )}
+
+        {/* Delete Confirmation */}
+        {showDeleteConfirm && (
+          <div className="card border-0 shadow-sm mb-4" style={{ borderRadius: 16, background: CARD_BG, border: `2px solid #b33a3a` }}>
+            <div className="card-header d-flex justify-content-between align-items-center py-3" style={{ backgroundColor: "#b33a3a", color: "#fff", borderTopLeftRadius: 16, borderTopRightRadius: 16 }}>
+              <h5 className="mb-0 fw-bold">Delete User</h5>
+              <button onClick={() => setShowDeleteConfirm(false)} className="btn btn-sm p-1" style={{ color: "#fff", borderRadius: 8 }}>
+                <FaTimes size={18} />
+              </button>
+            </div>
+            <div className="card-body p-3 p-md-4">
+              <p className="mb-3" style={{ fontSize: "16px" }}>Are you sure you want to delete this user? This action cannot be undone.</p>
+              <div className="d-flex flex-column flex-sm-row justify-content-end gap-2">
+                <button 
+                  className="btn btn-secondary order-2 order-sm-1" 
+                  onClick={() => setShowDeleteConfirm(false)} 
+                  style={{ 
+                    borderRadius: 12,
+                    padding: "12px 24px",
+                    border: "none",
+                    fontSize: "16px"
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="btn btn-danger order-1 order-sm-2"
+                  onClick={confirmDelete}
+                  disabled={deleteMutation.isLoading}
+                  style={{ 
+                    borderRadius: 12,
+                    padding: "12px 24px",
+                    fontSize: "16px",
+                    minWidth: "120px"
+                  }}
+                >
+                  {deleteMutation.isLoading ? "Deleting..." : "Delete"}
+                </button>
+              </div>
             </div>
           </div>
         )}
-      </div>
 
-      {/* Pagination */}
-      {filteredUsers.length > usersPerPage && (
-        <div className="d-flex justify-content-center align-items-center gap-1 gap-md-2 mt-3 mt-md-4 flex-wrap">
-          <button
-            onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-            disabled={currentPage === 1}
-            className="btn btn-outline-success px-2 px-md-3"
-            style={{
-              borderRadius: "8px",
-              borderColor: "#071835",
-              color: "#071835",
-              fontSize: "0.9rem"
-            }}
-          >
-            &laquo;
-          </button>
+        {/* Stats - Improved mobile layout */}
+        <div className="row g-2 g-md-3 mb-4">
+          {[
+            { 
+              title: "Total Users", 
+              value: users.length, 
+              icon: <FaUsers size={18} style={{ color: DARK_GREEN }} />,
+              bg: "#E8F4EA"
+            },
+            { 
+              title: "Customers", 
+              value: users.filter((u) => u.role === "user").length, 
+              icon: <FaShoppingCart size={18} style={{ color: DARK_GREEN }} />,
+              bg: "#E8F4EA"
+            },
+            { 
+              title: "Administrators", 
+              value: users.filter((u) => u.role === "admin").length, 
+              icon: <FaStar size={18} style={{ color: "#8a6d00" }} />,
+              bg: "#FFF9E6"
+            },
+            { 
+              title: "Search Results", 
+              value: filtered.length, 
+              icon: <FaSearch size={18} style={{ color: "#368c5aff" }} />,
+              bg: "#E3F2FD"
+            }
+          ].map((stat, index) => (
+            <div key={index} className="col-6 col-md-3">
+              <div className="card border-0 shadow-sm h-100" style={{ borderRadius: 12, background: CARD_BG }}>
+                <div className="card-body d-flex align-items-center gap-3 p-3">
+                  <div style={{ 
+                    width: 50, 
+                    height: 50, 
+                    borderRadius: 12, 
+                    background: stat.bg, 
+                    display: "flex", 
+                    alignItems: "center", 
+                    justifyContent: "center",
+                    flexShrink: 0
+                  }}>
+                    {stat.icon}
+                  </div>
+                  <div className="flex-grow-1">
+                    <h5 className="mb-0 fw-bold" style={{ fontSize: "1.25rem" }}>{stat.value}</h5>
+                    <div className="text-muted small" style={{ fontSize: "0.8rem" }}>{stat.title}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
 
-          {Array.from({ length: totalPages }, (_, i) => (
+        {/* Rest of the table and mobile cards remain the same */}
+        {/* Desktop Table */}
+        <div className="d-none d-md-block card border-0 shadow-sm" style={{ borderRadius: 12, background: CARD_BG }}>
+          <div className="table-responsive">
+            <table className="table align-middle mb-0">
+              <thead style={{ backgroundColor: "#FAFAFA", borderBottom: "2px solid #E0E0E0" }}>
+                <tr>
+                  <th className="py-3 px-4 text-muted fw-semibold" style={{ fontSize: "0.9rem" }}>ID</th>
+                  <th className="py-3 px-4 text-muted fw-semibold" style={{ fontSize: "0.9rem" }}>Customer</th>
+                  <th className="py-3 px-4 text-muted fw-semibold" style={{ fontSize: "0.9rem" }}>Email</th>
+                  <th className="py-3 px-4 text-muted fw-semibold" style={{ fontSize: "0.9rem" }}>Role</th>
+                  <th className="py-3 px-4 text-muted fw-semibold" style={{ fontSize: "0.9rem" }}>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {isLoading ? (
+                  <tr>
+                    <td colSpan={5} className="text-center py-5">
+                      <div className="spinner-border" style={{ color: DARK_GREEN }}></div>
+                    </td>
+                  </tr>
+                ) : isError ? (
+                  <tr>
+                    <td colSpan={5} className="text-center py-5 text-danger">Failed to load users</td>
+                  </tr>
+                ) : filtered.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="text-center py-5 text-muted">No users found</td>
+                  </tr>
+                ) : (
+                  currentUsers.map((user) => (
+                    <tr key={user.id} style={{ borderBottom: "1px solid #F0F0F0", transition: "background 0.15s" }}>
+                      <td className="px-4 py-3"><span className="text-muted small">{displayId(user.id)}</span></td>
+                      <td className="px-4 py-3">
+                        <div className="d-flex align-items-center gap-3">
+                          <div style={{ width: 40, height: 40, borderRadius: 40, background: "#E8F4EA", display: "flex", alignItems: "center", justifyContent: "center", color: DARK_GREEN }}>
+                            <FaUser size={16} />
+                          </div>
+                          <div>
+                            <div className="fw-semibold">{user.name}</div>
+                            <div className="text-muted small">{user.role === "admin" ? "Administrator" : "Customer"}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-muted">{user.email}</td>
+                      <td className="px-4 py-3">
+                        <span style={{ padding: "0.35rem 0.7rem", borderRadius: 8, fontWeight: 500, backgroundColor: user.role === "admin" ? "#FFF9E6" : "#F2FFF2", color: user.role === "admin" ? "#8a6d00" : "#2f6f2f" }}>
+                          {user.role === "admin" ? "Administrator" : "Customer"}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="d-flex gap-2">
+                          <IconBtn
+                            onClick={() => onEditClick(user)}
+                            style={{ borderColor: MEDIUM_GREEN, color: MEDIUM_GREEN }}
+                          >
+                            <FaEdit size={14} /> <span style={{ marginLeft: 6 }}>Edit</span>
+                          </IconBtn>
+
+                          <IconBtn
+                            onClick={() => onDeleteClick(user.id)}
+                            style={{ borderColor: "#b33a3a", color: "#b33a3a" }}
+                          >
+                            <FaTrash size={14} /> <span style={{ marginLeft: 6 }}>Delete</span>
+                          </IconBtn>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Mobile cards view */}
+        <div className="d-md-none">
+          {isLoading ? (
+            <div className="text-center py-5">
+              <div className="spinner-border" style={{ color: DARK_GREEN }}></div>
+            </div>
+          ) : isError ? (
+            <div className="text-center py-5 text-danger">Failed to load users</div>
+          ) : filtered.length === 0 ? (
+            <div className="text-center py-5 text-muted">No users found</div>
+          ) : (
+            currentUsers.map((user) => (
+              <div key={user.id} className="card mb-3 shadow-sm" style={{ borderRadius: 12, background: CARD_BG }}>
+                <div className="card-body p-3">
+                  <div className="d-flex justify-content-between align-items-start mb-3">
+                    <div className="d-flex align-items-center gap-3">
+                      <div style={{ width: 45, height: 45, borderRadius: 45, background: "#E8F4EA", display: "flex", alignItems: "center", justifyContent: "center", color: DARK_GREEN }}>
+                        <FaUser size={16} />
+                      </div>
+                      <div>
+                        <h6 className="fw-bold mb-0" style={{ fontSize: "16px" }}>{user.name}</h6>
+                        <small className="text-muted">{displayId(user.id)}</small>
+                      </div>
+                    </div>
+                    <span style={{ padding: "0.4rem 0.7rem", borderRadius: 8, backgroundColor: user.role === "admin" ? "#FFF9E6" : "#F2FFF2", color: user.role === "admin" ? "#8a6d00" : "#2f6f2f", fontWeight: 500, fontSize: "0.8rem" }}>
+                      {user.role === "admin" ? "Admin" : "Customer"}
+                    </span>
+                  </div>
+                  
+                  <div className="mb-3">
+                    <small className="text-muted d-block mb-1">Email</small>
+                    <div style={{ fontSize: "15px" }}>{user.email}</div>
+                  </div>
+                  
+                  <div className="d-flex justify-content-end gap-2">
+                    <button 
+                      className="btn btn-sm d-flex align-items-center gap-2"
+                      onClick={() => onEditClick(user)}
+                      style={{ 
+                        borderRadius: 8, 
+                        border: `1px solid ${MEDIUM_GREEN}`, 
+                        color: MEDIUM_GREEN,
+                        padding: "8px 12px",
+                        fontSize: "14px"
+                      }}
+                    >
+                      <FaEdit size={12} />
+                      <span>Edit</span>
+                    </button>
+                    <button 
+                      className="btn btn-sm d-flex align-items-center gap-2"
+                      onClick={() => onDeleteClick(user.id)}
+                      style={{ 
+                        borderRadius: 8, 
+                        border: `1px solid #b33a3a`, 
+                        color: "#b33a3a",
+                        padding: "8px 12px",
+                        fontSize: "14px"
+                      }}
+                    >
+                      <FaTrash size={12} />
+                      <span>Delete</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Pagination remains the same */}
+        {totalPages > 1 && (
+          <div className="d-flex justify-content-center align-items-center gap-2 mt-4 flex-wrap">
             <button
-              key={i}
-              onClick={() => setCurrentPage(i + 1)}
-              className={`btn ${
-                currentPage === i + 1 ? "btn-success" : "btn-outline-success"
-              }`}
+              className="btn"
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
               style={{
-                borderRadius: "50%",
-                width: "32px",
-                height: "32px",
-                padding: "0",
-                fontSize: "0.85rem",
-                borderColor: "#071835",
-                backgroundColor:
-                  currentPage === i + 1 ? "#071835" : "transparent",
-                color: currentPage === i + 1 ? "#fff" : "#071835",
+                borderRadius: 20,
+                width: 40,
+                height: 40,
+                padding: 0,
+                border: `1px solid ${DARK_GREEN}`,
+                background: currentPage === 1 ? "#fff" : BG,
+                color: DARK_GREEN,
               }}
             >
-              {i + 1}
+              ‹
             </button>
-          ))}
 
-          <button
-            onClick={() =>
-              setCurrentPage((p) => Math.min(p + 1, totalPages))
-            }
-            disabled={currentPage === totalPages}
-            className="btn btn-outline-success px-2 px-md-3"
-            style={{
-              borderRadius: "8px",
-              borderColor: "#071835",
-              color: "#071835",
-              fontSize: "0.9rem"
-            }}
-          >
-            &raquo;
-          </button>
-        </div>
-      )}
+            {Array.from({ length: totalPages }).map((_, i) => {
+              const page = i + 1;
+              const isActive = page === currentPage;
+              return (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  className="btn"
+                  style={{
+                    borderRadius: "50%",
+                    width: 38,
+                    height: 38,
+                    padding: 0,
+                    border: `1px solid ${DARK_GREEN}`,
+                    background: isActive ? DARK_GREEN : "#fff",
+                    color: isActive ? "#fff" : DARK_GREEN,
+                    boxShadow: isActive ? "0 2px 6px rgba(0,0,0,0.08)" : "none",
+                  }}
+                >
+                  {page}
+                </button>
+              );
+            })}
+
+            <button
+              className="btn"
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              style={{
+                borderRadius: 20,
+                width: 40,
+                height: 40,
+                padding: 0,
+                border: `1px solid ${DARK_GREEN}`,
+                background: currentPage === totalPages ? "#fff" : BG,
+                color: DARK_GREEN,
+              }}
+            >
+              ›
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

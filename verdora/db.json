@@ -193,7 +193,6 @@
       "password": "pa1478963",
       "phone": "01017468802",
       "role": "user"
-
     },
     {
       "id": "25ab",
@@ -233,38 +232,6 @@
       "email": "romisaa12@gmail.com",
       "password": "romisaa12",
       "phone": "01289367488",
-      "role": "user"
-    },
-    {
-      "id": "86b3",
-      "name": "ahmed",
-      "email": "ahmed@gmail.com",
-      "password": "ahmed12",
-      "phone": "01183763722",
-      "role": "user"
-    },
-    {
-      "id": "7be0",
-      "name": "somia",
-      "email": "somia12@gmail.com",
-      "password": "somia12",
-      "phone": "01287465893",
-      "role": "user"
-    },
-    {
-      "id": "91ae",
-      "name": "lina",
-      "email": "lina@gmail.com",
-      "password": "lina12",
-      "phone": "01198364763",
-      "role": "user"
-    },
-    {
-      "id": "bf99",
-      "name": "samar",
-      "email": "samar@gmail.com",
-      "password": "samar12",
-      "phone": "01134567897",
       "role": "user"
     }
   ],
@@ -946,7 +913,7 @@
       "category": "Outdoor",
       "name": "Marigold",
       "price": "50 EGP",
-      "stock": 53,
+      "stock": 51,
       "image": "https://i.postimg.cc/1305rjpy/id22.png",
       "bestseller": true,
       "oldprice": "60 EGP",
@@ -2241,7 +2208,8 @@
       },
       "paymentMethod": "cash-on-delivery",
       "total": 120,
-      "createdAt": "2025-10-19T14:54:55.000Z"
+      "createdAt": "2025-10-19T14:54:55.000Z",
+      "status": "confirmed"
     },
     {
       "id": "ORD-1760889152833",
@@ -2377,7 +2345,8 @@
       },
       "paymentMethod": "cash-on-delivery",
       "total": 95,
-      "createdAt": "2025-10-19T16:03:59.426Z"
+      "createdAt": "2025-10-19T16:03:59.426Z",
+      "status": "pending"
     },
     {
       "id": "ORD-1760890102448",
@@ -2968,6 +2937,59 @@
       "paymentMethod": "cash-on-delivery",
       "total": 280,
       "createdAt": "2025-10-19T18:13:12.824Z"
+    },
+    {
+      "id": "ORD-1760961450983",
+      "items": [
+        {
+          "id": 22,
+          "category": "Outdoor",
+          "name": "Marigold",
+          "price": "50 EGP",
+          "stock": 50,
+          "image": "https://i.postimg.cc/1305rjpy/id22.png",
+          "bestseller": true,
+          "oldprice": "60 EGP",
+          "rate": "⭐⭐⭐⭐☆",
+          "description": "Bright flowering plant, perfect choice for colorful garden beds.",
+          "review": "Easy to grow and maintain.",
+          "discount": "10%",
+          "isNew": false,
+          "scientificName": "Tagetes spp.",
+          "nativeRegion": "Americas",
+          "lifeCycle": "Annual flowering plant; fast growth; produces vibrant blooms.",
+          "genus": "Tagetes",
+          "type": "Flowering annual",
+          "climate": "Sunny, warm",
+          "soilType": "Well-draining soil",
+          "wateringNeeds": "Moderate; avoid waterlogging",
+          "sunlight": "Full sun",
+          "humidity": "Low to moderate",
+          "growthRate": "Fast",
+          "propagation": "Seeds",
+          "toxicity": "Non-toxic to pets",
+          "careTips": "Deadhead spent flowers, provide full sun, keep soil moderately moist.",
+          "floweringSeason": "Spring to Autumn",
+          "height": "0.3 - 0.6 m",
+          "containerType": "Garden bed or pot",
+          "numericPrice": 50,
+          "quantity": 2
+        }
+      ],
+      "shippingInfo": {
+        "firstName": "toka",
+        "lastName": "elqersh",
+        "email": "pata@gmail.com",
+        "phone": "01016796606",
+        "address": "el slam st",
+        "city": "Shibin El Kom",
+        "zipCode": "12312"
+      },
+      "paymentMethod": "cash-on-delivery",
+      "total": 100,
+      "createdAt": "2025-10-20T11:57:30.982Z",
+      "orderDate": "2025-10-20T11:57:30.982Z",
+      "status": "pending"
     }
   ]
 }

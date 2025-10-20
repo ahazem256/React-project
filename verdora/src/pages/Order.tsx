@@ -1,20 +1,14 @@
 import React, { useEffect, useState } from "react";
-// import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-// import { removeOrder } from "../redux/slices/ordersSlice";
-import "../styles/order.css"
+import "../styles/order.css";
 
 const OrdersPage: React.FC = () => {
   const navigate = useNavigate();
-<<<<<<< HEAD
-  const dispatch = useDispatch();
-  const allOrders = useSelector((state: RootState) => state.orders.orders);
-=======
   const currentUserEmail = (localStorage.getItem("userEmail") || "").toLowerCase().trim();
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
-  // Fetch orders for this user from the server
+  // Fetch user orders
   useEffect(() => {
     const fetchUserOrders = async () => {
       try {
@@ -35,14 +29,6 @@ const OrdersPage: React.FC = () => {
     fetchUserOrders();
   }, [currentUserEmail]);
 
-  const userOrders = orders;
->>>>>>> 786ea7c202ebb2266a063eadf2ba0543f51bac8f
-
-  const currentUserEmail = localStorage.getItem("userEmail");
-  const userOrders = allOrders.filter(
-    order => order.shippingInfo.email.toLowerCase().trim() === currentUserEmail
-  );
-
   const handleDeleteOrder = async (orderId: string) => {
     try {
       const orderRes = await fetch(`http://localhost:5005/orders/${orderId}`);
@@ -50,52 +36,16 @@ const OrdersPage: React.FC = () => {
 
       const orderData = await orderRes.json();
 
-<<<<<<< HEAD
       const deleteRes = await fetch(`http://localhost:5005/orders/${orderData.id}`, {
         method: "DELETE",
-=======
-const handleDeleteOrder = async (orderId: string) => {
-  try {
-    const orderRes = await fetch(`http://localhost:5005/orders/${orderId}`);
-    
-    if (!orderRes.ok) {
-      console.error("Order not found on server");
-      return;
-    }
-
-    const orderData = await orderRes.json(); 
-
- 
-    const deleteRes = await fetch(`http://localhost:5005/orders/${orderData.id}`, {
-      method: "DELETE",
-    });
-
-    if (!deleteRes.ok) {
-      console.error("Failed to delete order on server");
-      return;
-    }
-
-    // Optimistically update client state
-    setOrders(prev => prev.filter(o => o.id !== orderId));
-
-
-    for (const item of (orderData.items as Array<{id: number|string; quantity: number}>)) {
-      const res = await fetch(`http://localhost:5005/products/${item.id}`);
-      if (!res.ok) continue;
-
-      const product = await res.json();
-      const updatedStock = (product.stock ?? 0) + item.quantity;
-
-      await fetch(`http://localhost:5005/products/${item.id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ stock: updatedStock }),
->>>>>>> 786ea7c202ebb2266a063eadf2ba0543f51bac8f
       });
+
       if (!deleteRes.ok) return console.error("Failed to delete order on server");
 
-      dispatch(removeOrder(orderId));
+      // Update local state
+      setOrders(prev => prev.filter(o => o.id !== orderId));
 
+      // Update product stocks
       for (const item of orderData.items) {
         const res = await fetch(`http://localhost:5005/products/${item.id}`);
         if (!res.ok) continue;
@@ -116,7 +66,7 @@ const handleDeleteOrder = async (orderId: string) => {
     }
   };
 
-  const sortedOrders = [...userOrders].sort(
+  const sortedOrders = [...orders].sort(
     (a, b) => new Date(b.orderDate || b.createdAt || 0).getTime() - new Date(a.orderDate || a.createdAt || 0).getTime()
   );
 
@@ -128,7 +78,7 @@ const handleDeleteOrder = async (orderId: string) => {
     );
   }
 
-  if (userOrders.length === 0) {
+  if (orders.length === 0) {
     return (
       <div className="orders-empty">
         <h2>No orders yet</h2>
@@ -143,7 +93,7 @@ const handleDeleteOrder = async (orderId: string) => {
   return (
     <div className="orders-container">
       <h1>Order History</h1>
-      <p>You have {userOrders.length} order{userOrders.length !== 1 ? "s" : ""}</p>
+      <p>You have {orders.length} order{orders.length !== 1 ? "s" : ""}</p>
 
       {sortedOrders.map((order) => (
         <div key={order.id} className="order-card">
@@ -153,13 +103,9 @@ const handleDeleteOrder = async (orderId: string) => {
               <p>{new Date(order.orderDate || order.createdAt).toLocaleString()}</p>
               <p>Total: ${Number(order.total ?? 0).toFixed(2)}</p>
             </div>
-<<<<<<< HEAD
-            <span className={`status ${order.status ?? 'pending'}`}>
-              {(order.status ?? 'pending').toUpperCase()}
+            <span className={`status ${order.status || 'pending'}`}>
+              {(order.status || 'pending').toUpperCase()}
             </span>
-=======
-            <span className={`status ${(order.status || 'pending')}`}>{(order.status || 'pending').toUpperCase()}</span>
->>>>>>> 786ea7c202ebb2266a063eadf2ba0543f51bac8f
           </div>
 
           <div className="order-details">
@@ -177,21 +123,9 @@ const handleDeleteOrder = async (orderId: string) => {
             <div>
               <h4>Items ({order.items.length})</h4>
               <ul>
-<<<<<<< HEAD
-                {order.items.map((item) => (
-                  <li key={item.id}>
-                    {item.image && <img src={item.image} alt={item.name} className="order-item-image" />}
-=======
-                {order.items.map((item: {id: number|string; image?: string; name?: string; quantity: number; price?: number|string}) => (
+                {order.items.map((item: any) => (
                   <li key={String(item.id)}>
-                    {item.image && (
-                      <img 
-                        src={item.image} 
-                        alt={item.name}
-                        className="order-item-image"
-                      />
-                    )}
->>>>>>> 786ea7c202ebb2266a063eadf2ba0543f51bac8f
+                    {item.image && <img src={item.image} alt={item.name} className="order-item-image" />}
                     <div className="order-item-details">
                       <span className="order-item-name">{item.name}</span>
                       <span className="order-item-quantity">Quantity: {item.quantity}</span>
@@ -221,11 +155,11 @@ const handleDeleteOrder = async (orderId: string) => {
         <h3>Order Summary</h3>
         <p>
           <span>Total Orders:</span>
-          <span>{userOrders.length}</span>
+          <span>{orders.length}</span>
         </p>
         <p>
           <span>Total Spent:</span>
-          <span>${userOrders.reduce((sum, o) => sum + o.total, 0).toFixed(2)}</span>
+          <span>${orders.reduce((sum, o) => sum + o.total, 0).toFixed(2)}</span>
         </p>
         <button className="btn btn-success" onClick={() => navigate("/")}>
           Continue Shopping
