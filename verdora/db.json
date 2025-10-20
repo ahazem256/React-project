@@ -193,6 +193,79 @@
       "password": "pa1478963",
       "phone": "01017468802",
       "role": "user"
+
+    },
+    {
+      "id": "25ab",
+      "name": "romisaa",
+      "email": "romisaa@gmail.com",
+      "password": "romisaa123",
+      "phone": "01276845377",
+      "role": "user"
+    },
+    {
+      "id": "1545",
+      "name": "emad",
+      "email": "emad@gmail.com",
+      "password": "emad12",
+      "phone": "01238579475",
+      "role": "user"
+    },
+    {
+      "id": "1423",
+      "name": "eman",
+      "email": "eman@gmail.com",
+      "password": "eman12",
+      "phone": "01176835627",
+      "role": "user"
+    },
+    {
+      "id": "00fb",
+      "name": "somia",
+      "email": "somia@gmail.com",
+      "password": "somia12",
+      "phone": "01189367378",
+      "role": "user"
+    },
+    {
+      "id": "54e3",
+      "name": "romisaaa",
+      "email": "romisaa12@gmail.com",
+      "password": "romisaa12",
+      "phone": "01289367488",
+      "role": "user"
+    },
+    {
+      "id": "86b3",
+      "name": "ahmed",
+      "email": "ahmed@gmail.com",
+      "password": "ahmed12",
+      "phone": "01183763722",
+      "role": "user"
+    },
+    {
+      "id": "7be0",
+      "name": "somia",
+      "email": "somia12@gmail.com",
+      "password": "somia12",
+      "phone": "01287465893",
+      "role": "user"
+    },
+    {
+      "id": "91ae",
+      "name": "lina",
+      "email": "lina@gmail.com",
+      "password": "lina12",
+      "phone": "01198364763",
+      "role": "user"
+    },
+    {
+      "id": "bf99",
+      "name": "samar",
+      "email": "samar@gmail.com",
+      "password": "samar12",
+      "phone": "01134567897",
+      "role": "user"
     }
   ],
   "products": [
@@ -201,7 +274,7 @@
       "category": "Indoor",
       "name": "Fiddle Leaf Fig",
       "price": "120 EGP",
-      "stock": 24,
+      "stock": 23,
       "image": "https://i.postimg.cc/mhfBQYkk/id1.png",
       "bestseller": true,
       "oldprice": "150 EGP",
@@ -233,7 +306,7 @@
       "category": "Indoor",
       "name": "Snake Plant",
       "price": "80 EGP",
-      "stock": 27,
+      "stock": 28,
       "image": "https://i.postimg.cc/YjKM160q/id2.png",
       "bestseller": false,
       "oldprice": null,
@@ -553,7 +626,7 @@
       "category": "Indoor",
       "name": "Philodendron",
       "price": "100 EGP",
-      "stock": 22,
+      "stock": 10,
       "image": "https://i.postimg.cc/HxNpLDC9/id12.png",
       "bestseller": false,
       "oldprice": null,
@@ -1384,6 +1457,7 @@
       "id": "38",
       "category": "Bonsai & Miniature Plants",
       "name": "Miniature Cactus",
+      "status": "out_of_stock",
       "price": "50 EGP",
       "stock": -2,
       "image": "https://i.postimg.cc/MT3Gjf1m/id38.png",
@@ -1544,6 +1618,7 @@
       "id": "43",
       "category": "Bonsai & Miniature Plants",
       "name": "Miniature Succulent Mix",
+      "status": "out_of_stock",
       "price": "70 EGP",
       "stock": 0,
       "image": "https://i.postimg.cc/fLRLLftP/id43.png",
@@ -2810,6 +2885,89 @@
       "paymentMethod": "cash-on-delivery",
       "total": 120,
       "createdAt": "2025-10-19T20:23:25.905Z"
+    },
+    {
+      "id": "ORD-1760897592824",
+      "items": [
+        {
+          "id": 1,
+          "category": "Indoor",
+          "name": "Fiddle Leaf Fig",
+          "price": "120 EGP",
+          "stock": 25,
+          "image": "https://i.postimg.cc/mhfBQYkk/id1.png",
+          "bestseller": true,
+          "oldprice": "150 EGP",
+          "rate": "⭐⭐⭐⭐☆",
+          "description": "A popular indoor plant known for its large, glossy green leaves.",
+          "review": "Very easy to care for and looks great in living rooms.",
+          "discount": "20%",
+          "isNew": false,
+          "scientificName": "Ficus lyrata",
+          "nativeRegion": "Western Africa",
+          "lifeCycle": "Perennial indoor tree; grows slowly and may reach 3 meters indoors; prefers stable temperature.",
+          "genus": "Ficus",
+          "type": "Evergreen",
+          "climate": "Tropical, warm",
+          "soilType": "Well-draining potting soil",
+          "wateringNeeds": "Moderate; allow soil to dry between waterings",
+          "sunlight": "Bright indirect light",
+          "humidity": "Moderate to high",
+          "growthRate": "Slow to medium",
+          "propagation": "Stem cuttings",
+          "toxicity": "Toxic to pets if ingested",
+          "careTips": "Rotate regularly, wipe leaves to remove dust, avoid overwatering.",
+          "floweringSeason": "Rarely flowers indoors",
+          "height": "1.5 - 3 m indoors",
+          "containerType": "Large indoor pot",
+          "quantity": 1
+        },
+        {
+          "id": 2,
+          "category": "Indoor",
+          "name": "Snake Plant",
+          "price": "80 EGP",
+          "stock": 30,
+          "image": "https://i.postimg.cc/YjKM160q/id2.png",
+          "bestseller": false,
+          "oldprice": null,
+          "rate": "⭐⭐⭐⭐☆",
+          "description": "Low-maintenance indoor plant perfect for bedrooms.",
+          "review": "Survived my forgetful watering schedule!",
+          "discount": null,
+          "isNew": false,
+          "scientificName": "Sansevieria trifasciata",
+          "nativeRegion": "West Africa",
+          "lifeCycle": "Perennial succulent; slow-growing; very hardy indoor plant.",
+          "genus": "Sansevieria",
+          "type": "Evergreen",
+          "climate": "Tropical to subtropical",
+          "soilType": "Well-draining sandy soil",
+          "wateringNeeds": "Low; water sparingly",
+          "sunlight": "Low to bright indirect light",
+          "humidity": "Low to moderate",
+          "growthRate": "Slow",
+          "propagation": "Leaf cuttings or division",
+          "toxicity": "Mildly toxic to pets",
+          "careTips": "Avoid overwatering; tolerate neglect.",
+          "floweringSeason": "Rare indoors",
+          "height": "0.6 - 1 m",
+          "containerType": "Small to medium indoor pot",
+          "quantity": 2
+        }
+      ],
+      "shippingInfo": {
+        "firstName": "romisaa",
+        "lastName": "reda",
+        "email": "romisaa@gmail.com",
+        "phone": "01276845377",
+        "address": "cairo/egypt",
+        "city": "cairo",
+        "zipCode": "11351"
+      },
+      "paymentMethod": "cash-on-delivery",
+      "total": 280,
+      "createdAt": "2025-10-19T18:13:12.824Z"
     }
   ]
 }

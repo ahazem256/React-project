@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import type { RootState, AppDispatch } from "../redux/store";
@@ -11,10 +11,12 @@ const Checkout: React.FC = () => {
   const navigate = useNavigate();
   const cartItems = useSelector((state: RootState) => state.cart.items);
 
+  // Read current signed-in user's email from localStorage
+  const userEmail = useMemo(() => localStorage.getItem("userEmail") || "", []);
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
-    email: "",
     phone: "",
     address: "",
     city: "",
@@ -62,23 +64,27 @@ const Checkout: React.FC = () => {
     try {
       await new Promise(resolve => setTimeout(resolve, 2000));
       
-      // Store order data before clearing cart
+      // Store order data before clearing cart (include status for server persistence)
+      const nowIso = new Date().toISOString();
       const orderData = {
-    id: `ORD-${Date.now()}`,
-   items: cartItems,
-  shippingInfo: {
-    firstName: formData.firstName,
-    lastName: formData.lastName,
-    email: formData.email,
-    phone: formData.phone,
-    address: formData.address,
-    city: formData.city,
-    zipCode: formData.zipCode,
-  },
-  paymentMethod: formData.paymentMethod,
-  total: totalPrice,
-  createdAt: new Date().toISOString(),
-};
+        id: `ORD-${Date.now()}`,
+        items: cartItems,
+        shippingInfo: {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: userEmail,
+          phone: formData.phone,
+          address: formData.address,
+          city: formData.city,
+          zipCode: formData.zipCode,
+        },
+        paymentMethod: formData.paymentMethod,
+        total: totalPrice,
+        // keep both fields so all pages can read date consistently
+        createdAt: nowIso,
+        orderDate: nowIso,
+        status: formData.paymentMethod === 'credit-card' ? 'confirmed' : 'pending',
+      } as const;
 
 const response = await fetch("http://localhost:5005/orders", {
     method: "POST",
@@ -193,24 +199,21 @@ for (const item of cartItems) {
               </div>
             </div>
 
+            {/* Email is now auto-assigned from the logged-in account and not editable */}
             <div style={{ marginBottom: "16px" }}>
               <label style={{ display: "block", marginBottom: "4px", fontWeight: "500" }}>
-                Email *
+                Email
               </label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                required
-                style={{
-                  width: "100%",
-                  padding: "12px",
-                  border: "1px solid #ddd",
-                  borderRadius: "4px",
-                  fontSize: "16px",
-                }}
-              />
+              <div style={{
+                width: "100%",
+                padding: "12px",
+                border: "1px solid #ddd",
+                borderRadius: "4px",
+                fontSize: "16px",
+                backgroundColor: "#f8f9fa"
+              }}>
+                {userEmail || "Not signed in"}
+              </div>
             </div>
 
             <div style={{ marginBottom: "16px" }}>
@@ -351,12 +354,12 @@ for (const item of cartItems) {
                       Expiry Date *
                     </label>
                     <input
-                      type="text"
+                       type="month"
                       name="expiryDate"
                       value={formData.expiryDate}
                       onChange={handleInputChange}
                       required={formData.paymentMethod === "credit-card"}
-                      placeholder="MM/YY"
+                      
                       style={{
                         width: "100%",
                         padding: "12px",

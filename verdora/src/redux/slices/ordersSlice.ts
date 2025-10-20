@@ -22,7 +22,7 @@ interface Order {
   shippingInfo: ShippingInfo;
   paymentMethod: string;
   total: number;
-  status: 'pending' | 'confirmed' | 'shipped' | 'delivered';
+  status: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'cancelled';
 }
 
 export interface OrdersState {
@@ -30,19 +30,9 @@ export interface OrdersState {
   currentOrder: Order | null;
 }
 
-// Hydrate orders from localStorage (simple persistence)
-const savedOrdersState: Partial<OrdersState> = (() => {
-  try {
-    const raw = localStorage.getItem("orders_state");
-    return raw ? JSON.parse(raw) : {};
-  } catch {
-    return {};
-  }
-})();
-
 const initialState: OrdersState = {
-  orders: Array.isArray(savedOrdersState.orders) ? savedOrdersState.orders : [],
-  currentOrder: (savedOrdersState as any).currentOrder || null,
+  orders: [],
+  currentOrder: null,
 };
 
 const ordersSlice = createSlice({
@@ -52,9 +42,9 @@ const ordersSlice = createSlice({
     addOrder: (state, action: { payload: Omit<Order, 'id' | 'orderDate' | 'status'> }) => {
       const newOrder: Order = {
         ...action.payload,
-        //  id: `ORD-${Date.now()}`,
+         id: `ORD-${Date.now()}`,
          orderDate: new Date().toISOString(),
-        status: 'pending',
+        status: action.payload.paymentMethod === 'credit-card' ? 'confirmed' : 'pending',
       };
       state.orders.push(newOrder);
       state.currentOrder = newOrder;
@@ -63,12 +53,13 @@ const ordersSlice = createSlice({
       const order = state.orders.find(order => order.id === action.payload);
       state.currentOrder = order || null;
     },
-    updateOrderStatus: (state, action: { payload: { orderId: string; status: Order['status'] } }) => {
-      const order = state.orders.find(order => order.id === action.payload.orderId);
+    updateOrderStatus: (state, action: { payload: { orderId: string | number; status: Order['status'] } }) => {
+      const orderIdStr = String(action.payload.orderId);
+      const order = state.orders.find(order => String(order.id) === orderIdStr);
       if (order) {
         order.status = action.payload.status;
       }
-      if (state.currentOrder?.id === action.payload.orderId) {
+      if (state.currentOrder && String(state.currentOrder.id) === orderIdStr) {
         state.currentOrder.status = action.payload.status;
       }
     },
@@ -85,27 +76,9 @@ const ordersSlice = createSlice({
     clearAllOrders: (state) => {
       state.orders = [];
       state.currentOrder = null;
-      localStorage.removeItem("orders_state");
     },
   },
 });
-
-// Middleware لحفظ الـ state في localStorage
-export const ordersMiddleware = (store: any) => (next: any) => (action: any) => {
-  const result = next(action);
-  
-  // احفظ الـ state بعد أي تغيير في الطلبات
-  if (action.type?.startsWith('orders/')) {
-    const ordersState = store.getState().orders;
-    try {
-      localStorage.setItem("orders_state", JSON.stringify(ordersState));
-    } catch (error) {
-      console.error("Failed to save orders to localStorage:", error);
-    }
-  }
-  
-  return result;
-};
 
 export const { addOrder, setCurrentOrder, updateOrderStatus, removeOrder, clearCurrentOrder, clearAllOrders } = ordersSlice.actions;
 export default ordersSlice.reducer;

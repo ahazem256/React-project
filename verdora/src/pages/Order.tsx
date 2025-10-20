@@ -1,14 +1,42 @@
-import React from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useEffect, useState } from "react";
+// import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import type { RootState } from "../redux/store";
-import { removeOrder } from "../redux/slices/ordersSlice";
+// import { removeOrder } from "../redux/slices/ordersSlice";
 import "../styles/order.css"
 
 const OrdersPage: React.FC = () => {
   const navigate = useNavigate();
+<<<<<<< HEAD
   const dispatch = useDispatch();
   const allOrders = useSelector((state: RootState) => state.orders.orders);
+=======
+  const currentUserEmail = (localStorage.getItem("userEmail") || "").toLowerCase().trim();
+  const [orders, setOrders] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  // Fetch orders for this user from the server
+  useEffect(() => {
+    const fetchUserOrders = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch("http://localhost:5005/orders");
+        if (!res.ok) throw new Error("Failed to fetch orders");
+        const data = await res.json();
+        const filtered = Array.isArray(data)
+          ? data.filter((o: any) => (o?.shippingInfo?.email || "").toLowerCase().trim() === currentUserEmail)
+          : [];
+        setOrders(filtered);
+      } catch (e) {
+        setOrders([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUserOrders();
+  }, [currentUserEmail]);
+
+  const userOrders = orders;
+>>>>>>> 786ea7c202ebb2266a063eadf2ba0543f51bac8f
 
   const currentUserEmail = localStorage.getItem("userEmail");
   const userOrders = allOrders.filter(
@@ -22,8 +50,47 @@ const OrdersPage: React.FC = () => {
 
       const orderData = await orderRes.json();
 
+<<<<<<< HEAD
       const deleteRes = await fetch(`http://localhost:5005/orders/${orderData.id}`, {
         method: "DELETE",
+=======
+const handleDeleteOrder = async (orderId: string) => {
+  try {
+    const orderRes = await fetch(`http://localhost:5005/orders/${orderId}`);
+    
+    if (!orderRes.ok) {
+      console.error("Order not found on server");
+      return;
+    }
+
+    const orderData = await orderRes.json(); 
+
+ 
+    const deleteRes = await fetch(`http://localhost:5005/orders/${orderData.id}`, {
+      method: "DELETE",
+    });
+
+    if (!deleteRes.ok) {
+      console.error("Failed to delete order on server");
+      return;
+    }
+
+    // Optimistically update client state
+    setOrders(prev => prev.filter(o => o.id !== orderId));
+
+
+    for (const item of (orderData.items as Array<{id: number|string; quantity: number}>)) {
+      const res = await fetch(`http://localhost:5005/products/${item.id}`);
+      if (!res.ok) continue;
+
+      const product = await res.json();
+      const updatedStock = (product.stock ?? 0) + item.quantity;
+
+      await fetch(`http://localhost:5005/products/${item.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ stock: updatedStock }),
+>>>>>>> 786ea7c202ebb2266a063eadf2ba0543f51bac8f
       });
       if (!deleteRes.ok) return console.error("Failed to delete order on server");
 
@@ -50,8 +117,16 @@ const OrdersPage: React.FC = () => {
   };
 
   const sortedOrders = [...userOrders].sort(
-    (a, b) => new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime()
+    (a, b) => new Date(b.orderDate || b.createdAt || 0).getTime() - new Date(a.orderDate || a.createdAt || 0).getTime()
   );
+
+  if (loading) {
+    return (
+      <div className="orders-empty">
+        <h2>Loading your orders...</h2>
+      </div>
+    );
+  }
 
   if (userOrders.length === 0) {
     return (
@@ -75,12 +150,16 @@ const OrdersPage: React.FC = () => {
           <div className="order-header">
             <div>
               <h3>Order #{order.id}</h3>
-              <p>{new Date(order.orderDate).toLocaleString()}</p>
-              <p>Total: ${order.total.toFixed(2)}</p>
+              <p>{new Date(order.orderDate || order.createdAt).toLocaleString()}</p>
+              <p>Total: ${Number(order.total ?? 0).toFixed(2)}</p>
             </div>
+<<<<<<< HEAD
             <span className={`status ${order.status ?? 'pending'}`}>
               {(order.status ?? 'pending').toUpperCase()}
             </span>
+=======
+            <span className={`status ${(order.status || 'pending')}`}>{(order.status || 'pending').toUpperCase()}</span>
+>>>>>>> 786ea7c202ebb2266a063eadf2ba0543f51bac8f
           </div>
 
           <div className="order-details">
@@ -98,9 +177,21 @@ const OrdersPage: React.FC = () => {
             <div>
               <h4>Items ({order.items.length})</h4>
               <ul>
+<<<<<<< HEAD
                 {order.items.map((item) => (
                   <li key={item.id}>
                     {item.image && <img src={item.image} alt={item.name} className="order-item-image" />}
+=======
+                {order.items.map((item: {id: number|string; image?: string; name?: string; quantity: number; price?: number|string}) => (
+                  <li key={String(item.id)}>
+                    {item.image && (
+                      <img 
+                        src={item.image} 
+                        alt={item.name}
+                        className="order-item-image"
+                      />
+                    )}
+>>>>>>> 786ea7c202ebb2266a063eadf2ba0543f51bac8f
                     <div className="order-item-details">
                       <span className="order-item-name">{item.name}</span>
                       <span className="order-item-quantity">Quantity: {item.quantity}</span>
