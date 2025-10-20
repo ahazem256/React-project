@@ -124,6 +124,11 @@
   color: white;
 }
 
+.status.confirmed {
+  background: #34c759;
+  color: white;
+}
+
 /* Order Details */
 .order-details {
   display: grid;

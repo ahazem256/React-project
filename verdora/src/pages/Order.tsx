@@ -1,18 +1,37 @@
-import React from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useEffect, useState } from "react";
+// import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import type { RootState } from "../redux/store";
-import { removeOrder } from "../redux/slices/ordersSlice";
+// import { removeOrder } from "../redux/slices/ordersSlice";
 import "../styles/order.css"
 
 const OrdersPage: React.FC = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const allOrders = useSelector((state: RootState) => state.orders.orders);
-  
-  // const userOrders = allOrders.filter(order => order.userId === currentUser); 
-const currentUserEmail = localStorage.getItem("userEmail");
-const userOrders = allOrders.filter(order => order.shippingInfo.email.toLowerCase().trim()  === currentUserEmail);
+  const currentUserEmail = (localStorage.getItem("userEmail") || "").toLowerCase().trim();
+  const [orders, setOrders] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  // Fetch orders for this user from the server
+  useEffect(() => {
+    const fetchUserOrders = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch("http://localhost:5005/orders");
+        if (!res.ok) throw new Error("Failed to fetch orders");
+        const data = await res.json();
+        const filtered = Array.isArray(data)
+          ? data.filter((o: any) => (o?.shippingInfo?.email || "").toLowerCase().trim() === currentUserEmail)
+          : [];
+        setOrders(filtered);
+      } catch (e) {
+        setOrders([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUserOrders();
+  }, [currentUserEmail]);
+
+  const userOrders = orders;
 
 
 
@@ -38,11 +57,11 @@ const handleDeleteOrder = async (orderId: string) => {
       return;
     }
 
-  
-    dispatch(removeOrder(orderId));
+    // Optimistically update client state
+    setOrders(prev => prev.filter(o => o.id !== orderId));
 
 
-    for (const item of orderData.items) {
+    for (const item of (orderData.items as Array<{id: number|string; quantity: number}>)) {
       const res = await fetch(`http://localhost:5005/products/${item.id}`);
       if (!res.ok) continue;
 
@@ -66,8 +85,16 @@ const handleDeleteOrder = async (orderId: string) => {
 
 
   const sortedOrders = [...userOrders].sort(
-    (a, b) => new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime()
+    (a, b) => new Date(b.orderDate || b.createdAt || 0).getTime() - new Date(a.orderDate || a.createdAt || 0).getTime()
   );
+
+  if (loading) {
+    return (
+      <div className="orders-empty">
+        <h2>Loading your orders...</h2>
+      </div>
+    );
+  }
 
   if (userOrders.length === 0) {
     return (
@@ -91,10 +118,10 @@ const handleDeleteOrder = async (orderId: string) => {
           <div className="order-header">
             <div>
               <h3>Order #{order.id}</h3>
-              <p>{new Date(order.orderDate).toLocaleString()}</p>
-              <p>Total: ${order.total.toFixed(2)}</p>
+              <p>{new Date(order.orderDate || order.createdAt).toLocaleString()}</p>
+              <p>Total: ${Number(order.total ?? 0).toFixed(2)}</p>
             </div>
-            <span className={`status ${order.status}`}>{order.status.toUpperCase()}</span>
+            <span className={`status ${(order.status || 'pending')}`}>{(order.status || 'pending').toUpperCase()}</span>
           </div>
 
           <div className="order-details">
@@ -112,8 +139,8 @@ const handleDeleteOrder = async (orderId: string) => {
             <div>
               <h4>Items ({order.items.length})</h4>
               <ul>
-                {order.items.map((item) => (
-                  <li key={item.id}>
+                {order.items.map((item: {id: number|string; image?: string; name?: string; quantity: number; price?: number|string}) => (
+                  <li key={String(item.id)}>
                     {item.image && (
                       <img 
                         src={item.image} 
