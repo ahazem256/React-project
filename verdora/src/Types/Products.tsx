@@ -3,7 +3,7 @@ export interface Product {
   category: string;
   name: string;
   price: string;
-  stock: number;
+  stock?: number;
   image: string;
   bestseller?: boolean;
   oldprice?: string;

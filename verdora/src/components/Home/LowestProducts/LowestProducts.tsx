@@ -49,11 +49,9 @@ const LowestPriceSlider: React.FC = () => {
     });
 
     const handleAddToCart = (product: Product) => {
-
          if (!product.stock || product.stock === 0) {
       toast.error(`${product.name} is out of stock!`);
-      return;
-    }
+      return;}
 
         dispatch(addToCart({ product, quantity: 1 }));
         toast.success(`${product.name} added to cart!`);

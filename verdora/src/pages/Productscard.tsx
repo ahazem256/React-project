@@ -14,12 +14,10 @@ export default function ProductsCard({ product, onClick }: ProductCardProps) {
   const dispatch = useDispatch();
 
   const handleAddToCart = () => {
-
-     if (!product.stock || product.stock === 0) {
+    if (!product.stock || product.stock === 0) {
       toast.error(`${product.name} is out of stock!`);
-      return;
-    }
-    
+      return;}
+      
     dispatch(addToCart({ product, quantity: 1 }));
     toast.success(`${product.name} added to cart!`);
   };
