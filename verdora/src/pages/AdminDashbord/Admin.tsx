@@ -12,7 +12,6 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
-  LogOut,
   Home,
 } from "lucide-react";
 

@@ -131,7 +131,7 @@ const AppContent: React.FC = () => {
               element={
                 isAuthenticated ? (
                   userRole === "admin" ? (
-                    <Navigate to="/admin" replace />
+                    <Navigate to="/admin/dashboard" replace />
                   ) : (
                     <Navigate to="/home" replace />
                   )
