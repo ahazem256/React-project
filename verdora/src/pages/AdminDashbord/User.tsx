@@ -237,9 +237,9 @@ const UsersTable: React.FC = () => {
         <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
           <div>
             <h3 className="fw-bold mb-1" style={{ color: DARK_GREEN }}>
-              Customer Management
+              Verdora Management
             </h3>
-            <p className="text-muted mb-0">Manage your shop customers and administrators</p>
+            <p className="text-muted mb-0">Manage customers and administrators</p>
           </div>
 
           <div className="d-flex flex-column flex-sm-row gap-2 align-items-stretch align-items-sm-center w-100 w-md-auto">
