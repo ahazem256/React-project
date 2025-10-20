@@ -12,7 +12,6 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
-  Settings,
   LogOut,
   Home,
 } from "lucide-react";
@@ -307,36 +306,8 @@ const Admin: React.FC = () => {
               )}
             </button>
 
-            {/* Logout */}
-            <button
-              className={`d-flex align-items-center w-100 btn text-white ${
-                (isCollapsed && !isMobile) ? "justify-content-center" : "justify-content-start"
-              }`}
-              style={{
-                textDecoration: "none",
-                transition: "all 0.3s ease",
-                padding: isMobile ? "16px 20px" : "12px 16px",
-                borderRadius: "12px",
-                border: "none",
-                gap: (isCollapsed && !isMobile) ? "0" : "16px",
-                fontSize: isMobile ? "16px" : "14px",
-                background: "rgba(255,255,255,0.05)"
-              }}
-            >
-              <LogOut size={22} />
-              {(isMobile || !isCollapsed) && (
-                <span style={{ 
-                  opacity: (isCollapsed && !isMobile) ? 0 : 1,
-                  transition: "opacity 0.2s ease",
-                  fontWeight: "500"
-                }}>
-                  Logout
-                </span>
-              )}
-            </button>
           </div>
         </aside>
-
         {/* Main Content */}
         <main
           className="flex-grow-1 bg-light"
