@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import type { AppDispatch } from "../../redux/store";
 import { updateOrderStatus } from "../../redux/slices/ordersSlice";
-import { Search, RefreshCw, MoreVertical, Check, X, Truck, Package, Clock } from "lucide-react";
+import { Search, RefreshCw, MoreVertical, Check, X, Truck, Package, Clock, Settings, Trash2 } from "lucide-react";
 
 interface Order {
   id: string;
@@ -29,6 +29,8 @@ const Orderadmin: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [statusChangeMessage, setStatusChangeMessage] = useState<string | null>(null);
+  const [showDropdown, setShowDropdown] = useState<string | null>(null);
+  const [dropdownPosition, setDropdownPosition] = useState<{ top: number; left: number } | null>(null);
 
   const fetchOrders = async () => {
     try {
@@ -52,10 +54,56 @@ const Orderadmin: React.FC = () => {
     fetchOrders();
   }, []);
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (showDropdown && !(event.target as Element).closest('.position-relative')) {
+        setShowDropdown(null);
+        setDropdownPosition(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showDropdown]);
+
   
   const handleSelectOrder = (order: Order) => {
     setSelectedOrder(order);
     setStatusChangeMessage(null);
+  }
+
+  const handleRemoveOrder = async (orderId: string | number) => {
+    try {
+      const response = await fetch(`http://localhost:5005/orders/${orderId}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        setOrders(prev => prev.filter(order => String(order.id) !== String(orderId)));
+        setShowDropdown(null);
+      } else {
+        console.error("Failed to delete order");
+      }
+    } catch (error) {
+      console.error("Error deleting order:", error);
+    }
+  }
+
+  const toggleDropdown = (orderId: string, event: React.MouseEvent<HTMLButtonElement>) => {
+    if (showDropdown === orderId) {
+      setShowDropdown(null);
+      setDropdownPosition(null);
+    } else {
+      const buttonRect = event.currentTarget.getBoundingClientRect();
+      setDropdownPosition({
+        top: buttonRect.bottom + window.scrollY,
+        left: buttonRect.right - 150 // 150px is the minWidth of dropdown
+      });
+      setShowDropdown(orderId);
+    }
   }
 
   const handleStatusChange = async (orderId: string | number, newStatus: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'cancelled') => {
@@ -164,7 +212,7 @@ const Orderadmin: React.FC = () => {
             <thead style={{ backgroundColor: 'var(--color-green-lightest)' }}>
               <tr>
                 <th>#</th>
-                <th>Customer ID</th>
+                <th>Customer E-mail</th>
                 <th>Customer Name</th>
                 <th>Status</th>
                 <th>Created At</th>
@@ -189,9 +237,75 @@ const Orderadmin: React.FC = () => {
                     <td>{new Date(order.orderDate).toLocaleString()}</td>
                     <td>${order.total.toFixed(2)}</td>
                     <td>
-                      <button className="btn btn-sm btn-light border" data-bs-toggle="modal" data-bs-target="#statusModal" onClick={() => handleSelectOrder(order)}>
-                        <MoreVertical size={16} />
-                      </button>
+                      <div className="position-relative">
+                        <button 
+                          className="btn btn-sm btn-light border" 
+                          onClick={(e) => toggleDropdown(order.id, e)}
+                          style={{ position: 'relative' }}
+                        >
+                          <MoreVertical size={16} />
+                        </button>
+                        
+                        {showDropdown === order.id && dropdownPosition && (
+                          <div 
+                            style={{ 
+                              position: 'fixed',
+                              top: dropdownPosition.top,
+                              left: dropdownPosition.left,
+                              zIndex: 9999,
+                              backgroundColor: 'white',
+                              border: '1px solid var(--color-green-sage)',
+                              borderRadius: '6px',
+                              boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                              minWidth: '150px'
+                            }}
+                          >
+                            <button
+                              className="btn w-100 text-start d-flex align-items-center gap-2"
+                              style={{ 
+                                padding: '0.75rem 1rem',
+                                border: 'none',
+                                backgroundColor: 'transparent',
+                                color: 'var(--color-green-darkest)',
+                                fontSize: '0.9rem'
+                              }}
+                              data-bs-toggle="modal"
+                              data-bs-target="#statusModal"
+                              onClick={() => {
+                                handleSelectOrder(order);
+                                setShowDropdown(null);
+                                setDropdownPosition(null);
+                              }}
+                              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--color-green-lightest)'}
+                              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                            >
+                              <Settings size={16} />
+                              Set Status
+                            </button>
+                            <hr style={{ margin: 0, borderColor: 'var(--color-green-sage)' }} />
+                            <button
+                              className="btn w-100 text-start d-flex align-items-center gap-2"
+                              style={{ 
+                                padding: '0.75rem 1rem',
+                                border: 'none',
+                                backgroundColor: 'transparent',
+                                color: '#e63946',
+                                fontSize: '0.9rem'
+                              }}
+                              onClick={() => {
+                                handleRemoveOrder(order.id);
+                                setShowDropdown(null);
+                                setDropdownPosition(null);
+                              }}
+                              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#fef2f2'}
+                              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                            >
+                              <Trash2 size={16} />
+                              Remove Order
+                            </button>
+                          </div>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))
