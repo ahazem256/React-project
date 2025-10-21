@@ -15,7 +15,7 @@ const HomePage: React.FC = () => {
       </Helmet>
 
       <MainSlider />
-      <PlantQuiz /> {/* لازم يكون هنا */}
+      <PlantQuiz />
       <CategorySlider />
       <LowestProducts />
       <ExploreProducts />

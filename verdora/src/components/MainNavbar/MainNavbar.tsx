@@ -13,7 +13,6 @@ import { RiArrowDropDownLine } from "react-icons/ri";
 import { GoHistory } from "react-icons/go";
 import "./MainNavbar.css";
 
-// Types
 interface Category {
   name: string;
   path: string;
@@ -26,10 +25,7 @@ interface MainNavbarProps {
 
 type ActiveLinkType = "home" | "products" | "categories";
 
-const MainNavbar: React.FC<MainNavbarProps> = ({
-  onLogout,
-  userName,
-}) => {
+const MainNavbar: React.FC<MainNavbarProps> = ({ onLogout, userName }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
@@ -39,7 +35,6 @@ const MainNavbar: React.FC<MainNavbarProps> = ({
   const [cartCount, setCartCount] = useState<number>(0);
   const [isCartAnimating, setIsCartAnimating] = useState<boolean>(false);
 
-  // Refs for click outside detection
   const categoriesDropdownRef = useRef<HTMLDivElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
 
@@ -50,14 +45,12 @@ const MainNavbar: React.FC<MainNavbarProps> = ({
     { name: "Bonsai & Miniature Plants", path: "/categories/bonsai_miniature" },
   ];
 
-
   const updateCartCount = (): void => {
-    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+    const cart = JSON.parse(localStorage.getItem("cart_items") || "[]");
     const previousCount = cartCount;
     const newCount = cart.length;
 
     setCartCount(newCount);
-
 
     if (newCount > previousCount) {
       setIsCartAnimating(true);
@@ -65,7 +58,6 @@ const MainNavbar: React.FC<MainNavbarProps> = ({
     }
   };
 
-  // Load initial values from localStorage
   useEffect(() => {
     const nameFromStorage = localStorage.getItem("userName");
     setStoredName(nameFromStorage || "");
@@ -73,18 +65,15 @@ const MainNavbar: React.FC<MainNavbarProps> = ({
   }, []);
 
   useEffect(() => {
-
     const interval = setInterval(() => {
       updateCartCount();
     }, 1000);
 
-
     const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === "cart") {
+      if (e.key === "cart_items") {
         updateCartCount();
       }
     };
-
 
     const handleCartUpdate = () => {
       updateCartCount();
@@ -100,10 +89,12 @@ const MainNavbar: React.FC<MainNavbarProps> = ({
     };
   }, [cartCount]);
 
-  // Click outside handler
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent): void => {
-      if (categoriesDropdownRef.current && !categoriesDropdownRef.current.contains(event.target as Node)) {
+      if (
+        categoriesDropdownRef.current &&
+        !categoriesDropdownRef.current.contains(event.target as Node)
+      ) {
         setIsDropdownOpen(false);
       }
       if (isMenuOpen && mobileMenuRef.current && !mobileMenuRef.current.contains(event.target as Node)) {
@@ -124,24 +115,20 @@ const MainNavbar: React.FC<MainNavbarProps> = ({
     setIsDropdownOpen(false);
   };
 
+  // ✅ Modified logout to keep cart_items
   const handleLogout = (): void => {
-
+    // remove only sensitive data
     localStorage.removeItem("token");
     localStorage.removeItem("userName");
     localStorage.removeItem("userEmail");
     localStorage.removeItem("loggedInUser");
-    localStorage.removeItem("cart");
     localStorage.removeItem("orders_state");
-    localStorage.removeItem("cart_items");
 
-
+    // ✅ Do NOT remove cart_items to preserve cart after logout
+    // localStorage.removeItem("cart_items"); ❌
 
     setStoredName("");
-    setCartCount(0);
-
     onLogout();
-
-
     navigate("/auth/signin", { replace: true });
   };
 
@@ -156,6 +143,7 @@ const MainNavbar: React.FC<MainNavbarProps> = ({
     setActiveLink(link);
     closeMenu();
   };
+
   return (
     <nav className="navbar navbar-light shadow-sm">
       <div className="container-fluid px-4">
@@ -195,7 +183,7 @@ const MainNavbar: React.FC<MainNavbarProps> = ({
                 className={`main-navbar d-flex align-items-center ${activeLink === "categories" ? "active" : ""}`}
                 onClick={(e) => {
                   e.preventDefault();
-                  setIsDropdownOpen(prev => !prev);
+                  setIsDropdownOpen((prev) => !prev);
                   handleLinkClick("categories");
                 }}
               >
@@ -226,11 +214,9 @@ const MainNavbar: React.FC<MainNavbarProps> = ({
               </span>
             )}
 
-
-
             <Link
               to="/cart"
-              className={`btn position-relative btn-cart ${isCartAnimating ? 'cart-animate' : ''}`}
+              className={`btn position-relative btn-cart ${isCartAnimating ? "cart-animate" : ""}`}
             >
               <IoCartOutline size={26} />
               {cartCount > 0 && (
@@ -259,11 +245,7 @@ const MainNavbar: React.FC<MainNavbarProps> = ({
           </div>
 
           {/* Mobile Toggle */}
-          <button
-            className="menu-toggle-btn"
-            onClick={toggleMenu}
-            type="button"
-          >
+          <button className="menu-toggle-btn" onClick={toggleMenu} type="button">
             <CiMenuFries size={28} />
           </button>
         </div>
@@ -276,28 +258,16 @@ const MainNavbar: React.FC<MainNavbarProps> = ({
               ref={mobileMenuRef}
               onClick={(e: React.MouseEvent) => e.stopPropagation()}
             >
-              <button
-                className="close-menu-btn"
-                onClick={closeMenu}
-                type="button"
-              >
+              <button className="close-menu-btn" onClick={closeMenu} type="button">
                 <IoClose size={32} />
               </button>
 
               <div className="mobile-nav-links">
-                <Link
-                  className={`main-navbar-mobile ${activeLink === "home" ? "active" : ""}`}
-                  to="/home"
-                  onClick={closeMenu}
-                >
+                <Link className={`main-navbar-mobile ${activeLink === "home" ? "active" : ""}`} to="/home" onClick={closeMenu}>
                   Home
                 </Link>
 
-                <Link
-                  className={`main-navbar-mobile ${activeLink === "products" ? "active" : ""}`}
-                  to="/products"
-                  onClick={closeMenu}
-                >
+                <Link className={`main-navbar-mobile ${activeLink === "products" ? "active" : ""}`} to="/products" onClick={closeMenu}>
                   Products
                 </Link>
 
@@ -311,7 +281,7 @@ const MainNavbar: React.FC<MainNavbarProps> = ({
                       size={25}
                       style={{
                         transform: isDropdownOpen ? "rotate(180deg)" : "rotate(0deg)",
-                        transition: "transform 0.3s ease"
+                        transition: "transform 0.3s ease",
                       }}
                     />
                   </div>
@@ -335,37 +305,25 @@ const MainNavbar: React.FC<MainNavbarProps> = ({
 
               <div className="mobile-icons mt-3">
                 {storedName && (
-                  <p className="fw-bold text-success mb-2">
-                    Welcome, {storedName}
-                  </p>
+                  <p className="fw-bold text-success mb-2">Welcome, {storedName}</p>
                 )}
 
                 <Link
                   to="/cart"
-                  className={`mobile-cart-btn ${isCartAnimating ? 'cart-animate' : ''}`}
+                  className={`mobile-cart-btn ${isCartAnimating ? "cart-animate" : ""}`}
                   onClick={closeMenu}
                 >
                   <IoCartOutline size={30} /> Cart
                   {cartCount > 0 && (
-                    <span className="ms-2 badge bg-success">
-                      {cartCount}
-                    </span>
+                    <span className="ms-2 badge bg-success">{cartCount}</span>
                   )}
                 </Link>
 
-                <Link
-                  to="/order"
-                  className="mobile-order-btn"
-                  onClick={closeMenu}
-                >
+                <Link to="/order" className="mobile-order-btn" onClick={closeMenu}>
                   <GoHistory size={25} /> Orders
                 </Link>
 
-                <Link
-                  to="/profile"
-                  className="mobile-profile-btn"
-                  onClick={closeMenu}
-                >
+                <Link to="/profile" className="mobile-profile-btn" onClick={closeMenu}>
                   <IoPersonOutline size={25} /> Profile
                 </Link>
 

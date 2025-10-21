@@ -2,7 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./slices/authSlice";
 import productReducer from "./slices/productsSlice";
 import cartReducer from "./slices/cartSlice";
-import ordersReducer from "./slices/ordersSlice"; 
+import ordersReducer from "./slices/ordersSlice";
 
 export const store = configureStore({
   reducer: {
@@ -13,7 +13,6 @@ export const store = configureStore({
   },
 });
 
-// Persist selected slices to localStorage on any state change
 store.subscribe(() => {
   try {
     const state = store.getState();
@@ -23,7 +22,7 @@ store.subscribe(() => {
       JSON.stringify({ orders: state.orders.orders, currentOrder: state.orders.currentOrder })
     );
   } catch {
-    // ignore write errors
+    // ignore errors
   }
 });
 
