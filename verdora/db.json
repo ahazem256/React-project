@@ -1051,7 +1051,7 @@
       "category": "Outdoor",
       "name": "Petunia",
       "price": "45 EGP",
-      "stock": 54,
+      "stock": 53,
       "image": "https://i.postimg.cc/8zdPm0LK/id26.png",
       "bestseller": false,
       "oldprice": null,
@@ -3282,6 +3282,59 @@
       "total": 170,
       "createdAt": "2025-10-21T18:29:38.597Z",
       "orderDate": "2025-10-21T18:29:38.597Z",
+      "status": "pending"
+    },
+    {
+      "id": "ORD-1761081758100",
+      "items": [
+        {
+          "id": 26,
+          "category": "Outdoor",
+          "name": "Petunia",
+          "price": "45 EGP",
+          "stock": 60,
+          "image": "https://i.postimg.cc/8zdPm0LK/id26.png",
+          "bestseller": false,
+          "oldprice": null,
+          "rate": "⭐⭐⭐⭐☆",
+          "description": "Popular flowering plant perfect for colorful hanging baskets.",
+          "review": "Very vibrant and easy to maintain.",
+          "discount": null,
+          "isNew": true,
+          "scientificName": "Petunia spp.",
+          "nativeRegion": "South America",
+          "lifeCycle": "Annual flowering plant; fast growth; produces many blooms.",
+          "genus": "Petunia",
+          "type": "Flowering annual",
+          "climate": "Sunny, warm",
+          "soilType": "Well-draining fertile soil",
+          "wateringNeeds": "Moderate; avoid waterlogging",
+          "sunlight": "Full sun to partial shade",
+          "humidity": "Moderate",
+          "growthRate": "Fast",
+          "propagation": "Seeds or cuttings",
+          "toxicity": "Non-toxic to pets",
+          "careTips": "Deadhead spent flowers, water regularly, provide good air circulation.",
+          "floweringSeason": "Spring to Autumn",
+          "height": "0.2 - 0.5 m",
+          "containerType": "Hanging basket or garden bed",
+          "numericPrice": 45,
+          "quantity": 1
+        }
+      ],
+      "shippingInfo": {
+        "firstName": "toka",
+        "lastName": "elqersh",
+        "email": "tokaosamaelqersh@gmail.com",
+        "phone": "01016796606",
+        "address": "el slam st",
+        "city": "Shibin El Kom",
+        "zipCode": "12312"
+      },
+      "paymentMethod": "cash-on-delivery",
+      "total": 45,
+      "createdAt": "2025-10-21T21:22:38.100Z",
+      "orderDate": "2025-10-21T21:22:38.100Z",
       "status": "pending"
     }
   ]
