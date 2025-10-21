@@ -5,6 +5,7 @@ import CategorySlider from "../components/Home/CategorySection/CategorySection";
 import LowestProducts from "../components/Home/LowestProducts/LowestProducts";
 import About from "../components/Home/About/About";
 import ExploreProducts from "../components/Home/ExploreProducts/ExploreProducts";
+import PlantQuiz from "../components/PlantQuiz";
 
 const HomePage: React.FC = () => {
   return (
@@ -14,6 +15,7 @@ const HomePage: React.FC = () => {
       </Helmet>
 
       <MainSlider />
+      <PlantQuiz /> {/* لازم يكون هنا */}
       <CategorySlider />
       <LowestProducts />
       <ExploreProducts />

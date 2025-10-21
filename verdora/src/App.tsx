@@ -37,6 +37,9 @@ import Orderadmin from "./pages/AdminDashbord/Orderadmin";
 import Reports from "./pages/AdminDashbord/Reports";
 import DashboardPage from "./pages/AdminDashbord/DashboardPage";
 
+// 🌿 هنا بنضيف الكويز الجديد
+import PlantQuiz from "./components/PlantQuiz";
+
 const AppContent: React.FC = () => {
   const location = useLocation();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
@@ -91,8 +94,8 @@ const AppContent: React.FC = () => {
       <Toaster position="top-right" />
       <div className="app-container">
         {/* Navbar فقط لو مش في صفحة الأدمن */}
-        {!isAdminPage && (
-          isAuthenticated ? (
+        {!isAdminPage &&
+          (isAuthenticated ? (
             <MainNavbar
               onLogout={handleLogout}
               cartCount={cartCount}
@@ -104,8 +107,7 @@ const AppContent: React.FC = () => {
                 throw new Error("Function not implemented.");
               }}
             />
-          )
-        )}
+          ))}
 
         <main className="app-content">
           <Routes>
@@ -238,6 +240,16 @@ const AppContent: React.FC = () => {
               }
             />
 
+            {/* 🌿 Route الكويز الجديد */}
+            <Route
+              path="/quiz"
+              element={
+                <ProtectedRoute isAuthenticated={isAuthenticated}>
+                  <PlantQuiz />
+                </ProtectedRoute>
+              }
+            />
+
             {/* Admin Routes */}
             <Route
               path="/admin"
@@ -247,7 +259,7 @@ const AppContent: React.FC = () => {
                 </ProtectedRoute>
               }
             >
-              <Route path="dashboard" element={<DashboardPage/>} />
+              <Route path="dashboard" element={<DashboardPage />} />
               <Route path="users" element={<User />} />
               <Route path="products" element={<Productsadmin />} />
               <Route path="orders" element={<Orderadmin />} />
@@ -260,9 +272,9 @@ const AppContent: React.FC = () => {
         </main>
 
         {/* Footer فقط لو مش في صفحة الأدمن */}
-        {isAuthenticated && !location.pathname.startsWith("/auth") && !isAdminPage && (
-          <Footer />
-        )}
+        {isAuthenticated &&
+          !location.pathname.startsWith("/auth") &&
+          !isAdminPage && <Footer />}
       </div>
     </>
   );
