@@ -22,6 +22,8 @@ interface Order {
   status: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
 }
 
+const PAGE_SIZE = 10;
+
 const Orderadmin: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [orders, setOrders] = useState<Order[]>([]);
@@ -31,6 +33,7 @@ const Orderadmin: React.FC = () => {
   const [statusChangeMessage, setStatusChangeMessage] = useState<string | null>(null);
   const [showDropdown, setShowDropdown] = useState<string | null>(null);
   const [dropdownPosition, setDropdownPosition] = useState<{ top: number; left: number } | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const fetchOrders = async () => {
     try {
@@ -99,7 +102,7 @@ const Orderadmin: React.FC = () => {
     } else {
       const buttonRect = event.currentTarget.getBoundingClientRect();
       setDropdownPosition({
-        top: buttonRect.bottom + window.scrollY,
+        top: buttonRect.bottom,
         left: buttonRect.right - 150 // 150px is the minWidth of dropdown
       });
       setShowDropdown(orderId);
@@ -146,6 +149,17 @@ const Orderadmin: React.FC = () => {
     order.shippingInfo.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
     order.shippingInfo.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // Pagination logic
+  const totalPages = Math.max(1, Math.ceil(filteredOrders.length / PAGE_SIZE));
+  
+  useEffect(() => {
+    // Reset to page 1 if current page exceeds total pages after filtering
+    setCurrentPage((p) => Math.min(p, totalPages));
+  }, [filteredOrders.length, totalPages]);
+
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const currentOrders = filteredOrders.slice(start, start + PAGE_SIZE);
 
   const getStatusColor = (status: string | undefined) => {
     switch (status) {
@@ -221,12 +235,12 @@ const Orderadmin: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredOrders.length === 0 ? (
+              {currentOrders.length === 0 ? (
                 <tr><td colSpan={7} className="text-center p-4 text-muted">No orders found</td></tr>
               ) : (
-                filteredOrders.map((order, index) => (
+                currentOrders.map((order, index) => (
                   <tr key={order.id}>
-                    <td>{index + 1}</td>
+                    <td>{start + index + 1}</td>
                     <td>{order.shippingInfo.email}</td>
                     <td>{order.shippingInfo.firstName} {order.shippingInfo.lastName}</td>
                     <td>
@@ -314,6 +328,69 @@ const Orderadmin: React.FC = () => {
           </table>
         </div>
       </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="d-flex justify-content-center align-items-center gap-2 mt-4 flex-wrap">
+          <button
+            className="btn"
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+            style={{
+              borderRadius: 20,
+              width: 40,
+              height: 40,
+              padding: 0,
+              border: '1px solid var(--color-green-darkest)',
+              background: currentPage === 1 ? '#fff' : 'var(--color-green-lightest)',
+              color: 'var(--color-green-darkest)',
+            }}
+          >
+            ‹
+          </button>
+
+          {Array.from({ length: totalPages }).map((_, i) => {
+            const page = i + 1;
+            const isActive = page === currentPage;
+            return (
+              <button
+                key={page}
+                onClick={() => setCurrentPage(page)}
+                className="btn"
+                style={{
+                  borderRadius: '50%',
+                  width: 38,
+                  height: 38,
+                  padding: 0,
+                  border: '1px solid var(--color-green-darkest)',
+                  background: isActive ? 'var(--color-green-darkest)' : '#fff',
+                  color: isActive ? '#fff' : 'var(--color-green-darkest)',
+                  boxShadow: isActive ? '0 2px 6px rgba(0,0,0,0.08)' : 'none',
+                }}
+              >
+                {page}
+              </button>
+            );
+          })}
+
+          <button
+            className="btn"
+            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+            style={{
+              borderRadius: 20,
+              width: 40,
+              height: 40,
+              padding: 0,
+              border: '1px solid var(--color-green-darkest)',
+              background: currentPage === totalPages ? '#fff' : 'var(--color-green-lightest)',
+              color: 'var(--color-green-darkest)',
+            }}
+          >
+            ›
+          </button>
+        </div>
+      )}
 
       {/* Bootstrap Modal */}
       <div className="modal fade" id="statusModal" tabIndex={-1} aria-hidden="true">
