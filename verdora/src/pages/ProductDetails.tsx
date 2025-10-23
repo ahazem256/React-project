@@ -17,6 +17,7 @@ interface QuantityState {
 
 const ProductDetails: React.FC<ProductDetailsProps> = () => {
   const { id } = useParams<{ id: string }>();
+  const [product, setProduct] = useState<Product | undefined>(undefined);
   const dispatch = useDispatch<AppDispatch>();
   const { products, loading, error } = useSelector(
     (state: RootState) => state.products
@@ -37,10 +38,33 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, [dispatch]);
+  
 
-  const product: Product | undefined = products.find(
-    (p: Product) => String(p.id) === id
-  );
+  useEffect(() => {
+    if (!loading && products.length > 0) {
+      const productId = Number(id);
+      console.log("🟢 Searching for product ID:", productId);
+      console.log("🟢 Available products:", products.map(p => ({ 
+        id: p.id, 
+        name: p.name,
+        rate: p.rate 
+      })));
+      
+      const found = products.find((p) => Number(p.id) === productId);
+      
+      if (found) {
+        console.log("✅ Product found:", found);
+        console.log("✅ Product rate:", found.rate);
+        console.log("✅ Product stock:", found.stock);
+      } else {
+        console.log("❌ Product not found!");
+        console.log("❌ Available IDs:", products.map(p => p.id));
+      }
+      
+      setProduct(found);
+    }
+  }, [loading, products, id]);
+
 
   const handleAddToCart = (): void => {
     if (product) {
@@ -204,12 +228,12 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
               </h1>
             </div>
 
-            {/* Rating */}
+            {/* Rating - هذا الجزء تم تصحيحه */}
             <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "24px" }}>
               <div style={{ display: "flex", gap: "2px", color: "#f0c040" }}>
                 {Array.from({ length: 5 }, (_, i) => (
                   <span key={i} style={{ fontSize: isMobile ? "12px" : "14px" }}>
-                    {i < Math.floor(Number(products.rate || 4.5)) ? "★" : "☆"}
+                    {i < Math.floor(Number(product.rate || 4.5)) ? "★" : "☆"}
                   </span>
                 ))}
               </div>
