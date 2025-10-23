@@ -121,7 +121,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
     .filter((p: Product) => p.category === product.category && p.id !== product.id)
     .slice(0, 4);
 
-  // Get product images array or use single image
   const productImages = Array.isArray(product.image) ? product.image : [product.image];
 
   return (
@@ -227,8 +226,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
                 {product.name}
               </h1>
             </div>
-
-            {/* Rating - هذا الجزء تم تصحيحه */}
             <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "24px" }}>
               <div style={{ display: "flex", gap: "2px", color: "#f0c040" }}>
                 {Array.from({ length: 5 }, (_, i) => (

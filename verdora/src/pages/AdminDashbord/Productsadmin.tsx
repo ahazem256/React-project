@@ -214,8 +214,8 @@ export default function Productsadmin() {
             onChange={(e) => setCategoryFilter(e.target.value)}
           >
             <option value="All">All Categories</option>
-            <option value="Bonsai & Miniature Plants">Bonsai & Miniature Plants</option>
-            <option value="Flowering Plants">Flowering Plants</option>
+            <option value="bonsai_miniature">Bonsai & Miniature Plants</option>
+            <option value="Flowering">Flowering Plants</option>
             <option value="Indoor">Indoor</option>
             <option value="Outdoor">Outdoor</option>
           </select>
@@ -488,8 +488,8 @@ export default function Productsadmin() {
               >
                 <option value="Indoor">Indoor</option>
                 <option value="Outdoor">Outdoor</option>
-                <option value="Bonsai & Miniature Plants">Bonsai & Miniature Plants</option>
-                <option value="Flowering Plants">Flowering Plants</option>
+                <option value="bonsai_miniature">Bonsai & Miniature Plants</option>
+                <option value="Flowering">Flowering Plants</option>
               </select>
             </div>
           </div>

@@ -12,7 +12,7 @@ export default function Flowering() {
 const { displayedProducts, filter, setFilter, searchTerm, setSearchTerm, goToDetails } = UseProducts();
 const [searchOpen, setSearchOpen] = useState(false);
 const categoryProducts = displayedProducts.filter(
-  (product) => product.category === "Flowering Plants"
+  (product) => product.category === "Flowering"
 );
    return (
     <>
