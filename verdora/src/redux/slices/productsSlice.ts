@@ -14,26 +14,32 @@ const initialState: ProductsState = {
   error: null,
 };
 
-// ✅ الخطوة 1: جلب المنتجات من الـ API
+
 export const fetchProducts = createAsyncThunk<Product[]>(
   "products/fetchProducts",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get(
-        "https://api.jsonbin.io/v3/b/68e56de5d0ea881f4098eaa4/latest"
-      );
+      const response = await axios.get("http://localhost:5005/products");
+      
+      console.log("🟢 API Response:", response.data);
+      
+      
+      const productsWithStringIds = response.data.map((product: any) => ({
+        ...product,
+        id: String(product.id) 
+      }));
 
-      // ✅ الـ data عندك داخل record.products
-      const products = response.data.record.products;
-
-      return products;
+      console.log("✅ Products with string IDs:", productsWithStringIds.map(p => ({ id: p.id, name: p.name })));
+      
+      return productsWithStringIds;
     } catch (error: any) {
-      return rejectWithValue(error.message);
+      console.error("❌ Error fetching products:", error);
+      return rejectWithValue(error.message || "Failed to load products");
     }
   }
 );
 
-// ✅ الخطوة 2: الـ slice نفسه
+
 const productsSlice = createSlice({
   name: "products",
   initialState,
@@ -47,13 +53,12 @@ const productsSlice = createSlice({
       .addCase(fetchProducts.fulfilled, (state, action) => {
         state.loading = false;
         state.products = action.payload;
+        console.log("🟢 Products loaded successfully:", action.payload.length);
       })
       .addCase(fetchProducts.rejected, (state, action) => {
         state.loading = false;
-        state.error =
-          action.payload instanceof String
-            ? action.payload
-            : "Failed to load products";
+        state.error = action.payload as string || "Failed to load products";
+        console.error("❌ Products loading failed:", action.payload);
       });
   },
 });

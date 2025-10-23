@@ -270,3 +270,15 @@ body {
   z-index: 20 !important;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
+
+.back{
+  background-color: var(--color-green-darker) !important;
+  color: white !important;
+}
+
+.activebt{
+  border: 1px solid var(--color-green-darker) !important;
+  background-color: var(--color-green-darker) ;
+  color: white
+}
+
