@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import type { AppDispatch } from "../../redux/store";
 import { updateOrderStatus } from "../../redux/slices/ordersSlice";
 import { Search, RefreshCw, MoreVertical, Check, X, Truck, Package, Clock, Settings, Trash2 } from "lucide-react";
+import "./Orderadmin.css";
 
 interface Order {
   id: string;
@@ -57,10 +58,12 @@ const Orderadmin: React.FC = () => {
     fetchOrders();
   }, []);
 
-  // Close dropdown when clicking outside
+ 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (showDropdown && !(event.target as Element).closest('.position-relative')) {
+      const target = event.target as Element;
+      // don't close when clicking inside a position-relative (button) or the dropdown itself
+      if (showDropdown && !target.closest('.position-relative') && !target.closest('.order-dropdown-fixed')) {
         setShowDropdown(null);
         setDropdownPosition(null);
       }
@@ -72,7 +75,6 @@ const Orderadmin: React.FC = () => {
     };
   }, [showDropdown]);
 
-  
   const handleSelectOrder = (order: Order) => {
     setSelectedOrder(order);
     setStatusChangeMessage(null);
@@ -85,8 +87,10 @@ const Orderadmin: React.FC = () => {
       });
 
       if (response.ok) {
+
         setOrders(prev => prev.filter(order => String(order.id) !== String(orderId)));
         setShowDropdown(null);
+        setDropdownPosition(null);
       } else {
         console.error("Failed to delete order");
       }
@@ -123,11 +127,11 @@ const Orderadmin: React.FC = () => {
         ));
 
         dispatch(updateOrderStatus({ orderId, status: newStatus }));
-        
-        
+
+
         setStatusChangeMessage(`Order status successfully changed to ${newStatus.toUpperCase()}!`);
-        
-        
+
+
         // setSelectedOrder(null); 
         // const modalEl = document.getElementById('statusModal');
         // if (modalEl) {
@@ -152,7 +156,7 @@ const Orderadmin: React.FC = () => {
 
   // Pagination logic
   const totalPages = Math.max(1, Math.ceil(filteredOrders.length / PAGE_SIZE));
-  
+
   useEffect(() => {
     // Reset to page 1 if current page exceeds total pages after filtering
     setCurrentPage((p) => Math.min(p, totalPages));
@@ -161,6 +165,8 @@ const Orderadmin: React.FC = () => {
   const start = (currentPage - 1) * PAGE_SIZE;
   const currentOrders = filteredOrders.slice(start, start + PAGE_SIZE);
 
+  const allowedStatuses = ['pending','confirmed','processing','shipped','cancelled','delivered'];
+
   const getStatusColor = (status: string | undefined) => {
     switch (status) {
       case 'pending': return 'var(--color-green-sage)';
@@ -168,7 +174,8 @@ const Orderadmin: React.FC = () => {
       case 'processing': return 'var(--color-green-dark)';
       case 'shipped': return 'var(--color-green-darker)';
       case 'cancelled': return '#e63946';
-      default: return 'var(--color-green-sage)';
+      case 'delivered': return 'var(--color-green-darkest)';
+      default: return null; // unknown -> handled as neutral
     }
   };
 
@@ -179,7 +186,8 @@ const Orderadmin: React.FC = () => {
       case 'processing': return <Package size={16} />;
       case 'shipped': return <Truck size={16} />;
       case 'cancelled': return <X size={16} />;
-      default: return <Package size={16} />;
+      case 'delivered': return <Check size={16} />;
+      default: return null; // unknown -> no icon
     }
   };
 
@@ -194,33 +202,51 @@ const Orderadmin: React.FC = () => {
   }
 
   return (
-    <div style={{ backgroundColor: 'var(--color-green-lightest)', minHeight: '100vh', padding: '2rem' }}>
-      {/* Header */}
-      <div style={{ backgroundColor: 'white', padding: '1.5rem 2rem', borderRadius: '8px', marginBottom: '2rem', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+    <div className="orders-container">
+      {/* Header Card */}
+      <div className="orders-card orders-header">
         <div className="d-flex justify-content-between align-items-center">
-          <h1 style={{ color: 'var(--color-green-darkest)', margin: 0, fontSize: '1.75rem', fontWeight: '700' }}>Orders Management</h1>
-          <button className="btn d-flex align-items-center gap-2" onClick={fetchOrders} style={{ backgroundColor: 'var(--color-green-darkest)', color: 'white', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '6px', fontWeight: '600' }}>
-            <RefreshCw size={18} /> Refresh
+          <h1 className="orders-title">Orders Management</h1>
+          <button
+            className="btn d-flex align-items-center gap-2 refresh-btn"
+            onClick={fetchOrders}
+            style={{
+              backgroundColor: 'var(--color-green-darkest)',
+              color: 'white',
+              border: 'none',
+              padding: '0.75rem 1.5rem',
+              borderRadius: '6px',
+              fontWeight: '600'
+            }}
+          >
+            <RefreshCw size={18} />
+            <span className="refresh-text">Refresh</span>
           </button>
         </div>
       </div>
 
-      {/* Search Bar */}
-      <div style={{ backgroundColor: 'white', padding: '1rem 1.5rem', borderRadius: '8px', marginBottom: '1.5rem', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+      {/* Search Card */}
+      <div className="orders-card p-3">
         <div className="row">
           <div className="col-md-6">
             <div className="input-group">
-              <span className="input-group-text" style={{ backgroundColor: 'var(--color-green-lightest)', border: '1px solid var(--color-green-sage)', color: 'var(--color-green-darkest)' }}>
+              <span className="input-group-text">
                 <Search size={18} />
               </span>
-              <input type="text" className="form-control" placeholder="Search orders by name or email..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} style={{ border: '1px solid var(--color-green-sage)', borderLeft: 'none' }} />
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Search orders..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
             </div>
           </div>
         </div>
       </div>
 
-      {/* Orders Table */}
-      <div style={{ backgroundColor: 'white', borderRadius: '8px', overflow: 'hidden', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+      {/* Desktop Table View */}
+      <div className="desktop-table orders-card">
         <div className="table-responsive">
           <table className="table mb-0">
             <thead style={{ backgroundColor: 'var(--color-green-lightest)' }}>
@@ -244,25 +270,45 @@ const Orderadmin: React.FC = () => {
                     <td>{order.shippingInfo.email}</td>
                     <td>{order.shippingInfo.firstName} {order.shippingInfo.lastName}</td>
                     <td>
-                      <span style={{ backgroundColor: getStatusColor(order.status), color: 'white', padding: '0.5rem 1rem', borderRadius: '20px', fontSize: '0.8rem', fontWeight: '600' }}>
-                        {getStatusIcon(order.status)} {(order.status || 'pending').toUpperCase()}
-                      </span>
+                      {allowedStatuses.includes(order.status) ? (
+                        <span
+                          className="status-badge"
+                          style={{
+                            backgroundColor: getStatusColor(order.status) || undefined,
+                            color: 'white',
+                            padding: '0.5rem 1rem',
+                            borderRadius: '20px',
+                            fontSize: '0.8rem',
+                            fontWeight: '600',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '0.5rem'
+                          }}
+                        >
+                          {getStatusIcon(order.status)}
+                          {(order.status || 'PENDING').toUpperCase()}
+                        </span>
+                      ) : (
+                        <span className="status-badge neutral">
+                          {(order.status || 'UNKNOWN').toString().toUpperCase()}
+                        </span>
+                      )}
                     </td>
                     <td>{new Date(order.orderDate).toLocaleString()}</td>
                     <td>${order.total.toFixed(2)}</td>
                     <td>
                       <div className="position-relative">
-                        <button 
-                          className="btn btn-sm btn-light border" 
+                        <button
+                          className="btn btn-sm btn-light border"
                           onClick={(e) => toggleDropdown(order.id, e)}
                           style={{ position: 'relative' }}
                         >
                           <MoreVertical size={16} />
                         </button>
-                        
+
                         {showDropdown === order.id && dropdownPosition && (
-                          <div 
-                            style={{ 
+                          <div
+                            style={{
                               position: 'fixed',
                               top: dropdownPosition.top,
                               left: dropdownPosition.left,
@@ -276,7 +322,7 @@ const Orderadmin: React.FC = () => {
                           >
                             <button
                               className="btn w-100 text-start d-flex align-items-center gap-2"
-                              style={{ 
+                              style={{
                                 padding: '0.75rem 1rem',
                                 border: 'none',
                                 backgroundColor: 'transparent',
@@ -299,7 +345,7 @@ const Orderadmin: React.FC = () => {
                             <hr style={{ margin: 0, borderColor: 'var(--color-green-sage)' }} />
                             <button
                               className="btn w-100 text-start d-flex align-items-center gap-2"
-                              style={{ 
+                              style={{
                                 padding: '0.75rem 1rem',
                                 border: 'none',
                                 backgroundColor: 'transparent',
@@ -328,6 +374,136 @@ const Orderadmin: React.FC = () => {
           </table>
         </div>
       </div>
+
+      {/* Mobile Cards View */}
+      <div className="mobile-cards">
+        {currentOrders.map((order, index) => (
+          <div key={order.id} className="order-mobile-card">
+            <div className="order-mobile-header">
+              <div>
+                <h6 className="mb-1">Order {start + index + 1}</h6>
+                <small className="text-muted">{order.shippingInfo.email}</small>
+              </div>
+              <span style={{
+                backgroundColor: getStatusColor(order.status) || undefined,
+                color: 'white',
+                padding: '0.5rem 1rem',
+                borderRadius: '20px',
+                fontSize: '0.8rem',
+                fontWeight: '600',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.5rem'
+              }}>
+                {getStatusIcon(order.status)}
+                {(order.status || 'pending').toUpperCase()}
+              </span>
+            </div>
+
+            <div className="order-mobile-details">
+              <div className="order-mobile-detail">
+                <span className="order-mobile-label">Customer</span>
+                <span className="order-mobile-value">
+                  {order.shippingInfo.firstName} {order.shippingInfo.lastName}
+                </span>
+              </div>
+              <div className="order-mobile-detail">
+                <span className="order-mobile-label">Date</span>
+                <span className="order-mobile-value">
+                  {new Date(order.orderDate).toLocaleString()}
+                </span>
+              </div>
+              <div className="order-mobile-detail">
+                <span className="order-mobile-label">Total</span>
+                <span className="order-mobile-value fw-bold">
+                  ${order.total.toFixed(2)}
+                </span>
+              </div>
+            </div>
+
+            <div className="d-flex justify-content-end gap-2">
+              <button
+                className="btn btn-sm"
+                onClick={(e) => toggleDropdown(order.id, e)}
+                style={{
+                  backgroundColor: 'var(--color-green-lightest)',
+                  color: 'var(--color-green-darkest)',
+                  border: '1px solid var(--color-green-sage)'
+                }}
+              >
+                <Settings size={16} className="me-2" />
+                Manage
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Global dropdown render so it works on mobile & desktop */}
+      {showDropdown && dropdownPosition && (() => {
+        const order = orders.find(o => String(o.id) === String(showDropdown));
+        if (!order) return null;
+        return (
+          <div
+            className="order-dropdown-fixed"
+            style={{
+              position: 'fixed',
+              top: dropdownPosition.top,
+              left: dropdownPosition.left,
+              zIndex: 9999,
+              backgroundColor: 'white',
+              border: '1px solid var(--color-green-sage)',
+              borderRadius: '6px',
+              boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+              minWidth: '150px'
+            }}
+          >
+            <button
+              className="btn w-100 text-start d-flex align-items-center gap-2"
+              style={{
+                padding: '0.75rem 1rem',
+                border: 'none',
+                backgroundColor: 'transparent',
+                color: 'var(--color-green-darkest)',
+                fontSize: '0.9rem'
+              }}
+              data-bs-toggle="modal"
+              data-bs-target="#statusModal"
+              onClick={() => {
+                handleSelectOrder(order);
+                setShowDropdown(null);
+                setDropdownPosition(null);
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--color-green-lightest)')}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+            >
+              <Settings size={16} />
+              Set Status
+            </button>
+            <hr style={{ margin: 0, borderColor: 'var(--color-green-sage)' }} />
+            <button
+              className="btn w-100 text-start d-flex align-items-center gap-2"
+              style={{
+                padding: '0.75rem 1rem',
+                border: 'none',
+                backgroundColor: 'transparent',
+                color: '#e63946',
+                fontSize: '0.9rem'
+              }}
+              onClick={() => {
+                handleRemoveOrder(order.id);
+                setShowDropdown(null);
+                setDropdownPosition(null);
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#fef2f2'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+            >
+              <Trash2 size={16} />
+              Remove Order
+            </button>
+          </div>
+        );
+      })()}
 
       {/* Pagination */}
       {totalPages > 1 && (
@@ -436,12 +612,12 @@ const Orderadmin: React.FC = () => {
               )}
             </div>
             <div className="modal-footer">
-              <button 
-                type="button" 
-                className="btn" 
-                data-bs-dismiss="modal" 
+              <button
+                type="button"
+                className="btn"
+                data-bs-dismiss="modal"
                 style={{ backgroundColor: 'var(--color-green-darkest)', color: 'white' }}
-                // ✨ Clear the selected order and message when closing
+
                 onClick={() => { setSelectedOrder(null); setStatusChangeMessage(null); }}
               >
                 Close

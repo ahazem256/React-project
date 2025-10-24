@@ -1,0 +1,178 @@
+.orders-container {
+  background-color: var(--color-green-lightest);
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+.orders-card {
+  background: white;
+  border-radius: 12px;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin-bottom: 1rem;
+}
+
+.orders-header {
+  padding: 1.5rem 2rem;
+}
+
+.orders-title {
+  color: var(--color-green-darkest);
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+
+.order-mobile-card {
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+}
+
+.order-mobile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.order-mobile-details {
+  margin-bottom: 1rem;
+}
+
+.order-mobile-detail {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.order-mobile-label {
+  color: var(--color-green-darker);
+  font-size: 0.875rem;
+}
+
+.order-mobile-value {
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .orders-container {
+    padding: 1rem;
+  }
+  
+  .desktop-table {
+    display: none;
+  }
+  
+  .mobile-cards {
+    display: block;
+  }
+
+  .refresh-text {
+    display: none;
+  }
+
+  .refresh-btn {
+    padding: 0.5rem !important;
+    width: 40px !important;
+    height: 40px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin-left: 1px !important;
+  }
+}
+
+/* Tablet / small laptop: keep card layout but use 2 columns for content */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .orders-container {
+    padding: 1.25rem;
+  }
+
+  /* hide full table on tablets, show compact card grid */
+  .desktop-table {
+    display: none;
+  }
+
+  .mobile-cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .order-mobile-card {
+    padding: 0.75rem;
+    border-radius: 10px;
+    box-shadow: 0 6px 18px rgba(15,23,12,0.06);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .order-mobile-header {
+    gap: 10px;
+  }
+
+  .order-mobile-detail {
+    font-size: 0.93rem;
+  }
+
+  .orders-header {
+    padding: 1rem 1rem;
+  }
+
+  .orders-title {
+    font-size: 1.4rem;
+  }
+
+  /* keep refresh text visible but smaller */
+  .refresh-text {
+    display: inline;
+    font-size: 0.9rem;
+  }
+
+  .refresh-btn {
+    padding: 0.45rem 0.9rem !important;
+    height: 38px !important;
+    min-width: 38px !important;
+  }
+}
+
+/* Desktop: show full table and single-column mobile-cards hidden */
+@media (min-width: 1025px) {
+  .desktop-table { display: block; }
+  .mobile-cards { display: none; }
+}
+
+/* optional: make table horizontally scrollable on narrow desktops */
+.desktop-table .table-responsive {
+  overflow-x: auto;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+/* neutral fallback when status is invalid/bugged */
+.status-badge.neutral {
+  background: transparent;
+  color: var(--color-green-darker);
+  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: none;
+  padding: 0.45rem 0.9rem;
+}
+
+/* ensure icons in neutral look subtle */
+.status-badge.neutral svg {
+  opacity: 0.6;
+}
