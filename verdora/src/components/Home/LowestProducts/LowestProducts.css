@@ -11,6 +11,8 @@ body {
     font-family: var(--font-family-serif);
     background-color: #fff;
     overflow: hidden;
+    max-width: 1920px;  /* add max-width */
+    margin: 0 auto;     /* add margin auto */
 }
 
 .lp-final-category-slider-title {
@@ -185,6 +187,7 @@ body {
 .slick-slider {
     position: relative;
     width: 100%;
+    margin: 0 auto;     /* add margin auto to slider */
 }
 
 .slick-list {
@@ -221,6 +224,38 @@ body {
 
 .slick-dots li.slick-active button:before {
     color: var(--color-green-darkest);
+}
+
+/* Add wishlist button styles */
+.lp-final-image-container .wishlist-overlay {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+    transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateY(-6px);
+    border: none;
+    color: var(--color-green-darkest);
+    cursor: pointer;
+    z-index: 30;
+}
+
+.lp-final-category-slide:hover .wishlist-overlay {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.wishlist-overlay.added {
+    background: var(--color-green-dark);
+    color: #fff;
 }
 
 /* Responsive Design */

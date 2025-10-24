@@ -1,9 +1,11 @@
+import React, { useState, useEffect } from "react";
 import type { Product } from "./Hooks";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../redux/slices/cartSlice";
 import toast from "react-hot-toast";
 import "../components/Home/ExploreProducts/ExploreProducts.css";
 import "../styles/global.css";
+import { IoHeartOutline, IoHeart } from "react-icons/io5";
 
 interface ProductCardProps {
   product: Product;
@@ -13,13 +15,79 @@ interface ProductCardProps {
 export default function ProductsCard({ product, onClick }: ProductCardProps) {
   const dispatch = useDispatch();
 
+  // new state to track whether this product is in wishlist
+  const [inWishlist, setInWishlist] = useState<boolean>(false);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("wishlist_items") || "[]";
+      const list = JSON.parse(raw);
+      const exists = Array.isArray(list) && list.some((p: any) => String(p.id) === String(product.id));
+      setInWishlist(Boolean(exists));
+    } catch {
+      setInWishlist(false);
+    }
+
+    const onWishlistUpdated = () => {
+      try {
+        const raw = localStorage.getItem("wishlist_items") || "[]";
+        const list = JSON.parse(raw);
+        const exists = Array.isArray(list) && list.some((p: any) => String(p.id) === String(product.id));
+        setInWishlist(Boolean(exists));
+      } catch {
+        setInWishlist(false);
+      }
+    };
+
+    window.addEventListener("wishlistUpdated", onWishlistUpdated as EventListener);
+    return () => window.removeEventListener("wishlistUpdated", onWishlistUpdated as EventListener);
+  }, [product.id]);
+
   const handleAddToCart = () => {
     if (!product.stock || product.stock === 0) {
       toast.error(`${product.name} is out of stock!`);
-      return;}
-      
+      return;
+    }
+
     dispatch(addToCart({ product, quantity: 1 }));
     toast.success(`${product.name} added to cart!`);
+  };
+
+  // toggle wishlist (add/remove) and update UI immediately
+  const addToWishlist = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      const raw = localStorage.getItem("wishlist_items") || "[]";
+      const parsed = JSON.parse(raw);
+      const list = Array.isArray(parsed) ? parsed : [];
+
+      const existsIndex = list.findIndex((p: any) => String(p.id) === String(product.id));
+      if (existsIndex >= 0) {
+        // remove
+        list.splice(existsIndex, 1);
+        localStorage.setItem("wishlist_items", JSON.stringify(list));
+        window.dispatchEvent(new Event("wishlistUpdated"));
+        setInWishlist(false);
+        toast.success(`${product.name} removed from wishlist`);
+        return;
+      }
+
+      // add
+      const item = {
+        id: product.id,
+        title: product.name ?? product.title ?? "Product",
+        price: product.price ?? product.oldprice ?? "",
+        image: product.image ?? "",
+      };
+
+      list.push(item);
+      localStorage.setItem("wishlist_items", JSON.stringify(list));
+      window.dispatchEvent(new Event("wishlistUpdated"));
+      setInWishlist(true);
+      toast.success(`${item.title} added to wishlist`);
+    } catch {
+      toast.error("Could not update wishlist");
+    }
   };
 
   const { name, image, price, oldprice } = product;
@@ -63,6 +131,17 @@ export default function ProductsCard({ product, onClick }: ProductCardProps) {
               <span className="badge discount">-{discountPercentage}%</span>
             </>
           )}
+
+          <button
+            className={`wishlist-overlay ${inWishlist ? "added" : ""}`}
+            onClick={addToWishlist}
+            title={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
+            type="button"
+            aria-label="Toggle wishlist"
+          >
+            {inWishlist ? <IoHeart size={18} /> : <IoHeartOutline size={18} />}
+          </button>
+
           <button className="add-to-cart-overlay" onClick={handleAddToCart}>
             {" "}
             Add to Cart

@@ -39,6 +39,8 @@ import DashboardPage from "./pages/AdminDashbord/DashboardPage";
 
 // 🌿 هنا بنضيف الكويز الجديد
 import PlantQuiz from "./components/PlantQuiz";
+// add wishlist import
+import Wishlish from "./pages/Wishlist";
 
 const AppContent: React.FC = () => {
   const location = useLocation();
@@ -199,6 +201,17 @@ const AppContent: React.FC = () => {
                 </ProtectedRoute>
               }
             />
+
+            {/* Wishlist route */}
+            <Route
+              path="/wishlist"
+              element={
+                <ProtectedRoute isAuthenticated={isAuthenticated}>
+                  <Wishlish />
+                </ProtectedRoute>
+              }
+            />
+
             <Route
               path="/order"
               element={

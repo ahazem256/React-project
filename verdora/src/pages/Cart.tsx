@@ -121,18 +121,28 @@ const Cart: React.FC = () => {
               </p>
             </div>
             <button
-              onClick={() => dispatch(removeFromCart(item.id))}
-              style={{
-                backgroundColor: "#e53935",
-                color: "#fff",
-                border: "none",
-                padding: "8px 12px",
-                borderRadius: "6px",
-                cursor: "pointer",
-              }}
-            >
-              Remove
-            </button>
+  onClick={() => dispatch(removeFromCart(item.id))}
+  style={{
+    backgroundColor: "#e53935",
+    color: "#fff",
+    border: "none",
+    padding: "8px 12px",
+    borderRadius: "6px",
+    cursor: "pointer",
+    transition: "all 0.3s ease",
+  }}
+  onMouseEnter={(e) => {
+    (e.target as HTMLButtonElement).style.backgroundColor = "#f44336"; // lighter red
+    (e.target as HTMLButtonElement).style.transform = "scale(1.05)";
+  }}
+  onMouseLeave={(e) => {
+    (e.target as HTMLButtonElement).style.backgroundColor = "#e53935"; // original red
+    (e.target as HTMLButtonElement).style.transform = "scale(1)";
+  }}
+>
+  Remove
+</button>
+
           </div>
         );
       })}
@@ -160,31 +170,52 @@ const Cart: React.FC = () => {
         }}
       >
         <button
-          onClick={() => dispatch(clearCart())}
-          style={{
-            padding: "12px 20px",
-            backgroundColor: "#6c757d",
-            color: "#fff",
-            border: "none",
-            borderRadius: "8px",
-            cursor: "pointer",
-          }}
-        >
-          Clear Cart
-        </button>
-        <button
-          onClick={() => navigate("/checkout")}
-          style={{
-            padding: "12px 20px",
-            backgroundColor: "#1b5e20",
-            color: "#fff",
-            border: "none",
-            borderRadius: "8px",
-            cursor: "pointer",
-          }}
-        >
-          Proceed to Checkout
-        </button>
+  onClick={() => dispatch(clearCart())}
+  style={{
+    padding: "12px 20px",
+    backgroundColor: "#6c757d",
+    color: "#fff",
+    border: "none",
+    borderRadius: "8px",
+    cursor: "pointer",
+    transition: "all 0.3s ease",
+  }}
+  onMouseEnter={(e) => {
+    (e.target as HTMLButtonElement).style.backgroundColor = "#868e96"; // lighter gray
+    (e.target as HTMLButtonElement).style.transform = "scale(1.05)";
+  }}
+  onMouseLeave={(e) => {
+    (e.target as HTMLButtonElement).style.backgroundColor = "#6c757d"; // original gray
+    (e.target as HTMLButtonElement).style.transform = "scale(1)";
+  }}
+>
+  Clear Cart
+</button>
+
+       <button
+  onClick={() => navigate("/checkout")}
+  style={{
+    padding: "12px 20px",
+    backgroundColor: "#1b5e20",
+    color: "#fff",
+    border: "none",
+    borderRadius: "8px",
+    cursor: "pointer",
+    transition: "all 0.3s ease",
+  }}
+  onMouseEnter={(e) => {
+    (e.target as HTMLButtonElement).style.backgroundColor = "#2e7d32"; // lighter green
+    (e.target as HTMLButtonElement).style.transform = "scale(1.05)";   // slightly bigger
+  }}
+  onMouseLeave={(e) => {
+    (e.target as HTMLButtonElement).style.backgroundColor = "#1b5e20"; // original color
+    (e.target as HTMLButtonElement).style.transform = "scale(1)";      // normal size
+  }}
+>
+  Proceed to Checkout
+</button>
+
+
       </div>
     </div>
   );

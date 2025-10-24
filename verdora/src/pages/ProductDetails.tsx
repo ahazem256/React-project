@@ -73,6 +73,40 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
     }
   };
 
+  const handleAddToWishlist = (): void => {
+    if (!product) return;
+    try {
+      const raw = localStorage.getItem("wishlist_items") || "[]";
+      const parsed = JSON.parse(raw);
+      const list = Array.isArray(parsed) ? parsed : [];
+      const exists = list.some((p: any) => String(p.id) === String(product.id));
+      if (exists) {
+        toast(`${product.name} is already in your wishlist`);
+        return;
+      }
+
+      // normalize shape so Wishlish.tsx (which expects title/price/image) works
+      const wishlistItem = {
+        id: product.id,
+        title: (product.name as string) || (product.title as string) || "Product",
+        price: product.price ?? product.price,
+        image:
+          typeof product.image === "string"
+            ? product.image
+            : Array.isArray(product.image) && product.image.length
+            ? product.image[0]
+            : product.image || ""
+      };
+
+      list.push(wishlistItem);
+      localStorage.setItem("wishlist_items", JSON.stringify(list));
+      window.dispatchEvent(new Event("wishlistUpdated"));
+      toast.success(`${wishlistItem.title} added to wishlist!`);
+    } catch (err) {
+      toast.error("Could not add to wishlist");
+    }
+  };
+
   const handleQuantityChange = (action: 'increment' | 'decrement'): void => {
     setQuantity(prev => ({
       value: action === 'increment' 
@@ -332,6 +366,29 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
               onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#333")}
             >
               ADD TO CART
+            </button>
+
+            {/* Add to Wishlist Button */}
+            <button
+              onClick={handleAddToWishlist}
+              style={{
+                width: "100%",
+                padding: isMobile ? "12px" : "14px",
+                backgroundColor: "var(--color-green-darker",
+                color: "#333",
+                border: "1px solid #ddd",
+                borderRadius: "4px",
+                fontSize: isMobile ? "13px" : "14px",
+                fontWeight: "600",
+                cursor: "pointer",
+                letterSpacing: "0.5px",
+                transition: "background 0.2s ease",
+                marginBottom: "16px"
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--color-green-medium")}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "var(--color-green-darker")}
+            >
+              ADD TO WISHLIST
             </button>
 
             {/* Additional Info */}
