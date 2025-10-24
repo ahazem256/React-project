@@ -15,7 +15,7 @@
       "password": "To1478963",
       "phone": "01016796606",
       "role": "user",
-      "resetCode": "960694"
+      "resetCode": null
     },
     {
       "address": "cairo",
@@ -492,15 +492,7 @@
       "category": "Indoor",
       "name": "Pothos",
       "price": "60 EGP",
-<<<<<<< HEAD
-<<<<<<< HEAD
-      "stock": 37,
-=======
-      "stock": 3,
->>>>>>> 5e3e76f7ec6ef09e000a5b234df37795dfce4f68
-=======
       "stock": 0,
->>>>>>> ea667205f41f960b1d93c36342682d45378efbb6
       "image": "https://i.postimg.cc/mkFTzXLr/id6.png",
       "bestseller": false,
       "oldprice": null,
@@ -660,11 +652,7 @@
       "category": "Indoor",
       "name": "Spider Plant",
       "price": "55 EGP",
-<<<<<<< HEAD
-      "stock": 30,
-=======
       "stock": 35,
->>>>>>> 5e3e76f7ec6ef09e000a5b234df37795dfce4f68
       "image": "https://i.postimg.cc/3RqKw5H9/id11.png",
       "bestseller": true,
       "oldprice": "70 EGP",
@@ -3442,76 +3430,6 @@
       "status": "pending"
     },
     {
-<<<<<<< HEAD
-      "id": "ORD-1761181170604",
-      "items": [
-        {
-          "id": "11",
-          "category": "Indoor",
-          "name": "Spider Plant",
-          "price": "55 EGP",
-          "stock": 31,
-          "image": "https://i.postimg.cc/3RqKw5H9/id11.png",
-          "bestseller": true,
-          "oldprice": "70 EGP",
-          "rate": "⭐⭐⭐☆☆",
-          "description": "Air-purifying indoor plant with long, arching leaves.",
-          "review": "Great for beginners, very forgiving.",
-          "discount": "15%",
-          "isNew": false,
-          "scientificName": "Chlorophytum comosum",
-          "nativeRegion": "South Africa",
-          "lifeCycle": "Perennial indoor plant; fast-growing; produces spiderettes for easy propagation.",
-          "genus": "Chlorophytum",
-          "type": "Evergreen",
-          "climate": "Tropical, warm",
-          "soilType": "Well-draining potting mix",
-          "wateringNeeds": "Moderate; allow top layer to dry slightly between waterings",
-          "sunlight": "Bright indirect to moderate light",
-          "humidity": "Moderate",
-          "growthRate": "Fast",
-          "propagation": "Offsets (spiderettes)",
-          "toxicity": "Non-toxic to pets",
-          "careTips": "Trim brown tips, avoid overwatering, can be grown in hanging baskets.",
-          "floweringSeason": "Occasionally flowers indoors",
-          "height": "0.3 - 0.6 m indoors",
-          "containerType": "Small to medium pot",
-          "numericPrice": 55,
-          "quantity": 1
-        },
-        {
-          "id": "6",
-          "category": "Indoor",
-          "name": "Pothos",
-          "price": "60 EGP",
-          "stock": 38,
-          "image": "https://i.postimg.cc/mkFTzXLr/id6.png",
-          "bestseller": false,
-          "oldprice": null,
-          "rate": "⭐⭐⭐⭐☆",
-          "description": "Easy-care trailing plant with cascading vines and lush leaves.",
-          "review": "Great for hanging baskets or shelves.",
-          "discount": null,
-          "isNew": true,
-          "scientificName": "Epipremnum aureum",
-          "nativeRegion": "Southeast Asia",
-          "lifeCycle": "Perennial indoor vine; grows moderately fast; can trail or climb supports.",
-          "genus": "Epipremnum",
-          "type": "Evergreen",
-          "climate": "Tropical, warm",
-          "soilType": "Well-draining potting soil",
-          "wateringNeeds": "Moderate; allow top inch of soil to dry",
-          "sunlight": "Bright indirect to low light",
-          "humidity": "Moderate",
-          "growthRate": "Medium",
-          "propagation": "Stem cuttings",
-          "toxicity": "Toxic to pets if ingested",
-          "careTips": "Prune regularly to maintain shape, avoid overwatering, can be grown in water.",
-          "floweringSeason": "Rarely flowers indoors",
-          "height": "Up to 2 m when supported",
-          "containerType": "Hanging basket or medium pot",
-          "numericPrice": 60,
-=======
       "id": "ORD-1761122417354",
       "items": [
         {
@@ -3590,12 +3508,6 @@
         "phone": "01016796606",
         "address": "el slam st",
         "city": "Shibin El Kom",
-        "zipCode": "1111"
-      },
-      "paymentMethod": "cash-on-delivery",
-      "total": 115,
-      "createdAt": "2025-10-23T00:59:30.603Z",
-      "orderDate": "2025-10-23T00:59:30.603Z",
         "zipCode": "12312"
       },
       "paymentMethod": "cash-on-delivery",
@@ -3863,7 +3775,6 @@
       "total": 500,
       "createdAt": "2025-10-23T20:55:51.027Z",
       "orderDate": "2025-10-23T20:55:51.027Z",
->>>>>>> 5e3e76f7ec6ef09e000a5b234df37795dfce4f68
       "status": "pending"
     }
   ]
