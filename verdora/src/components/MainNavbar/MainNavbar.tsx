@@ -185,7 +185,7 @@ const MainNavbar: React.FC<MainNavbarProps> = ({ onLogout, userName }) => {
             to="/home"
             onClick={() => handleLinkClick("home")}
           >
-            <img src={Logo} alt="logo" style={{ height: "80px", width: "220px" }} />
+            <img src={Logo} alt="logo" style={{ height: "80px", width: "180px" }} />
           </Link>
 
           {/* Desktop Nav */}
