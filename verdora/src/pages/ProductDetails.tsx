@@ -264,7 +264,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
               <div style={{ display: "flex", gap: "2px", color: "#f0c040" }}>
                 {Array.from({ length: 5 }, (_, i) => (
                   <span key={i} style={{ fontSize: isMobile ? "12px" : "14px" }}>
-                    {i < Math.floor(Number(product.rate || 4.5)) ? "★" : "☆"}
+                    {i < Math.floor(Number(products.rate || 4.5)) ? "★" : "☆"}
                   </span>
                 ))}
               </div>
