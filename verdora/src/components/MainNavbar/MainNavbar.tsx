@@ -157,8 +157,7 @@ const MainNavbar: React.FC<MainNavbarProps> = ({ onLogout, userName }) => {
     localStorage.removeItem("loggedInUser");
     localStorage.removeItem("orders_state");
 
-    // ✅ Do NOT remove cart_items to preserve cart after logout
-    // localStorage.removeItem("cart_items"); ❌
+
 
     setStoredName("");
     onLogout();
@@ -186,7 +185,7 @@ const MainNavbar: React.FC<MainNavbarProps> = ({ onLogout, userName }) => {
             to="/home"
             onClick={() => handleLinkClick("home")}
           >
-            <img src={Logo} alt="logo" style={{ height: "80px", width: "auto" }} />
+            <img src={Logo} alt="logo" style={{ height: "80px", width: "220px" }} />
           </Link>
 
           {/* Desktop Nav */}
