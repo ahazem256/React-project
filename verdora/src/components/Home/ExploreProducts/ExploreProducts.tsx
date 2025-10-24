@@ -21,8 +21,8 @@ interface Product {
 
 
 const fetchProducts = async (): Promise<Product[]> => {
-    const res = await axios.get("https://api.jsonbin.io/v3/b/68e56de5d0ea881f4098eaa4/latest");
-    return res.data.record.products;
+    const res = await axios.get("http://localhost:5005/products");
+    return res.data;
 };
 
 const ExploreProducts: React.FC = () => {

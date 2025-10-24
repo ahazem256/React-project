@@ -13,7 +13,7 @@ export default function Bonsai_miniature() {
 const { displayedProducts, filter, setFilter, searchTerm, setSearchTerm, goToDetails } = UseProducts();
 const [searchOpen, setSearchOpen] = useState(false);
 const categoryProducts = displayedProducts.filter(
-  (product) => product.category === "Bonsai & Miniature Plants"
+  (product) => product.category === "bonsai_miniature"
 );
 
      return (
