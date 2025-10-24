@@ -7,6 +7,7 @@ import {
   IoCartOutline,
   IoClose,
   IoLogOutOutline,
+  IoHeartOutline, // added
 } from "react-icons/io5";
 import { CiMenuFries } from "react-icons/ci";
 import { RiArrowDropDownLine } from "react-icons/ri";
@@ -35,6 +36,10 @@ const MainNavbar: React.FC<MainNavbarProps> = ({ onLogout, userName }) => {
   const [cartCount, setCartCount] = useState<number>(0);
   const [isCartAnimating, setIsCartAnimating] = useState<boolean>(false);
 
+  // wishlist state
+  const [wishlistCount, setWishlistCount] = useState<number>(0);
+  const [isWishAnimating, setIsWishAnimating] = useState<boolean>(false);
+
   const categoriesDropdownRef = useRef<HTMLDivElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
 
@@ -48,7 +53,7 @@ const MainNavbar: React.FC<MainNavbarProps> = ({ onLogout, userName }) => {
   const updateCartCount = (): void => {
     const cart = JSON.parse(localStorage.getItem("cart_items") || "[]");
     const previousCount = cartCount;
-    const newCount = cart.length;
+    const newCount = Array.isArray(cart) ? cart.length : 0;
 
     setCartCount(newCount);
 
@@ -58,20 +63,42 @@ const MainNavbar: React.FC<MainNavbarProps> = ({ onLogout, userName }) => {
     }
   };
 
+  const updateWishlistCount = (): void => {
+    try {
+      const wishlist = JSON.parse(localStorage.getItem("wishlist_items") || "[]");
+      const previous = wishlistCount;
+      const newCount = Array.isArray(wishlist) ? wishlist.length : 0;
+
+      setWishlistCount(newCount);
+
+      if (newCount > previous) {
+        setIsWishAnimating(true);
+        setTimeout(() => setIsWishAnimating(false), 600);
+      }
+    } catch {
+      setWishlistCount(0);
+    }
+  };
+
   useEffect(() => {
     const nameFromStorage = localStorage.getItem("userName");
     setStoredName(nameFromStorage || "");
     updateCartCount();
+    updateWishlistCount();
   }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
       updateCartCount();
+      updateWishlistCount();
     }, 1000);
 
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === "cart_items") {
         updateCartCount();
+      }
+      if (e.key === "wishlist_items") {
+        updateWishlistCount();
       }
     };
 
@@ -79,15 +106,21 @@ const MainNavbar: React.FC<MainNavbarProps> = ({ onLogout, userName }) => {
       updateCartCount();
     };
 
+    const handleWishlistUpdate = () => {
+      updateWishlistCount();
+    };
+
     window.addEventListener("storage", handleStorageChange);
     window.addEventListener("cartUpdated", handleCartUpdate);
+    window.addEventListener("wishlistUpdated", handleWishlistUpdate);
 
     return () => {
       clearInterval(interval);
       window.removeEventListener("storage", handleStorageChange);
       window.removeEventListener("cartUpdated", handleCartUpdate);
+      window.removeEventListener("wishlistUpdated", handleWishlistUpdate);
     };
-  }, [cartCount]);
+  }, [cartCount, wishlistCount]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent): void => {
@@ -215,6 +248,19 @@ const MainNavbar: React.FC<MainNavbarProps> = ({ onLogout, userName }) => {
             )}
 
             <Link
+              to="/wishlist"
+              className={`btn position-relative btn-wishlist ${isWishAnimating ? "wish-animate" : ""}`}
+              title="Wishlist"
+            >
+              <IoHeartOutline size={22} />
+              {wishlistCount > 0 && (
+                <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                  {wishlistCount}
+                </span>
+              )}
+            </Link>
+
+            <Link
               to="/cart"
               className={`btn position-relative btn-cart ${isCartAnimating ? "cart-animate" : ""}`}
             >
@@ -307,6 +353,17 @@ const MainNavbar: React.FC<MainNavbarProps> = ({ onLogout, userName }) => {
                 {storedName && (
                   <p className="fw-bold text-success mb-2">Welcome, {storedName}</p>
                 )}
+
+                <Link
+                  to="/wishlist"
+                  className={`mobile-wish-btn ${isWishAnimating ? "wish-animate" : ""}`}
+                  onClick={closeMenu}
+                >
+                  <IoHeartOutline size={26} /> Wishlist
+                  {wishlistCount > 0 && (
+                    <span className="ms-2 badge bg-danger">{wishlistCount}</span>
+                  )}
+                </Link>
 
                 <Link
                   to="/cart"
