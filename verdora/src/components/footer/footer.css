@@ -423,15 +423,3 @@
         font-size: 12px;
     }
 }
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translate(-50%, -10%);
-    }
-
-    to {
-        opacity: 1;
-        transform: translate(-50%, 0);
-    }
-}
