@@ -151,6 +151,7 @@
 }
 
 /* Dropdown Styles */
+/* Dropdown Styles - Click instead of Hover */
 .footer-dropdown {
     position: relative;
     display: inline-block;
@@ -160,9 +161,12 @@
     cursor: pointer;
     color: var(--color-green-darkest);
     font-weight: 600;
-    transition: color 0.3s ease;
+    transition: all 0.3s ease;
     padding: 0.3rem 0.5rem;
     border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
 }
 
 .dropdown-title:hover {
@@ -175,7 +179,6 @@
     left: 50%;
     transform: translateX(-50%);
     top: -220%;
-    /* 👈 خليه يطلع فوق الفوتر بدل ما ينزل تحته */
     background: rgba(255, 255, 255, 0.98);
     border-radius: 8px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
@@ -184,15 +187,20 @@
     margin: 0;
     display: none;
     z-index: 9999;
-    /* 🔥 فوق كل حاجة */
     min-width: 200px;
     backdrop-filter: blur(10px);
     border: 1px solid rgba(120, 168, 125, 0.2);
-    animation: fadeIn 0.25s ease-in-out;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.25s ease-in-out;
 }
 
-.footer-dropdown:hover .footer-dropdown-menu {
+/* Show dropdown when active */
+.footer-dropdown-menu.show {
     display: block;
+    opacity: 1;
+    visibility: visible;
+    animation: fadeInDropdown 0.25s ease-in-out;
 }
 
 .footer-dropdown-menu li {
@@ -212,6 +220,18 @@
 .footer-dropdown-menu li a:hover {
     color: var(--color-green-darker);
     background-color: rgba(120, 168, 125, 0.1);
+}
+
+@keyframes fadeInDropdown {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
 }
 
 /* Footer Bottom */

@@ -1,14 +1,41 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { FaFacebookF, FaInstagram, FaTwitter, FaLeaf } from "react-icons/fa";
+import { RiArrowDropDownLine } from "react-icons/ri";
 import Logo from '../../assets/logo.png';
 import "./Footer.css";
 
 const Footer: React.FC = () => {
+    const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+    const dropdownRef = useRef<HTMLLIElement>(null);
+
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent): void => {
+            if (
+                dropdownRef.current &&
+                !dropdownRef.current.contains(event.target as Node)
+            ) {
+                setIsDropdownOpen(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    const toggleDropdown = (): void => {
+        setIsDropdownOpen((prev) => !prev);
+    };
+
+    const handleCategoryClick = (): void => {
+        setIsDropdownOpen(false);
+    };
+
     return (
         <footer className="footer">
             <div className="footer-container">
-                {/* القسم الأول: اللوجو والوصف */}
+
                 <div className="footer-section footer-about">
                     <div className="footer-logo">
                         <img
@@ -23,25 +50,70 @@ const Footer: React.FC = () => {
                     </p>
                 </div>
 
-                {/* القسم الثاني: روابط التنقل */}
+
                 <div className="footer-section footer-links-section">
                     <h5 className="footer-title">Quick Links</h5>
                     <ul className="footer-links">
                         <li><Link to="/home">Home</Link></li>
                         <li><Link to="/products">Products</Link></li>
-                        <li className="footer-dropdown">
-                            <span className="dropdown-title">Categories ▾</span>
-                            <ul className="footer-dropdown-menu">
-                                <li><Link to="/categories/indoor">Indoor</Link></li>
-                                <li><Link to="/categories/outdoor">Outdoor</Link></li>
-                                <li><Link to="/categories/flowering">Flowering</Link></li>
-                                <li><Link to="/categories/bonsai_miniature">Bonsai & Miniature</Link></li>
-                            </ul>
+
+
+                        <li className="footer-dropdown" ref={dropdownRef}>
+                            <span
+                                className="dropdown-title"
+                                onClick={toggleDropdown}
+                            >
+                                Categories
+                                <RiArrowDropDownLine
+                                    size={22}
+                                    style={{
+                                        transform: isDropdownOpen ? "rotate(180deg)" : "rotate(0deg)",
+                                        transition: "transform 0.3s ease",
+                                    }}
+                                />
+                            </span>
+
+                            {isDropdownOpen && (
+                                <ul className="footer-dropdown-menu show">
+                                    <li>
+                                        <Link
+                                            to="/categories/indoor"
+                                            onClick={handleCategoryClick}
+                                        >
+                                            Indoor
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link
+                                            to="/categories/outdoor"
+                                            onClick={handleCategoryClick}
+                                        >
+                                            Outdoor
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link
+                                            to="/categories/flowering"
+                                            onClick={handleCategoryClick}
+                                        >
+                                            Flowering
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link
+                                            to="/categories/bonsai_miniature"
+                                            onClick={handleCategoryClick}
+                                        >
+                                            Bonsai & Miniature
+                                        </Link>
+                                    </li>
+                                </ul>
+                            )}
                         </li>
                     </ul>
                 </div>
 
-                {/* القسم الثالث: سوشيال ميديا */}
+
                 <div className="footer-section footer-social-section">
                     <h5 className="footer-title">Follow Us</h5>
                     <div className="footer-social">

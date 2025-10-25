@@ -7,7 +7,6 @@ import {
   IoCartOutline,
   IoClose,
   IoLogOutOutline,
-  IoHeartOutline, // added
 } from "react-icons/io5";
 import { CiMenuFries } from "react-icons/ci";
 import { RiArrowDropDownLine } from "react-icons/ri";
@@ -32,13 +31,10 @@ const MainNavbar: React.FC<MainNavbarProps> = ({ onLogout, userName }) => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [activeLink, setActiveLink] = useState<ActiveLinkType>("home");
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+  const [isMobileDropdownOpen, setIsMobileDropdownOpen] = useState<boolean>(false);
   const [storedName, setStoredName] = useState<string>("");
   const [cartCount, setCartCount] = useState<number>(0);
   const [isCartAnimating, setIsCartAnimating] = useState<boolean>(false);
-
-  // wishlist state
-  const [wishlistCount, setWishlistCount] = useState<number>(0);
-  const [isWishAnimating, setIsWishAnimating] = useState<boolean>(false);
 
   const categoriesDropdownRef = useRef<HTMLDivElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
@@ -53,7 +49,7 @@ const MainNavbar: React.FC<MainNavbarProps> = ({ onLogout, userName }) => {
   const updateCartCount = (): void => {
     const cart = JSON.parse(localStorage.getItem("cart_items") || "[]");
     const previousCount = cartCount;
-    const newCount = Array.isArray(cart) ? cart.length : 0;
+    const newCount = cart.length;
 
     setCartCount(newCount);
 
@@ -63,42 +59,20 @@ const MainNavbar: React.FC<MainNavbarProps> = ({ onLogout, userName }) => {
     }
   };
 
-  const updateWishlistCount = (): void => {
-    try {
-      const wishlist = JSON.parse(localStorage.getItem("wishlist_items") || "[]");
-      const previous = wishlistCount;
-      const newCount = Array.isArray(wishlist) ? wishlist.length : 0;
-
-      setWishlistCount(newCount);
-
-      if (newCount > previous) {
-        setIsWishAnimating(true);
-        setTimeout(() => setIsWishAnimating(false), 600);
-      }
-    } catch {
-      setWishlistCount(0);
-    }
-  };
-
   useEffect(() => {
     const nameFromStorage = localStorage.getItem("userName");
     setStoredName(nameFromStorage || "");
     updateCartCount();
-    updateWishlistCount();
   }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
       updateCartCount();
-      updateWishlistCount();
     }, 1000);
 
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === "cart_items") {
         updateCartCount();
-      }
-      if (e.key === "wishlist_items") {
-        updateWishlistCount();
       }
     };
 
@@ -106,21 +80,15 @@ const MainNavbar: React.FC<MainNavbarProps> = ({ onLogout, userName }) => {
       updateCartCount();
     };
 
-    const handleWishlistUpdate = () => {
-      updateWishlistCount();
-    };
-
     window.addEventListener("storage", handleStorageChange);
     window.addEventListener("cartUpdated", handleCartUpdate);
-    window.addEventListener("wishlistUpdated", handleWishlistUpdate);
 
     return () => {
       clearInterval(interval);
       window.removeEventListener("storage", handleStorageChange);
       window.removeEventListener("cartUpdated", handleCartUpdate);
-      window.removeEventListener("wishlistUpdated", handleWishlistUpdate);
     };
-  }, [cartCount, wishlistCount]);
+  }, [cartCount]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent): void => {
@@ -146,18 +114,15 @@ const MainNavbar: React.FC<MainNavbarProps> = ({ onLogout, userName }) => {
   const closeMenu = (): void => {
     setIsMenuOpen(false);
     setIsDropdownOpen(false);
+    setIsMobileDropdownOpen(false);
   };
 
-  // ✅ Modified logout to keep cart_items
   const handleLogout = (): void => {
-    // remove only sensitive data
     localStorage.removeItem("token");
     localStorage.removeItem("userName");
     localStorage.removeItem("userEmail");
     localStorage.removeItem("loggedInUser");
     localStorage.removeItem("orders_state");
-
-
 
     setStoredName("");
     onLogout();
@@ -167,6 +132,7 @@ const MainNavbar: React.FC<MainNavbarProps> = ({ onLogout, userName }) => {
   const handleCategoryClick = (path: string): void => {
     setActiveLink("categories");
     setIsDropdownOpen(false);
+    setIsMobileDropdownOpen(false);
     closeMenu();
     navigate(path);
   };
@@ -185,10 +151,10 @@ const MainNavbar: React.FC<MainNavbarProps> = ({ onLogout, userName }) => {
             to="/home"
             onClick={() => handleLinkClick("home")}
           >
-            <img src={Logo} alt="logo" style={{ height: "80px", width: "180px" }} />
+            <img src={Logo} alt="logo" style={{ height: "80px", width: "220px" }} />
           </Link>
 
-          {/* Desktop Nav */}
+
           <div className="navbar-nav-desktop">
             <Link
               className={`main-navbar ${activeLink === "home" ? "active" : ""}`}
@@ -204,23 +170,19 @@ const MainNavbar: React.FC<MainNavbarProps> = ({ onLogout, userName }) => {
             >
               Products
             </Link>
-            <div
-              ref={categoriesDropdownRef}
-              className="nav-item dropdown"
-              onMouseEnter={() => setIsDropdownOpen(true)}
-              onMouseLeave={() => setIsDropdownOpen(false)}
-            >
-              <Link
-                to="#"
-                className={`main-navbar d-flex align-items-center ${activeLink === "categories" ? "active" : ""}`}
-                onClick={(e) => {
-                  e.preventDefault();
+
+
+            <div ref={categoriesDropdownRef} className="nav-item dropdown">
+              <button
+                className={`main-navbar dropdown-toggle-btn d-flex align-items-center ${activeLink === "categories" ? "active" : ""}`}
+                onClick={() => {
+                  setActiveLink("categories");
                   setIsDropdownOpen((prev) => !prev);
-                  handleLinkClick("categories");
                 }}
               >
                 Categories <RiArrowDropDownLine size={22} />
-              </Link>
+              </button>
+
               {isDropdownOpen && (
                 <div className="dropdown-menu show">
                   {categories.map((cat: Category) => (
@@ -238,26 +200,13 @@ const MainNavbar: React.FC<MainNavbarProps> = ({ onLogout, userName }) => {
             </div>
           </div>
 
-          {/* Desktop Icons */}
+
           <div className="navbar-icons-desktop">
             {storedName && (
               <span className="fw-bold text-success me-2 welcome">
                 Welcome, {storedName}
               </span>
             )}
-
-            <Link
-              to="/wishlist"
-              className={`btn position-relative btn-wishlist ${isWishAnimating ? "wish-animate" : ""}`}
-              title="Wishlist"
-            >
-              <IoHeartOutline size={26} />
-              {wishlistCount > 0 && (
-                <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                  {wishlistCount}
-                </span>
-              )}
-            </Link>
 
             <Link
               to="/cart"
@@ -289,49 +238,61 @@ const MainNavbar: React.FC<MainNavbarProps> = ({ onLogout, userName }) => {
             </button>
           </div>
 
-          {/* Mobile Toggle */}
+
           <button className="menu-toggle-btn" onClick={toggleMenu} type="button">
             <CiMenuFries size={28} />
           </button>
         </div>
 
-        {/* Mobile Menu */}
+
         {isMenuOpen && (
           <div className="mobile-menu-overlay" onClick={closeMenu}>
             <div
               className="mobile-menu-content"
               ref={mobileMenuRef}
-              onClick={(e: React.MouseEvent) => e.stopPropagation()}
+              onClick={(e) => e.stopPropagation()}
             >
               <button className="close-menu-btn" onClick={closeMenu} type="button">
                 <IoClose size={32} />
               </button>
 
               <div className="mobile-nav-links">
-                <Link className={`main-navbar-mobile ${activeLink === "home" ? "active" : ""}`} to="/home" onClick={closeMenu}>
+                <Link
+                  className={`main-navbar-mobile ${activeLink === "home" ? "active" : ""}`}
+                  to="/home"
+                  onClick={() => handleLinkClick("home")}
+                >
                   Home
                 </Link>
 
-                <Link className={`main-navbar-mobile ${activeLink === "products" ? "active" : ""}`} to="/products" onClick={closeMenu}>
+                <Link
+                  className={`main-navbar-mobile ${activeLink === "products" ? "active" : ""}`}
+                  to="/products"
+                  onClick={() => handleLinkClick("products")}
+                >
                   Products
                 </Link>
 
+
                 <div className="nav-item dropdown">
-                  <div
+                  <button
                     className={`main-navbar-mobile d-flex align-items-center justify-content-between ${activeLink === "categories" ? "active" : ""}`}
-                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    onClick={() => {
+                      setActiveLink("categories");
+                      setIsMobileDropdownOpen((prev) => !prev);
+                    }}
                   >
                     Categories
                     <RiArrowDropDownLine
                       size={25}
                       style={{
-                        transform: isDropdownOpen ? "rotate(180deg)" : "rotate(0deg)",
+                        transform: isMobileDropdownOpen ? "rotate(180deg)" : "rotate(0deg)",
                         transition: "transform 0.3s ease",
                       }}
                     />
-                  </div>
+                  </button>
 
-                  {isDropdownOpen && (
+                  {isMobileDropdownOpen && (
                     <div className="mobile-dropdown-menu">
                       {categories.map((cat: Category) => (
                         <Link
@@ -352,18 +313,6 @@ const MainNavbar: React.FC<MainNavbarProps> = ({ onLogout, userName }) => {
                 {storedName && (
                   <p className="fw-bold text-success mb-2">Welcome, {storedName}</p>
                 )}
-
-                <Link
-                  to="/wishlist"
-                  className={`mobile-wish-btn ${isWishAnimating ? "wish-animate" : ""}`}
-                  onClick={closeMenu}
-                >
-                  <IoHeartOutline size={26} /> {/* Changed from 26 to 26 to be consistent */}
-                  Wishlist
-                  {wishlistCount > 0 && (
-                    <span className="ms-2 badge bg-danger">{wishlistCount}</span>
-                  )}
-                </Link>
 
                 <Link
                   to="/cart"
@@ -398,6 +347,7 @@ const MainNavbar: React.FC<MainNavbarProps> = ({ onLogout, userName }) => {
             </div>
           </div>
         )}
+
       </div>
     </nav>
   );
