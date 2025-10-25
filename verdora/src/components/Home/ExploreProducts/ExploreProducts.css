@@ -149,7 +149,7 @@
     align-items: center;
     justify-content: center;
     box-shadow: 0 6px 18px rgba(0,0,0,0.12);
-    transition: all 0.3s ease;
+    transition: transform 0.12s ease, opacity 0.12s ease;
     opacity: 0;
     transform: translateY(-6px);
     border: none;
@@ -158,7 +158,8 @@
     z-index: 30;
 }
 
-.product-image-wrapper-explore:hover .wishlist-overlay {
+.product-image-wrapper-explore:hover .wishlist-overlay,
+.product-image-wrapper:hover .wishlist-overlay {
     opacity: 1;
     transform: translateY(0);
 }

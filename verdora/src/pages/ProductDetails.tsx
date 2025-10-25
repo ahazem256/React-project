@@ -26,6 +26,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
   const [quantity, setQuantity] = useState<QuantityState>({ value: 1 });
   const [activeImageIndex, setActiveImageIndex] = useState<number>(0);
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth <= 768);
+  const [isInWishlist, setIsInWishlist] = useState<boolean>(false);
 
   useEffect(() => {
     dispatch(fetchProducts());
@@ -65,6 +66,16 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
     }
   }, [loading, products, id]);
 
+  useEffect(() => {
+    if (product) {
+      const raw = localStorage.getItem("wishlist_items") || "[]";
+      const parsed = JSON.parse(raw);
+      const list = Array.isArray(parsed) ? parsed : [];
+      const exists = list.some((p: any) => String(p.id) === String(product.id));
+      setIsInWishlist(exists);
+    }
+  }, [product]);
+
 
   const handleAddToCart = (): void => {
     if (product) {
@@ -80,11 +91,18 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
       const parsed = JSON.parse(raw);
       const list = Array.isArray(parsed) ? parsed : [];
       const exists = list.some((p: any) => String(p.id) === String(product.id));
+      
       if (exists) {
-        toast(`${product.name} is already in your wishlist`);
+        // Remove from wishlist
+        const updatedList = list.filter((p: any) => String(p.id) !== String(product.id));
+        localStorage.setItem("wishlist_items", JSON.stringify(updatedList));
+        window.dispatchEvent(new Event("wishlistUpdated"));
+        setIsInWishlist(false);
+        toast.success(`${product.name} removed from wishlist!`);
         return;
       }
 
+      // Add to wishlist
       // normalize shape so Wishlish.tsx (which expects title/price/image) works
       const wishlistItem = {
         id: product.id,
@@ -101,9 +119,10 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
       list.push(wishlistItem);
       localStorage.setItem("wishlist_items", JSON.stringify(list));
       window.dispatchEvent(new Event("wishlistUpdated"));
+      setIsInWishlist(true);
       toast.success(`${wishlistItem.title} added to wishlist!`);
     } catch (err) {
-      toast.error("Could not add to wishlist");
+      toast.error("Could not update wishlist");
     }
   };
 
@@ -345,51 +364,59 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
               </div>
             </div>
 
-            {/* Add to Cart Button */}
-            <button
-              onClick={handleAddToCart}
-              style={{
-                width: "100%",
-                padding: isMobile ? "14px" : "16px",
-                backgroundColor: "#333",
-                color: "#fff",
-                border: "none",
-                borderRadius: "4px",
-                fontSize: isMobile ? "13px" : "14px",
-                fontWeight: "600",
-                cursor: "pointer",
-                letterSpacing: "0.5px",
-                transition: "background 0.3s ease",
-                marginBottom: "16px"
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#555")}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#333")}
-            >
-              ADD TO CART
-            </button>
+            {/* Add to Cart & Wishlist Buttons */}
+            <div style={{ display: "flex", gap: "12px", marginBottom: "16px" }}>
+              <button
+                onClick={handleAddToCart}
+                style={{
+                  flex: 1,
+                  padding: isMobile ? "14px" : "16px",
+                  backgroundColor: "#333",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: "4px",
+                  fontSize: isMobile ? "13px" : "14px",
+                  fontWeight: "600",
+                  cursor: "pointer",
+                  letterSpacing: "0.5px",
+                  transition: "background 0.3s ease"
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#555")}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#333")}
+              >
+                ADD TO CART
+              </button>
 
-            {/* Add to Wishlist Button */}
-            <button
-              onClick={handleAddToWishlist}
-              style={{
-                width: "100%",
-                padding: isMobile ? "12px" : "14px",
-                backgroundColor: "var(--color-green-darker",
-                color: "#333",
-                border: "1px solid #ddd",
-                borderRadius: "4px",
-                fontSize: isMobile ? "13px" : "14px",
-                fontWeight: "600",
-                cursor: "pointer",
-                letterSpacing: "0.5px",
-                transition: "background 0.2s ease",
-                marginBottom: "16px"
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--color-green-medium")}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "var(--color-green-darker")}
-            >
-              ADD TO WISHLIST
-            </button>
+              <button
+                onClick={handleAddToWishlist}
+                style={{
+                  width: isMobile ? "52px" : "56px",
+                  height: isMobile ? "48px" : "52px",
+                  backgroundColor: isInWishlist ? "var(--color-green-darker)" : "#fff",
+                  color: isInWishlist ? "#fff" : "#333",
+                  border: "1px solid #ddd",
+                  borderRadius: "4px",
+                  fontSize: "20px",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center"
+                }}
+                onMouseEnter={(e) => {
+                  if (!isInWishlist) {
+                    e.currentTarget.style.backgroundColor = "#f5f5f5";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isInWishlist) {
+                    e.currentTarget.style.backgroundColor = "#fff";
+                  }
+                }}
+              >
+                ♥
+              </button>
+            </div>
 
             {/* Additional Info */}
             <div style={{ borderTop: "1px solid #e0e0e0", paddingTop: isMobile ? "24px" : "32px", marginTop: isMobile ? "24px" : "32px" }}>

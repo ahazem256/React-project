@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Slider from "react-slick";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
@@ -8,6 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import ClipLoader from "react-spinners/ClipLoader";
 import { addToCart } from "../../../redux/slices/cartSlice";
+import { IoHeartOutline, IoHeart } from "react-icons/io5";
 import "./LowestProducts.css";
 
 interface Product {
@@ -89,6 +90,59 @@ const LowestProducts: React.FC = () => {
         ],
     };
 
+    const [wishlistMap, setWishlistMap] = useState<{ [key: string]: boolean }>({});
+
+    useEffect(() => {
+        try {
+            const raw = localStorage.getItem("wishlist_items") || "[]";
+            const list = JSON.parse(raw);
+            const map: { [key: string]: boolean } = {};
+            if (Array.isArray(list)) {
+                list.forEach((item: any) => {
+                    map[item.id] = true;
+                });
+            }
+            setWishlistMap(map);
+        } catch {
+            setWishlistMap({});
+        }
+    }, []);
+
+    const toggleWishlist = (product: any, e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        try {
+            const raw = localStorage.getItem("wishlist_items") || "[]";
+            const list = JSON.parse(raw);
+            const items = Array.isArray(list) ? list : [];
+
+            const exists = items.some((p: any) => String(p.id) === String(product.id));
+            if (exists) {
+                // Remove
+                const filtered = items.filter((p: any) => String(p.id) !== String(product.id));
+                localStorage.setItem("wishlist_items", JSON.stringify(filtered));
+                setWishlistMap((prev) => ({ ...prev, [product.id]: false }));
+                toast.success(`${product.name} removed from wishlist`);
+            } else {
+                // Add
+                const item = {
+                    id: product.id,
+                    title: product.name,
+                    price: product.price,
+                    image: product.image,
+                };
+                items.push(item);
+                localStorage.setItem("wishlist_items", JSON.stringify(items));
+                setWishlistMap((prev) => ({ ...prev, [product.id]: true }));
+                toast.success(`${product.name} added to wishlist`);
+            }
+            window.dispatchEvent(new Event("wishlistUpdated"));
+        } catch {
+            toast.error("Could not update wishlist");
+        }
+    };
+
     if (isLoading) {
         return (
             <div className="lp-final-loading-container">
@@ -125,6 +179,18 @@ const LowestProducts: React.FC = () => {
                                     }}
                                 >
                                     Add to Cart
+                                </button>
+                                <button
+                                    className={`wishlist-overlay ${wishlistMap[p.id] ? "added" : ""}`}
+                                    onClick={(e) => toggleWishlist(p, e)}
+                                    title={wishlistMap[p.id] ? "Remove from wishlist" : "Add to wishlist"}
+                                    type="button"
+                                >
+                                    {wishlistMap[p.id] ? (
+                                        <IoHeart size={18} />
+                                    ) : (
+                                        <IoHeartOutline size={18} />
+                                    )}
                                 </button>
                             </div>
                             <div className="lp-final-details">

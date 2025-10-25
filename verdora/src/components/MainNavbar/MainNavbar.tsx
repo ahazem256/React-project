@@ -251,7 +251,7 @@ const MainNavbar: React.FC<MainNavbarProps> = ({ onLogout, userName }) => {
               className={`btn position-relative btn-wishlist ${isWishAnimating ? "wish-animate" : ""}`}
               title="Wishlist"
             >
-              <IoHeartOutline size={22} />
+              <IoHeartOutline size={26} />
               {wishlistCount > 0 && (
                 <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                   {wishlistCount}
@@ -358,7 +358,8 @@ const MainNavbar: React.FC<MainNavbarProps> = ({ onLogout, userName }) => {
                   className={`mobile-wish-btn ${isWishAnimating ? "wish-animate" : ""}`}
                   onClick={closeMenu}
                 >
-                  <IoHeartOutline size={26} /> Wishlist
+                  <IoHeartOutline size={26} /> {/* Changed from 26 to 26 to be consistent */}
+                  Wishlist
                   {wishlistCount > 0 && (
                     <span className="ms-2 badge bg-danger">{wishlistCount}</span>
                   )}

@@ -1,5 +1,5 @@
 // ExploreProducts.tsx
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import './ExploreProducts.css';
@@ -8,6 +8,7 @@ import { useDispatch } from "react-redux";
 import { addToCart } from "../../../redux/slices/cartSlice";
 import { useQuery } from "@tanstack/react-query";
 import { ClipLoader } from "react-spinners";
+import { IoHeartOutline, IoHeart } from "react-icons/io5";
 
 interface Product {
     id: number;
@@ -18,7 +19,6 @@ interface Product {
     rate: string;
     stock: string;
 }
-
 
 const fetchProducts = async (): Promise<Product[]> => {
     const res = await axios.get("http://localhost:5005/products");
@@ -34,6 +34,24 @@ const ExploreProducts: React.FC = () => {
         queryFn: fetchProducts,
     });
 
+    const [wishlistMap, setWishlistMap] = useState<{[key: string]: boolean}>({});
+
+    useEffect(() => {
+        try {
+            const raw = localStorage.getItem("wishlist_items") || "[]";
+            const list = JSON.parse(raw);
+            const map: {[key: string]: boolean} = {};
+            if (Array.isArray(list)) {
+                list.forEach((item: any) => {
+                    map[item.id] = true;
+                });
+            }
+            setWishlistMap(map);
+        } catch {
+            setWishlistMap({});
+        }
+    }, []);
+
     const handleProductClick = (id: number) => {
         navigate(`/product/${id}`);
     };
@@ -43,6 +61,40 @@ const ExploreProducts: React.FC = () => {
         toast.success(`${product.name} added to cart!`);
     };
 
+    const toggleWishlist = (product: any, e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        try {
+            const raw = localStorage.getItem("wishlist_items") || "[]";
+            const list = JSON.parse(raw);
+            const items = Array.isArray(list) ? list : [];
+            
+            const exists = items.some((p: any) => String(p.id) === String(product.id));
+            if (exists) {
+                // Remove
+                const filtered = items.filter((p: any) => String(p.id) !== String(product.id));
+                localStorage.setItem("wishlist_items", JSON.stringify(filtered));
+                setWishlistMap(prev => ({...prev, [product.id]: false}));
+                toast.success(`${product.name} removed from wishlist`);
+            } else {
+                // Add
+                const item = {
+                    id: product.id,
+                    title: product.name,
+                    price: product.price,
+                    image: product.image
+                };
+                items.push(item);
+                localStorage.setItem("wishlist_items", JSON.stringify(items));
+                setWishlistMap(prev => ({...prev, [product.id]: true}));
+                toast.success(`${product.name} added to wishlist`);
+            }
+            window.dispatchEvent(new Event("wishlistUpdated"));
+        } catch {
+            toast.error("Could not update wishlist");
+        }
+    };
 
     if (isLoading) {
         return (
@@ -52,7 +104,6 @@ const ExploreProducts: React.FC = () => {
             </div>
         );
     }
-
 
     if (isError) {
         return <div className="error-message">Failed to load products.</div>;
@@ -75,6 +126,7 @@ const ExploreProducts: React.FC = () => {
                                 alt={product.name}
                                 className="product-image-explore"
                             />
+                            
                             <button
                                 className="add-to-cart-overlay"
                                 onClick={(e) => {
@@ -83,6 +135,19 @@ const ExploreProducts: React.FC = () => {
                                 }}
                             >
                                 Add to Cart
+                            </button>
+
+                            <button
+                                className={`wishlist-overlay ${wishlistMap[product.id] ? "added" : ""}`}
+                                onClick={(e) => toggleWishlist(product, e)}
+                                title={wishlistMap[product.id] ? "Remove from wishlist" : "Add to wishlist"}
+                                type="button"
+                            >
+                                {wishlistMap[product.id] ? (
+                                    <IoHeart size={18} />
+                                ) : (
+                                    <IoHeartOutline size={18} />
+                                )}
                             </button>
                         </div>
 
