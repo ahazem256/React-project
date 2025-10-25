@@ -10,7 +10,7 @@ It helps users explore, choose, and buy plants that fit their lifestyle — usin
 - 🔍 **Smart Search & Filters** – Filter by category, size, and maintenance level.  
 - 🎯 **Plant Finder Quiz** – Helps users find the perfect plant match based on lifestyle.  
 - 🛍️ **Shopping Cart** – Add, edit, and remove items easily.  
-- 🧑‍💻 **Admin Dashboard** – Manage products, categories, and users.  
+- 🧑‍💻 **Admin Dashboard** – Manage products, categories, Reports, orders, and users.  
 - 📱 **Responsive Design** – Works on mobile, tablet, and desktop.  
 - ⚙️ **Pagination** – Clean navigation through large product lists.  
 - 🔐 **Authentication** – Login, signup, and local session management.
