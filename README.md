@@ -35,7 +35,7 @@ It helps users explore, choose, and buy plants that fit their lifestyle — usin
 Clone the project and install dependencies:
 
 ```bash
-git clone https://github.com/your-username/verdora.git
+git clone https://github.com/ahazem256/React-project.git
 cd verdora
 npm install
 ```
@@ -49,7 +49,7 @@ npm run dev
 For the mock API (JSON Server):
 
 ```bash
-npx json-server --watch db.json --port 5000
+npx json-server --watch db.json --port 5005
 ```
 
 Then open the app at [http://localhost:5173](http://localhost:5173).
