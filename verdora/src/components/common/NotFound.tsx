@@ -15,7 +15,7 @@ const NotFound: React.FC = () => {
 
       <div
         className="d-flex justify-content-center align-items-center vh-100 bg-white text-dark notfound-container"
-        style={{ fontFamily: "var(--font-family-form)" }}
+        style={{ fontFamily: "var(--font-family-form)", background: "#ffff" }}
       >
         <div className="d-flex flex-column flex-md-row align-items-center gap-5 px-3 fade-in">
           <h1

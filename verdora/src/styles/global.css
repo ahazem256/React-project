@@ -282,3 +282,35 @@ body {
   color: white
 }
 
+.notfound-wrapper {
+  margin-top: -300px; 
+}
+
+@media (max-width: 1024px) {
+  .notfound-wrapper {
+    margin-top: -200px;
+  }
+}
+@media (max-width: 768px) {
+  .notfound-wrapper {
+    margin-top: -50px;
+  }
+}
+
+.circle {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #121212; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: #efe7e7;
+  cursor: pointer;
+  margin-top: 2px;
+  background-color: rgb(28, 26, 26);
+}
+
+
+

@@ -35,12 +35,14 @@
       "role": "user"
     },
     {
-      "id": "ad16",
-      "name": "amina",
+      "name": "aminaa",
       "email": "amin@gmail.com",
-      "password": "amina123",
       "phone": "01234568979",
-      "role": "user"
+      "address": "",
+      "image": "",
+      "password": "amina123",
+      "role": "user",
+      "id": "ad16"
     },
     {
       "id": "49d5",
@@ -313,6 +315,22 @@
       "email": "salmm@gmail.com",
       "password": "salma12",
       "phone": "01097836746",
+      "role": "user"
+    },
+    {
+      "id": "c832",
+      "name": "alromisaa",
+      "email": "alromisaa@gmail.com",
+      "password": "alromisaa12",
+      "phone": "01028736499",
+      "role": "user"
+    },
+    {
+      "id": "4ae1",
+      "name": "toka",
+      "email": "toka@gmail.com",
+      "password": "toka12",
+      "phone": "01074874637",
       "role": "user"
     }
   ],

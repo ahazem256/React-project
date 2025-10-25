@@ -5,6 +5,7 @@ import CardLoader from "../components/CardLoader/CardLoader";
 import type { Product } from "./Hooks";
 import { useState } from "react";
 import { FaSearch } from "react-icons/fa";
+import NotFound from "../components/common/NotFound";
 
 export default function Products() {
 
@@ -101,15 +102,20 @@ export default function Products() {
 
       <div className="contaier p-5" style={{ backgroundColor: "#ffffff" }}>
         <div className="row">
-          {currentProducts.length
-            ? currentProducts.map((product: Product) => (
-                <ProductsCard
-                  product={product}
-                  key={product.id}
-                  onClick={() => goToDetails(product.id)}
-                />
-              ))
-            : Array.from({ length: 15 }).map(() => <CardLoader />)}
+         {displayedProducts.length === 0 ? (
+<div style={{marginTop: "-80px"}}>
+    <NotFound/>
+  </div>) : currentProducts.length ? (
+  currentProducts.map((product: Product) => (
+    <ProductsCard
+      product={product}
+      key={product.id}
+      onClick={() => goToDetails(product.id)}
+    />
+  ))
+) : (
+  Array.from({ length: 15 }).map((_, i) => <CardLoader key={i} />)
+)}
         </div>
 
 

@@ -6,6 +6,7 @@ import CardLoader from "../../components/CardLoader/CardLoader";
 // import Bonsaie from '../../assets/bonsoi.jpg';
 import { useState } from "react";
 import { FaSearch } from "react-icons/fa";
+import NotFound from "../../components/common/NotFound";
 
 
 
@@ -67,15 +68,25 @@ const categoryProducts = displayedProducts.filter(
          </div>
        </div>
  
- <div className="contaier p-5" style={{ backgroundColor: "#ffffff" }}>
- <div className="row gy-3">
-    
-{categoryProducts.length ? categoryProducts.map((product: Product) => (
-<ProductsCard product={product} key={product.id} onClick={() => goToDetails(product.id)} />
-)) :  Array.from ({length: 15}).map (() => < CardLoader />)}
-
- </div>
- </div>
+ <div className="container p-5" style={{ backgroundColor: "#ffffff" }}>
+  <div className="row gy-3">
+    {categoryProducts.length === 0 ? (
+      <div className="notfound-wrapper">
+        <NotFound />
+      </div>
+    ) : categoryProducts.length ? (
+      categoryProducts.map((product: Product) => (
+        <ProductsCard
+          product={product}
+          key={product.id}
+          onClick={() => goToDetails(product.id)}
+        />
+      ))
+    ) : (
+      Array.from({ length: 15 }).map((_, i) => <CardLoader key={i} />)
+    )}
+  </div>
+</div>
 
     </>
   )
