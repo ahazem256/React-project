@@ -4,11 +4,6 @@
 Verdora is a modern, eco-inspired e-commerce web app for plant lovers.  
 It helps users explore, choose, and buy plants that fit their lifestyle — using an interactive **Plant Finder Quiz**, personalized recommendations, and a smooth shopping experience.
 
-## 🖼️ Screenshots
-
-### 🏠 Home Page
-![Home Page](./Screenshot 2025-10-25 181340.png")
-
 ## ✨ Features
 - ⚙️ **Typescrpit** - All code written by Typescript
 - 🪴 **Product Listing & Details** – Browse and view all available plants with images and info.  
