@@ -21,7 +21,7 @@ It helps users explore, choose, and buy plants that fit their lifestyle — usin
 
 | Category | Technologies |
 |-----------|---------------|
-| **Frontend** | React, TypeScript, Redux Toolkit, React Query, Tailwind CSS |
+| **Frontend** | React, TypeScript, Redux Toolkit, React Query, Bootstrap |
 | **Backend / API** | JSON Server (Mock API) |
 | **Routing** | React Router |
 | **State Management** | Redux Toolkit |
