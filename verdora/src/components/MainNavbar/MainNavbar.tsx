@@ -247,7 +247,7 @@ const MainNavbar: React.FC<MainNavbarProps> = ({ onLogout, userName }) => {
 
               title="Wishlist"
             >
-              <IoHeartOutline size={22} />
+              <IoHeartOutline size={26} />
               {wishlistCount > 0 && (
                 <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                   {wishlistCount}

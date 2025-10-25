@@ -22,17 +22,9 @@
       "address": "cairo",
       "phone": "01016796606",
       "id": "fd7b",
-      "name": "teke",
+      "name": "teka",
       "email": "teka@gmail.com",
       "password": "teka147",
-      "role": "user"
-    },
-    {
-      "id": "2009",
-      "name": "menna",
-      "email": "menna@gmail.com",
-      "password": "me14789",
-      "phone": "01017468802",
       "role": "user"
     },
     {
@@ -1502,7 +1494,7 @@
       "name": "Miniature Cactus",
       "status": "out_of_stock",
       "price": "50 EGP",
-      "stock": -4,
+      "stock": -5,
       "image": "https://i.postimg.cc/MT3Gjf1m/id38.png",
       "bestseller": false,
       "oldprice": null,
@@ -2235,19 +2227,19 @@
       "containerType": "Pot"
     },
     {
-      "id": "61",
-      "name": "zz",
-      "image": "https://myjungleclub.com/cdn/shop/files/Plants-265_zz.webp?v=1711733426&width=1946jhnjnk",
+      "id": 61,
+      "name": "flower",
+      "image": "https://glasswingshop.com/cdn/shop/products/8D2A2069.jpg?v=1595400475&width=533",
       "category": "Indoor",
-      "price": "120 EGP",
-      "stock": 0,
+      "price": "250 EGP",
+      "stock": 50,
       "bestseller": false,
-      "oldprice": "",
+      "oldprice": "500",
       "rate": "4.5",
-      "description": "kjkjkmkjikjikj",
-      "review": "",
-      "discount": "0%",
-      "isNew": false,
+      "description": "egvetvetbebr",
+      "review": "good",
+      "discount": "50%",
+      "isNew": true,
       "scientificName": "",
       "nativeRegion": "",
       "lifeCycle": "",
@@ -2385,7 +2377,7 @@
       "total": 220,
       "createdAt": "2025-10-20T19:00:06.595Z",
       "orderDate": "2025-10-20T19:00:06.595Z",
-      "status": "confirmed"
+      "status": "shipped"
     },
     {
       "id": "ORD-1761065215923",
@@ -2815,7 +2807,7 @@
       "total": 90,
       "createdAt": "2025-10-21T18:18:19.760Z",
       "orderDate": "2025-10-21T18:18:19.760Z",
-      "status": "pending"
+      "status": "confirmed"
     },
     {
       "id": "ORD-1761071000847",
@@ -3748,7 +3740,7 @@
       "total": 70,
       "createdAt": "2025-10-23T21:03:36.611Z",
       "orderDate": "2025-10-23T21:03:36.611Z",
-      "status": "pending"
+      "status": "confirmed"
     },
     {
       "id": "ORD-1761304644763",
@@ -4040,6 +4032,60 @@
       "createdAt": "2025-10-25T16:40:12.605Z",
       "orderDate": "2025-10-25T16:40:12.605Z",
       "status": "pending"
+    },
+    {
+      "id": "ORD-1761411394715",
+      "items": [
+        {
+          "id": "38",
+          "category": "bonsai_miniature",
+          "name": "Miniature Cactus",
+          "status": "out_of_stock",
+          "price": "50 EGP",
+          "stock": -4,
+          "image": "https://i.postimg.cc/MT3Gjf1m/id38.png",
+          "bestseller": false,
+          "oldprice": null,
+          "rate": "⭐⭐⭐⭐☆",
+          "description": "Small indoor cactus plant that’s easy to care for.",
+          "review": "Great for desks and small spaces.",
+          "discount": null,
+          "isNew": true,
+          "scientificName": "Various Cactaceae",
+          "nativeRegion": "Americas",
+          "lifeCycle": "Perennial succulent; slow growth.",
+          "genus": "Cactus",
+          "type": "Succulent",
+          "climate": "Arid to semi-arid",
+          "soilType": "Well-draining cactus soil",
+          "wateringNeeds": "Low; water sparingly",
+          "sunlight": "Bright indirect to direct light",
+          "humidity": "Low",
+          "growthRate": "Slow",
+          "propagation": "Offsets or cuttings",
+          "toxicity": "Non-toxic to pets",
+          "careTips": "Avoid overwatering, provide bright light.",
+          "floweringSeason": "Seasonal, varies by species",
+          "height": "0.1 - 0.3 m",
+          "containerType": "Small pot",
+          "numericPrice": 50,
+          "quantity": 1
+        }
+      ],
+      "shippingInfo": {
+        "firstName": "toka",
+        "lastName": "elqersh",
+        "email": "teka@gmail.com",
+        "phone": "01016796606",
+        "address": "el slam st",
+        "city": "Shibin El Kom",
+        "zipCode": "12312"
+      },
+      "paymentMethod": "cash-on-delivery",
+      "total": 50,
+      "createdAt": "2025-10-25T16:56:34.715Z",
+      "orderDate": "2025-10-25T16:56:34.715Z",
+      "status": "confirmed"
     }
   ]
 }
