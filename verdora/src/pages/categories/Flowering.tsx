@@ -6,6 +6,7 @@ import CardLoader from "../../components/CardLoader/CardLoader";
 import { FaSearch } from "react-icons/fa";
 import { useState } from "react";
 import { Helmet } from "react-helmet";
+import NotFound from "../../components/common/NotFound";
 
 
 export default function Flowering() {
@@ -75,9 +76,21 @@ const categoryProducts = displayedProducts.filter(
 
 <div className="contaier p-5" style={{backgroundColor: "#ffffff"}}>
 <div className="row gy-3">
-  {categoryProducts.length ? categoryProducts.map((product: Product) => (
-<ProductsCard product={product} key={product.id} onClick={() => goToDetails(product.id)} />
-)) :  Array.from ({length: 15}).map (() => < CardLoader />)}
+   {categoryProducts.length === 0 ? (
+            <div className="notfound-wrapper">
+              <NotFound />
+            </div>
+          ) : categoryProducts.length ? (
+            categoryProducts.map((product: Product) => (
+              <ProductsCard
+                product={product}
+                key={product.id}
+                onClick={() => goToDetails(product.id)}
+              />
+            ))
+          ) : (
+            Array.from({ length: 15 }).map((_, i) => <CardLoader key={i} />)
+          )}
 </div>
 </div>
 
