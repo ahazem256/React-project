@@ -63,7 +63,7 @@ const Admin: React.FC = () => {
         <title>Admin Dashboard</title>
       </Helmet>
 
-      <div className="d-flex" style={{ minHeight: "100vh" }}>
+      <div className="d-flex" style={{ minHeight: "100vh", fontFamily: "'Domaine Display', serif" }}>
         {/* Mobile Header */}
         {isMobile && (
           <header

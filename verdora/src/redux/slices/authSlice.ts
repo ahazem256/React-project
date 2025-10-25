@@ -11,7 +11,7 @@ interface AuthState {
   user: User | null;
 }
 
-// دالة لمسح كل عربات التسوق القديمة (اختياري)
+
 const clearOldCarts = () => {
   Object.keys(localStorage).forEach((key) => {
     if (key.startsWith("cart_items_")) {
@@ -48,22 +48,18 @@ const authSlice = createSlice({
 
 export const { login, logout } = authSlice.actions;
 
-// Thunk للتعامل مع تسجيل الخروج ومسح الكارت
 export const logoutAndClearCart = () => (dispatch: AppDispatch) => {
-  // مسح بيانات المستخدم أولاً
   dispatch(logout());
   
-  // ثم مسح حالة الكارت
+  
   dispatch({ type: "cart/clearAllCartData" });
   
-  // مسح الكارت من localStorage
   clearOldCarts();
 };
 
-// Thunk للتبديل بين المستخدمين
+
 export const switchUser = (userData: { token: string; user: User }) => (dispatch: AppDispatch) => {
-  // حفظ الكارت الحالي قبل التبديل (إذا أردت)
-  // ثم تسجيل الدخول بالمستخدم الجديد
+  
   dispatch(login(userData));
   
   // Update the cart

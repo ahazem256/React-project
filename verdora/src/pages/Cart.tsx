@@ -15,12 +15,12 @@ const Cart: React.FC = () => {
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const user = useSelector((state: RootState) => state.auth.user);
 
-  // ✅ Keep cart synced when user changes (login/logout)
+  // Keep cart synced when user changes (login/logout)
   useEffect(() => {
     dispatch(updateCartForUser());
   }, [user, dispatch]);
 
-  // ✅ If user not logged in
+  // If user not logged in
   if (!user) {
     return (
       <div style={{ textAlign: "center", padding: "100px 20px" }}>
@@ -32,7 +32,7 @@ const Cart: React.FC = () => {
     );
   }
 
-  // ✅ If cart is empty
+  // If cart is empty
   if (cartItems.length === 0) {
     return (
       <div style={{ textAlign: "center", padding: "100px 20px" }}>
@@ -44,7 +44,7 @@ const Cart: React.FC = () => {
     );
   }
 
-  // ✅ Calculate total
+  //Calculate total
   const totalPrice = cartItems.reduce((sum, item) => {
     const price =
       typeof item.price === "string"
@@ -232,8 +232,8 @@ const Cart: React.FC = () => {
     transition: "all 0.3s ease",
   }}
   onMouseEnter={(e) => {
-    (e.target as HTMLButtonElement).style.backgroundColor = "#2e7d32"; // lighter green
-    (e.target as HTMLButtonElement).style.transform = "scale(1.05)";   // slightly bigger
+    (e.target as HTMLButtonElement).style.backgroundColor = "#2e7d32"; 
+    (e.target as HTMLButtonElement).style.transform = "scale(1.05)";   
   }}
   onMouseLeave={(e) => {
     (e.target as HTMLButtonElement).style.backgroundColor = "#1b5e20"; // original color

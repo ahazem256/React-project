@@ -577,7 +577,7 @@ const Orderadmin: React.FC = () => {
               <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div className="modal-body">
-              {/* ✨ Conditional rendering for success message or status buttons */}
+              {/* Conditional rendering for success message or status buttons */}
               {statusChangeMessage ? (
                 <div className="alert alert-success" role="alert" style={{ color: 'var(--color-green-darkest)', backgroundColor: 'var(--color-green-lightest)', border: '1px solid var(--color-green-sage)', fontWeight: '600' }}>
                   {statusChangeMessage}

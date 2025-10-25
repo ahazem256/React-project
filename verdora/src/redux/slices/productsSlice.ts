@@ -21,7 +21,7 @@ export const fetchProducts = createAsyncThunk<Product[]>(
     try {
       const response = await axios.get("http://localhost:5005/products");
       
-      console.log("🟢 API Response:", response.data);
+      console.log("API Response:", response.data);
       
       
       const productsWithStringIds = response.data.map((product: any) => ({
@@ -29,11 +29,11 @@ export const fetchProducts = createAsyncThunk<Product[]>(
         id: String(product.id) 
       }));
 
-      console.log("✅ Products with string IDs:", productsWithStringIds.map(p => ({ id: p.id, name: p.name })));
+      console.log("Products with string IDs:", productsWithStringIds.map(p => ({ id: p.id, name: p.name })));
       
       return productsWithStringIds;
     } catch (error: any) {
-      console.error("❌ Error fetching products:", error);
+      console.error("Error fetching products:", error);
       return rejectWithValue(error.message || "Failed to load products");
     }
   }
@@ -53,12 +53,12 @@ const productsSlice = createSlice({
       .addCase(fetchProducts.fulfilled, (state, action) => {
         state.loading = false;
         state.products = action.payload;
-        console.log("🟢 Products loaded successfully:", action.payload.length);
+        console.log("Products loaded successfully:", action.payload.length);
       })
       .addCase(fetchProducts.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string || "Failed to load products";
-        console.error("❌ Products loading failed:", action.payload);
+        console.error("Products loading failed:", action.payload);
       });
   },
 });

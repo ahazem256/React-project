@@ -9,7 +9,7 @@ import authImg from "../../assets/download (6).jpeg";
 import "../../styles/global.css";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { updateCartForUser } from "../../redux/slices/cartSlice"; // عدلي المسار حسب مكان slice عندك
+import { updateCartForUser } from "../../redux/slices/cartSlice"; 
 
 interface SignInFormValues {
   email: string;

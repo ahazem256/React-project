@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import "../../styles/global.css"
 import { TrendingUp, Users, Package, BarChart3, DollarSign, Leaf } from "lucide-react";
 import {
   LineChart,
@@ -70,7 +71,7 @@ const DashboardPage: React.FC = () => {
   const COLORS = ["#6DA34D", "#A3C9A8", "#52734D", "#B7E4C7"];
 
   return (
-    <div className="dashboard-page">
+    <div className="dashboard-page checkout-page">
       <h1 className="dashboard-title">📊 Admin Dashboard</h1>
 
       {/* KPI CARDS */}

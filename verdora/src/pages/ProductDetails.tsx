@@ -44,8 +44,8 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
   useEffect(() => {
     if (!loading && products.length > 0) {
       const productId = Number(id);
-      console.log("🟢 Searching for product ID:", productId);
-      console.log("🟢 Available products:", products.map(p => ({ 
+      console.log("Searching for product ID:", productId);
+      console.log("Available products:", products.map(p => ({ 
         id: p.id, 
         name: p.name,
         rate: p.rate 
@@ -54,12 +54,12 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
       const found = products.find((p) => Number(p.id) === productId);
       
       if (found) {
-        console.log("✅ Product found:", found);
-        console.log("✅ Product rate:", found.rate);
-        console.log("✅ Product stock:", found.stock);
+        console.log("Product found:", found);
+        console.log("Product rate:", found.rate);
+        console.log("Product stock:", found.stock);
       } else {
-        console.log("❌ Product not found!");
-        console.log("❌ Available IDs:", products.map(p => p.id));
+        console.log("Product not found!");
+        console.log("Available IDs:", products.map(p => p.id));
       }
       
       setProduct(found);
@@ -103,7 +103,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
       }
 
       // Add to wishlist
-      // normalize shape so Wishlish.tsx (which expects title/price/image) works
       const wishlistItem = {
         id: product.id,
         title: (product.name as string) || (product.title as string) || "Product",

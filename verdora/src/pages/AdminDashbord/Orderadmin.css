@@ -2,6 +2,7 @@
   background-color: var(--color-green-lightest);
   min-height: 100vh;
   padding: 2rem;
+  font-family: 'Domaine Display', serif;
 }
 
 .orders-card {
@@ -86,13 +87,13 @@
   }
 }
 
-/* Tablet / small laptop: keep card layout but use 2 columns for content */
+/* Tablet / small laptop */
 @media (min-width: 769px) and (max-width: 1024px) {
   .orders-container {
     padding: 1.25rem;
   }
 
-  /* hide full table on tablets, show compact card grid */
+  /* hide full table on tablets*/
   .desktop-table {
     display: none;
   }
@@ -163,7 +164,7 @@
   line-height: 1;
 }
 
-/* neutral fallback when status is invalid/bugged */
+
 .status-badge.neutral {
   background: transparent;
   color: var(--color-green-darker);

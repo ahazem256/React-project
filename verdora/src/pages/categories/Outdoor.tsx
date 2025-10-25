@@ -5,6 +5,8 @@ import type {Product} from "../Hooks"
 import CardLoader from "../../components/CardLoader/CardLoader";
 import { useState } from "react";
 import { FaSearch } from "react-icons/fa";
+import { Helmet } from "react-helmet";
+
 
 export default function Outdoor() {
 const { displayedProducts, filter, setFilter, searchTerm, setSearchTerm, goToDetails  } = UseProducts();
@@ -15,6 +17,12 @@ const categoryProducts = displayedProducts.filter(
 );
    return (
     <>
+     <Helmet>
+      <title>Outdoor Plants</title>
+      <meta name="description" content="Verdora - Explore our beautiful house plants" />
+      <meta name="keywords" content="plants, house plants, verdora, garden" />
+    </Helmet>
+
     <div style={{height:"200px", width: "100%", backgroundImage:"url('https://i.pinimg.com/1200x/9c/66/90/9c6690ba911eb325a088e28ed710b4f4.jpg')", backgroundSize: "cover",  
     backgroundPosition: "center", 
     backgroundRepeat: "no-repeat",opacity: .9,

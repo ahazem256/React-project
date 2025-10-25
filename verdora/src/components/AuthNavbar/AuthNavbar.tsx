@@ -12,7 +12,7 @@ const AuthNavbar: React.FC<AuthNavbarProps> = ({ onLogin }) => {
     return (
         <nav className="navbar navbar-expand-lg navbar-light shadow-sm">
             <div className="container-fluid px-4">
-                {/* Logo على اليسار */}
+                {/* Logo*/}
                 <Link className="navbar-brand d-flex align-items-center" to="/">
                     <div
                         className="d-flex align-items-center  me-1"

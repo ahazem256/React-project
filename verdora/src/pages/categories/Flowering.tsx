@@ -5,6 +5,7 @@ import type {Product} from "../Hooks"
 import CardLoader from "../../components/CardLoader/CardLoader";
 import { FaSearch } from "react-icons/fa";
 import { useState } from "react";
+import { Helmet } from "react-helmet";
 
 
 export default function Flowering() {
@@ -16,6 +17,12 @@ const categoryProducts = displayedProducts.filter(
 );
    return (
     <>
+      <Helmet>
+      <title>Flowering Plants</title>
+      <meta name="description" content="Verdora - Explore our beautiful house plants" />
+      <meta name="keywords" content="plants, house plants, verdora, garden" />
+    </Helmet>
+
     <div style={{height:"200px", width: "100%", backgroundImage:"url('https://i.pinimg.com/1200x/75/6f/ed/756fed349a15e9513c7cd2d1cdc0a544.jpg')", backgroundSize: "cover",  
     backgroundPosition: "center", 
     backgroundRepeat: "no-repeat",opacity: .9,

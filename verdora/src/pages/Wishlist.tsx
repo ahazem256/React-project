@@ -1,9 +1,11 @@
-// ...new file...
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../redux/slices/cartSlice";
 import "../styles/global.css";
+import {
+  IoCartOutline,
+} from "react-icons/io5";
 
 type Product = {
   id: number | string;
@@ -77,7 +79,7 @@ const Wishlish: React.FC = () => {
 
   if (!items.length) {
     return (
-      <div className="wishlist-page container py-5" style={{ minHeight: "70vh" }}>
+      <div className="wishlist-page container py-5 checkout-page" style={{ minHeight: "70vh" }}>
         <div
           style={{
             maxWidth: "600px",
@@ -133,7 +135,7 @@ const Wishlish: React.FC = () => {
   }
 
   return (
-    <div className="wishlist-page container py-5" style={{ maxWidth: "1400px" }}>
+    <div className="wishlist-page container py-5 checkout-page" style={{ maxWidth: "1400px" }}>
       <div style={{ marginBottom: "48px" }}>
         <h1
           style={{
@@ -181,7 +183,7 @@ const Wishlish: React.FC = () => {
                 <div
                   style={{
                     position: "relative",
-                    paddingTop: "75%",
+                    paddingTop: "100%",
                     overflow: "hidden",
                     backgroundColor: "#f5f5f5",
                   }}
@@ -200,7 +202,7 @@ const Wishlish: React.FC = () => {
                   />
                 </div>
               )}
-              <div className="card-body d-flex flex-column" style={{ padding: "12px" }}>
+              <div className="card-body d-flex flex-column ms-2" style={{ padding: "5px" }}>
                 <h5
                   style={{
                     fontSize: "14px",
@@ -319,7 +321,8 @@ const Wishlish: React.FC = () => {
           onClick={moveAllToCart}
           aria-label="Move all wishlist items to cart"
         >
-          🛒 Move All to Cart ({items.length})
+            <IoCartOutline size={22} style={{ marginRight: "8px", marginTop: "-1px" }}/> 
+            Move All to Cart ({items.length})
         </button>
       </div>
     </div>
