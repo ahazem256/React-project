@@ -36,8 +36,8 @@ const Cart: React.FC = () => {
   if (cartItems.length === 0) {
     return (
       <div style={{ textAlign: "center", padding: "100px 20px" }}>
-        <h2>Your cart is empty</h2>
-        <Link to="/" style={{ color: "#2e7d32", textDecoration: "none" }}>
+        <h2 style={{fontFamily: "var(--font-family-serif)"}}>Your cart is empty</h2>
+        <Link to="/" style={{ color: "#2e7d32", textDecoration: "none", fontFamily: "var(--font-family-serif)" }}>
           Continue Shopping
         </Link>
       </div>
@@ -56,7 +56,7 @@ const Cart: React.FC = () => {
   return (
     <div
       style={{
-        maxWidth: "1000px",
+        maxWidth: "700px",
         margin: "50px auto",
         padding: "40px 30px",
         backgroundColor: "#fff",
@@ -69,6 +69,7 @@ const Cart: React.FC = () => {
           marginBottom: "32px",
           color: "#1b5e20",
           textAlign: "center",
+          fontFamily: "var(--font-family-serif)"
         }}
       >
         Your Cart
@@ -97,6 +98,7 @@ const Cart: React.FC = () => {
               marginBottom: "24px",
               borderBottom: "1px solid #eee",
               paddingBottom: "16px",
+              fontFamily: "var(--font-family-serif)",
             }}
           >
             <img
@@ -115,12 +117,13 @@ const Cart: React.FC = () => {
                 {item.quantity} × {currency}
                 {price.toFixed(2)}
               </p>
-              <p style={{ fontWeight: "700", margin: 0 }}>
+              {/* <p style={{ fontWeight: "700", margin: 0 }}>
                 Subtotal: {currency}
                 {(price * item.quantity).toFixed(2)}
-              </p>
+              </p> */}
             </div>
-            <button
+
+          {/* <button>
   onClick={() => dispatch(removeFromCart(item.id))}
   style={{
     backgroundColor: "#e53935",
@@ -141,9 +144,32 @@ const Cart: React.FC = () => {
   }}
 >
   Remove
-</button>
+</button> */}
 
+
+              <div style={{display: "flex", gap: "20px"}}>
+               <p style={{ fontWeight: "700", margin: 0 }}>
+                {currency}
+                {(price * item.quantity).toFixed(2)}
+              </p>
+            {/* <button
+              onClick={() => dispatch(removeFromCart(item.id))}
+              style={{
+                backgroundColor: "#e53935",
+                color: "#fff",
+                border: "none",
+                padding: "8px 12px",
+                borderRadius: "6px",
+                cursor: "pointer",
+              }}
+            >
+              Remove
+            </button> */}
+
+            <p className="circle"  style={{fontSize: "12px"}}onClick={() => dispatch(removeFromCart(item.id))}>X</p>
+            </div>
           </div>
+          
         );
       })}
 
@@ -152,6 +178,7 @@ const Cart: React.FC = () => {
           marginTop: "32px",
           color: "#1b5e20",
           textAlign: "right",
+            fontFamily: "var(--font-family-serif)"
         }}
       >
         Total: {totalPrice.toFixed(2)}{" "}
@@ -167,6 +194,7 @@ const Cart: React.FC = () => {
           gap: "12px",
           justifyContent: "flex-end",
           marginTop: "16px",
+            fontFamily: "var(--font-family-serif)"
         }}
       >
         <button

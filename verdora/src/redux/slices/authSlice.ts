@@ -11,6 +11,15 @@ interface AuthState {
   user: User | null;
 }
 
+// دالة لمسح كل عربات التسوق القديمة (اختياري)
+const clearOldCarts = () => {
+  Object.keys(localStorage).forEach((key) => {
+    if (key.startsWith("cart_items_")) {
+      localStorage.removeItem(key);
+    }
+  });
+};
+
 const initialState: AuthState = {
   token: localStorage.getItem("token"),
   user: localStorage.getItem("loggedInUser")
@@ -33,24 +42,32 @@ const authSlice = createSlice({
       state.user = null;
       localStorage.removeItem("token");
       localStorage.removeItem("loggedInUser");
-
-      // remove all cart keys when user logs out
-      Object.keys(localStorage).forEach((key) => {
-        if (key.startsWith("cart_items_")) {
-          localStorage.removeItem(key);
-        }
-      });
     },
   },
 });
 
 export const { login, logout } = authSlice.actions;
 
-// ✅ optional thunk to fully clear everything including cart slice state
+// Thunk للتعامل مع تسجيل الخروج ومسح الكارت
 export const logoutAndClearCart = () => (dispatch: AppDispatch) => {
-  dispatch(logout()); // clear auth
-  // clear cart state by dispatching from cartSlice
+  // مسح بيانات المستخدم أولاً
+  dispatch(logout());
+  
+  // ثم مسح حالة الكارت
   dispatch({ type: "cart/clearAllCartData" });
+  
+  // مسح الكارت من localStorage
+  clearOldCarts();
+};
+
+// Thunk للتبديل بين المستخدمين
+export const switchUser = (userData: { token: string; user: User }) => (dispatch: AppDispatch) => {
+  // حفظ الكارت الحالي قبل التبديل (إذا أردت)
+  // ثم تسجيل الدخول بالمستخدم الجديد
+  dispatch(login(userData));
+  
+  // Update the cart
+  dispatch({ type: "cart/updateCartForUser" });
 };
 
 export default authSlice.reducer;

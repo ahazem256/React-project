@@ -9,10 +9,21 @@ interface CartState {
   items: CartItem[];
 }
 
+
+const getCartKey = (): string => {
+  const user = localStorage.getItem("loggedInUser");
+  if (user) {
+    const userData = JSON.parse(user);
+    return `cart_items_${userData.email || userData.userName}`;
+  }
+  return "cart_items_guest"; 
+};
+
 // Load cart safely
 const loadCart = (): CartItem[] => {
   try {
-    const storedCart = localStorage.getItem("cart_items");
+    const cartKey = getCartKey();
+    const storedCart = localStorage.getItem(cartKey);
     return storedCart ? JSON.parse(storedCart) : [];
   } catch {
     return [];
@@ -21,7 +32,8 @@ const loadCart = (): CartItem[] => {
 
 // Save cart safely
 const saveCart = (items: CartItem[]) => {
-  localStorage.setItem("cart_items", JSON.stringify(items));
+  const cartKey = getCartKey();
+  localStorage.setItem(cartKey, JSON.stringify(items));
 };
 
 const initialState: CartState = {
@@ -54,12 +66,18 @@ const cartSlice = createSlice({
     },
 
     updateCartForUser: (state) => {
-      // Reload cart on refresh or login
+      // Reload cart when user changes
       state.items = loadCart();
+    },
+
+  // reducer to remove
+    clearAllCartData: (state) => {
+      state.items = [];
+      
     },
   },
 });
 
-export const { addToCart, removeFromCart, clearCart, updateCartForUser } =
+export const { addToCart, removeFromCart, clearCart, updateCartForUser, clearAllCartData } =
   cartSlice.actions;
 export default cartSlice.reducer;

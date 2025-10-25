@@ -35,12 +35,14 @@
       "role": "user"
     },
     {
-      "id": "ad16",
-      "name": "amina",
+      "name": "aminaa",
       "email": "amin@gmail.com",
-      "password": "amina123",
       "phone": "01234568979",
-      "role": "user"
+      "address": "",
+      "image": "",
+      "password": "amina123",
+      "role": "user",
+      "id": "ad16"
     },
     {
       "id": "49d5",
@@ -314,6 +316,30 @@
       "password": "salma12",
       "phone": "01097836746",
       "role": "user"
+    },
+    {
+      "id": "c832",
+      "name": "alromisaa",
+      "email": "alromisaa@gmail.com",
+      "password": "alromisaa12",
+      "phone": "01028736499",
+      "role": "user"
+    },
+    {
+      "id": "4ae1",
+      "name": "toka",
+      "email": "toka@gmail.com",
+      "password": "toka12",
+      "phone": "01074874637",
+      "role": "user"
+    },
+    {
+      "id": "5339",
+      "name": "manga",
+      "email": "sadnibba192@gmail.com",
+      "password": "Ahmed192",
+      "phone": "01023340945",
+      "role": "user"
     }
   ],
   "products": [
@@ -355,7 +381,7 @@
       "category": "Indoor",
       "name": "Snake Plant",
       "price": "80 EGP",
-      "stock": "30",
+      "stock": 29,
       "image": "https://i.postimg.cc/YjKM160q/id2.png",
       "bestseller": false,
       "oldprice": null,
@@ -388,7 +414,7 @@
       "category": "Indoor",
       "name": "Peace Lily",
       "price": "90 EGP",
-      "stock": 9,
+      "stock": 6,
       "image": "https://i.postimg.cc/WtLTMGzs/id3.png",
       "bestseller": true,
       "oldprice": "110 EGP",
@@ -516,7 +542,7 @@
       "category": "Indoor",
       "name": "Rubber Plant",
       "price": "130 EGP",
-      "stock": 12,
+      "stock": 11,
       "image": "https://i.postimg.cc/0jJ9MW8L/id7.png",
       "bestseller": true,
       "oldprice": "160 EGP",
@@ -612,7 +638,7 @@
       "category": "Indoor",
       "name": "Parlor Palm",
       "price": "75 EGP",
-      "stock": 23,
+      "stock": 24,
       "image": "https://i.postimg.cc/50rxtdMP/id10.png",
       "bestseller": false,
       "oldprice": null,
@@ -676,7 +702,7 @@
       "category": "Indoor",
       "name": "Philodendron",
       "price": "100 EGP",
-      "stock": 8,
+      "stock": 9,
       "image": "https://i.postimg.cc/HxNpLDC9/id12.png",
       "bestseller": false,
       "oldprice": null,
@@ -996,7 +1022,7 @@
       "category": "Outdoor",
       "name": "Marigold",
       "price": "50 EGP",
-      "stock": 47,
+      "stock": 44,
       "image": "https://i.postimg.cc/1305rjpy/id22.png",
       "bestseller": true,
       "oldprice": "60 EGP",
@@ -2339,91 +2365,6 @@
     }
   ],
   "orders": [
-    {
-      "id": "ORD-1761057369866",
-      "items": [
-        {
-          "id": 12,
-          "category": "Indoor",
-          "name": "Philodendron",
-          "price": "100 EGP",
-          "stock": 22,
-          "image": "https://i.postimg.cc/HxNpLDC9/id12.png",
-          "bestseller": false,
-          "oldprice": null,
-          "rate": "⭐⭐⭐⭐☆",
-          "description": "Vining plant perfect for shelves or hanging baskets.",
-          "review": "Fast-growing and easy to train.",
-          "discount": null,
-          "isNew": false,
-          "scientificName": "Philodendron hederaceum",
-          "nativeRegion": "Central and South America",
-          "lifeCycle": "Perennial indoor vine; medium to fast growth; can climb or trail.",
-          "genus": "Philodendron",
-          "type": "Evergreen",
-          "climate": "Tropical, warm",
-          "soilType": "Well-draining potting soil",
-          "wateringNeeds": "Moderate; keep soil slightly moist",
-          "sunlight": "Bright indirect light",
-          "humidity": "Moderate to high",
-          "growthRate": "Medium to fast",
-          "propagation": "Stem cuttings",
-          "toxicity": "Toxic to pets if ingested",
-          "careTips": "Support climbing stems, prune to shape, avoid direct sunlight.",
-          "floweringSeason": "Rarely flowers indoors",
-          "height": "1 - 2 m indoors",
-          "containerType": "Medium pot or hanging basket",
-          "quantity": 1
-        },
-        {
-          "id": 10,
-          "category": "Indoor",
-          "name": "Parlor Palm",
-          "price": "75 EGP",
-          "stock": 25,
-          "image": "https://i.postimg.cc/50rxtdMP/id10.png",
-          "bestseller": false,
-          "oldprice": null,
-          "rate": "⭐⭐⭐⭐☆",
-          "description": "Classic indoor palm that thrives in low-light spaces.",
-          "review": "Perfect for corners and desks.",
-          "discount": null,
-          "isNew": true,
-          "scientificName": "Chamaedorea elegans",
-          "nativeRegion": "Mexico and Central America",
-          "lifeCycle": "Perennial indoor palm; slow growth; thrives in low-light indoor spaces.",
-          "genus": "Chamaedorea",
-          "type": "Evergreen",
-          "climate": "Tropical, warm",
-          "soilType": "Well-draining potting soil",
-          "wateringNeeds": "Moderate; allow top layer of soil to dry between waterings",
-          "sunlight": "Low to bright indirect light",
-          "humidity": "Moderate",
-          "growthRate": "Slow",
-          "propagation": "Division of offshoots",
-          "toxicity": "Non-toxic to pets",
-          "careTips": "Rotate for even growth, avoid overwatering, remove dead fronds.",
-          "floweringSeason": "Rarely flowers indoors",
-          "height": "0.6 - 1.8 m indoors",
-          "containerType": "Small to medium pot",
-          "quantity": 1
-        }
-      ],
-      "shippingInfo": {
-        "firstName": "ahmeed",
-        "lastName": "sadsadasd",
-        "email": "ahmed.hazem708@gmail.com",
-        "phone": "213123",
-        "address": "sadasfd",
-        "city": "12312",
-        "zipCode": "12321"
-      },
-      "paymentMethod": "cash-on-delivery",
-      "total": 100,
-      "createdAt": "2025-10-20T11:57:30.982Z",
-      "orderDate": "2025-10-20T11:57:30.982Z",
-      "status": "pending"
-    },
     {
       "id": "ORD-1760986806596",
       "items": [
@@ -3956,7 +3897,7 @@
       "total": 50,
       "createdAt": "2025-10-24T11:17:24.762Z",
       "orderDate": "2025-10-24T11:17:24.762Z",
-      "status": "pending"
+      "status": "confirmed"
     },
     {
       "id": "ORD-1761305583686",
@@ -4009,6 +3950,105 @@
       "createdAt": "2025-10-24T11:33:03.686Z",
       "orderDate": "2025-10-24T11:33:03.686Z",
       "status": "pending"
+    },
+    {
+      "id": "ORD-1761373124321",
+      "items": [
+        {
+          "id": "3",
+          "category": "Indoor",
+          "name": "Peace Lily",
+          "price": "90 EGP",
+          "stock": 9,
+          "image": "https://i.postimg.cc/WtLTMGzs/id3.png",
+          "bestseller": true,
+          "oldprice": "110 EGP",
+          "rate": "⭐⭐⭐⭐☆",
+          "description": "An elegant indoor plant admired for its graceful white flowers",
+          "review": "Purifies air and blooms beautifully.",
+          "discount": "10%",
+          "isNew": false,
+          "scientificName": "Spathiphyllum wallisii",
+          "nativeRegion": "Tropical Americas",
+          "lifeCycle": "Perennial indoor plant; blooms throughout year under proper care.",
+          "genus": "Spathiphyllum",
+          "type": "Evergreen",
+          "climate": "Tropical, warm and humid",
+          "soilType": "Rich, well-draining potting mix",
+          "wateringNeeds": "Moderate; keep soil moist but not soggy",
+          "sunlight": "Low to bright indirect light",
+          "humidity": "High",
+          "growthRate": "Medium",
+          "propagation": "Division of rhizomes",
+          "toxicity": "Toxic to pets if ingested",
+          "careTips": "Wipe leaves, remove faded flowers, avoid cold drafts.",
+          "floweringSeason": "Spring to fall",
+          "height": "0.6 - 1 m",
+          "containerType": "Medium indoor pot",
+          "quantity": 1
+        }
+      ],
+      "shippingInfo": {
+        "firstName": "ahmeed",
+        "lastName": "hazeemm",
+        "email": "ahmed.hazem708@gmail.com",
+        "phone": "01023340945",
+        "address": "asdsad",
+        "city": "tanta",
+        "zipCode": "12321"
+      },
+      "paymentMethod": "cash-on-delivery",
+      "total": 90,
+      "createdAt": "2025-10-25T06:18:44.320Z",
+      "orderDate": "2025-10-25T06:18:44.320Z",
+      "status": "shipped"
+    },
+    {
+      "id": "ORD-1761379139317",
+      "items": [
+        {
+          "id": "3",
+          "name": "Peace Lily",
+          "price": "90 EGP",
+          "image": "https://i.postimg.cc/WtLTMGzs/id3.png",
+          "quantity": 2
+        },
+        {
+          "id": "22",
+          "name": "Marigold",
+          "price": "50 EGP",
+          "image": "https://i.postimg.cc/1305rjpy/id22.png",
+          "quantity": 3
+        },
+        {
+          "id": "7",
+          "name": "Rubber Plant",
+          "price": "130 EGP",
+          "image": "https://i.postimg.cc/0jJ9MW8L/id7.png",
+          "quantity": 1
+        },
+        {
+          "id": "2",
+          "name": "Snake Plant",
+          "price": "80 EGP",
+          "image": "https://i.postimg.cc/YjKM160q/id2.png",
+          "quantity": 1
+        }
+      ],
+      "shippingInfo": {
+        "firstName": "3ayezz",
+        "lastName": "anaaammmm",
+        "email": "ahmed.hazem708@gmail.com",
+        "phone": "12312",
+        "address": "adas",
+        "city": "tanta",
+        "zipCode": "21312"
+      },
+      "paymentMethod": "credit-card",
+      "total": 540,
+      "createdAt": "2025-10-25T07:58:59.317Z",
+      "orderDate": "2025-10-25T07:58:59.317Z",
+      "status": "shipped"
     }
   ]
 }

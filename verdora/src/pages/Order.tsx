@@ -154,7 +154,7 @@ const OrdersPage: React.FC = () => {
       <div className="orders-empty">
         <h2>No orders yet</h2>
         <p>You haven't placed any orders.</p>
-        <button className="btn btn-primary" onClick={() => navigate("/")}>
+        <button className="btn text-light" style= {{background: "black" }}onClick={() => navigate("/")}>
           Go Shopping
         </button>
       </div>
