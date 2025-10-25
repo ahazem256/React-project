@@ -343,41 +343,8 @@
     }
   ],
   "products": [
-
     {
-      "id": 1,
-      "category": "Indoor",
-      "name": "Fiddle Leaf Fig",
-      "price": "120 EGP",
-      "stock": 25,
-      "image": "https://i.postimg.cc/mhfBQYkk/id1.png",
-      "bestseller": true,
-      "oldprice": "150 EGP",
-      "rate": "⭐⭐⭐⭐☆",
-      "description": "A popular indoor plant known for its large, glossy green leaves.",
-      "review": "Very easy to care for and looks great in living rooms.",
-      "discount": "20%",
-      "isNew": false,
-      "scientificName": "Ficus lyrata",
-      "nativeRegion": "Western Africa",
-      "lifeCycle": "Perennial indoor tree; grows slowly and may reach 3 meters indoors; prefers stable temperature.",
-      "genus": "Ficus",
-      "type": "Evergreen",
-      "climate": "Tropical, warm",
-      "soilType": "Well-draining potting soil",
-      "wateringNeeds": "Moderate; allow soil to dry between waterings",
-      "sunlight": "Bright indirect light",
-      "humidity": "Moderate to high",
-      "growthRate": "Slow to medium",
-      "propagation": "Stem cuttings",
-      "toxicity": "Toxic to pets if ingested",
-      "careTips": "Rotate regularly, wipe leaves to remove dust, avoid overwatering.",
-      "floweringSeason": "Rarely flowers indoors",
-      "height": "1.5 - 3 m indoors",
-      "containerType": "Large indoor pot"
-    },
-    {
-      "id": 2,
+      "id": "2",
       "category": "Indoor",
       "name": "Snake Plant",
       "price": "80 EGP",
@@ -409,7 +376,7 @@
       "containerType": "Small to medium indoor pot"
     },
     {
-      "id": 3,
+      "id": "3",
       "category": "Indoor",
       "name": "Peace Lily",
       "price": "90 EGP",
@@ -441,7 +408,7 @@
       "containerType": "Medium indoor pot"
     },
     {
-      "id": 4,
+      "id": "4",
       "category": "Indoor",
       "name": "Zanzibar Gem",
       "price": "70 EGP",
@@ -2267,7 +2234,7 @@
       "containerType": "Pot"
     },
     {
-      "id": 61,
+      "id": "61",
       "name": "zz",
       "image": "https://myjungleclub.com/cdn/shop/files/Plants-265_zz.webp?v=1711733426&width=1946jhnjnk",
       "category": "Indoor",
