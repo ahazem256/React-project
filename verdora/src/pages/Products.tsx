@@ -42,7 +42,7 @@ export default function Products() {
   return (
     <>
   <Helmet>
-      <title>Products</title>
+      <title>Verdora | Products</title>
       <meta name="description" content="Verdora - Explore our beautiful house plants" />
       <meta name="keywords" content="plants, house plants, verdora, garden" />
     </Helmet>
