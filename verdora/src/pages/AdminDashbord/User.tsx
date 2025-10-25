@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { FaEdit, FaTrash, FaPlusCircle, FaTimes, FaUser, FaShoppingCart, FaStar, FaSearch, FaUsers } from "react-icons/fa";
 import * as yup from "yup";
+import "../../styles/global.css"
 
 interface UserType {
   id: number;
@@ -230,7 +231,7 @@ const UsersTable: React.FC = () => {
   };
 
   return (
-    <div style={{ backgroundColor: BG, minHeight: "100vh" }}>
+    <div style={{ backgroundColor: BG, minHeight: "100vh"}}  className="checkout-page">
       {/* Page content */}
       <div className="container-fluid p-2 p-md-4">
         {/* Header */}

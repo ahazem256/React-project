@@ -127,14 +127,14 @@ for (const item of cartItems) {
 
   if (cartItems.length === 0) {
     return (
-      <div style={{ textAlign: "center", padding: "100px 20px" }}>
+      <div style={{ textAlign: "center", padding: "100px 20px" }} className="checkout-page">
         <h2>Your cart is empty</h2>
         <p>Please add some items to your cart before checkout.</p>
         <button
           onClick={() => navigate("/")}
           style={{
             padding: "12px 24px",
-            backgroundColor: "#007bff",
+            backgroundColor: "#0f1010ff",
             color: "white",
             border: "none",
             borderRadius: "4px",
@@ -150,7 +150,7 @@ for (const item of cartItems) {
   }
 
   return (
-    <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "40px 20px" }}>
+    <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "40px 20px" }} className="checkout-page">
       <h1 style={{ marginBottom: "32px", textAlign: "center", color: "var(--color-green-darkest)" }}>Checkout</h1>
       
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "40px" }}>

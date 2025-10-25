@@ -312,5 +312,17 @@ body {
   background-color: rgb(28, 26, 26);
 }
 
+.checkout-page {
+  font-family: var(--font-family-serif); 
+}
+
+/* .checkout-page h1,
+.checkout-page h2,
+.checkout-page h3,
+.checkout-page h4,
+.checkout-page h5 {
+  font-family: var(--font-family-serif);
+} */
+
 
 

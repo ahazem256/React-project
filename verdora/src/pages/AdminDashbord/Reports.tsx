@@ -6,6 +6,7 @@ import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import "./Reports.css";
+import "../../styles/global.css"
 
 interface OrderItem {
   name: string;
@@ -130,7 +131,7 @@ const Reports: React.FC = () => {
     fetchOrders();
   }, []);
 
-  // 🧾 Export Functions
+  // Export Functions
   const exportToPDF = () => {
     const doc = new jsPDF();
     doc.text("Reports Overview", 14, 15);
@@ -164,7 +165,7 @@ const Reports: React.FC = () => {
   };
 
   return (
-    <div className="reports-page">
+    <div className="checkout-page">
       <div className="reports-header">
         <h1 className="reports-title">
           <FileText size={26} /> Reports Overview

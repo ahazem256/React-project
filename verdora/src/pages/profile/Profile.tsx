@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { IoCallOutline, IoLocationOutline, IoSaveOutline, IoCameraOutline } from "react-icons/io5";
 import { FaRegEdit } from "react-icons/fa";
 import { toast } from "react-hot-toast";
+import "../../styles/global.css"
 
 
 
@@ -99,7 +100,7 @@ const UserProfile: React.FC = () => {
   if (!user) return <p>Data is loading...</p>;
 
   return (
-    <div className="profile-container" style={styles.container}>
+    <div className="profile-container checkout-page" style={styles.container}>
       <div style={styles.imageContainer}>
         <div style={styles.avatarContainer}>
           {formData.image ? (

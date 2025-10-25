@@ -5,6 +5,7 @@ import type {Product} from "../Hooks"
 import CardLoader from "../../components/CardLoader/CardLoader";
 import { useState } from "react";
 import { FaSearch } from "react-icons/fa";
+import { Helmet } from "react-helmet";
 
 
 export default function Indoor() {
@@ -16,6 +17,12 @@ const categoryProducts = displayedProducts.filter(
 
    return (
     <>
+     <Helmet>
+      <title>Indoor Plants</title>
+      <meta name="description" content="Verdora - Explore our beautiful house plants" />
+      <meta name="keywords" content="plants, house plants, verdora, garden" />
+    </Helmet>
+
     <div style={{height:"200px", width: "100%", backgroundImage:"url('https://i.pinimg.com/1200x/98/85/f3/9885f38dc02d4aad94ffe92bfc728894.jpg')", backgroundSize: "cover",  
     backgroundPosition: "center", 
     backgroundRepeat: "no-repeat",opacity: .9,

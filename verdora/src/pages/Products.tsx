@@ -6,6 +6,7 @@ import type { Product } from "./Hooks";
 import { useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import NotFound from "../components/common/NotFound";
+import { Helmet } from "react-helmet";
 
 export default function Products() {
 
@@ -40,6 +41,12 @@ export default function Products() {
 
   return (
     <>
+  <Helmet>
+      <title>Products</title>
+      <meta name="description" content="Verdora - Explore our beautiful house plants" />
+      <meta name="keywords" content="plants, house plants, verdora, garden" />
+    </Helmet>
+    
       <div
         style={{
           height: "200px",

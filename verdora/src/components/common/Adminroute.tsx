@@ -8,7 +8,7 @@ const AdminRoute: React.FC = () => {
     return <Navigate to="/" replace />;
   }
 
-  return <Outlet />; // Outlet معناها اعرض الصفحات اللي جوه المسار ده
+  return <Outlet />;
 };
 
 export default AdminRoute;

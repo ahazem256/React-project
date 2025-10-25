@@ -5,6 +5,11 @@ import "../../styles/global.css";
 import type { Products } from "../../Types";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { RiDeleteBinLine } from "react-icons/ri";
+import { FaRegEdit } from "react-icons/fa";
+import Swal from "sweetalert2";
+
+
 
 export default function Productsadmin() {
   const [products, setProducts] = useState<Products[]>([]);
@@ -16,152 +21,163 @@ export default function Productsadmin() {
   const [newProduct, setNewProduct] = useState<Products | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Schema validation with Yup
+  // Schema validation
   const productValidationSchema = Yup.object({
     name: Yup.string()
-      .required('Product name is required')
-      .min(2, 'Product name must be at least 2 characters')
-      .max(100, 'Product name cannot exceed 100 characters'),
-    
+      .required("Product name is required")
+      .min(2, "Product name must be at least 2 characters")
+      .max(100, "Product name cannot exceed 100 characters"),
+
     description: Yup.string()
-      .required('Description is required')
-      .min(10, 'Description must be at least 10 characters')
-      .max(1000, 'Description cannot exceed 1000 characters'),
-    
+      .required("Description is required")
+      .min(10, "Description must be at least 10 characters")
+      .max(1000, "Description cannot exceed 1000 characters"),
+
     image: Yup.string()
-      .required('Product image is required')
-      .test('is-valid-image', 'Please enter a valid image URL or upload an image', function(value) {
-        if (!value) return false;
-        
-        // Check for base64 image
-        if (value.startsWith('data:image/')) return true;
-        
-        // Check for valid URL with image extension
-        try {
-          const url = new URL(value);
-          const validExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg'];
-          const pathname = url.pathname.toLowerCase();
-          return validExtensions.some(ext => pathname.endsWith(ext));
-        } catch {
-          return false;
+      .required("Product image is required")
+      .test(
+        "is-valid-image",
+        "Please enter a valid image URL or upload an image",
+        function (value) {
+          if (!value) return false;
+
+          // Check for image
+          if (value.startsWith("data:image/")) return true;
+
+          // Check for valid URL with image extension
+          try {
+            const url = new URL(value);
+            const validExtensions = [
+              ".jpg",
+              ".jpeg",
+              ".png",
+              ".gif",
+              ".webp",
+              ".svg",
+            ];
+            const pathname = url.pathname.toLowerCase();
+            return validExtensions.some((ext) => pathname.endsWith(ext));
+          } catch {
+            return false;
+          }
         }
-      }),
-    
+      ),
+
     category: Yup.string()
-      .required('Category is required')
-      .oneOf(['Indoor', 'Outdoor', 'bonsai_miniature', 'Flowering'], 'Please select a valid category'),
-    
+      .required("Category is required")
+      .oneOf(
+        ["Indoor", "Outdoor", "bonsai_miniature", "Flowering"],
+        "Please select a valid category"
+      ),
+
     price: Yup.number()
-      .required('Price is required')
-      .min(0.01, 'Price must be greater than 0 EGP')
-      .max(100000, 'Price cannot exceed 100,000 EGP'),
-    
+      .required("Price is required")
+      .min(0.01, "Price must be greater than 0 EGP")
+      .max(100000, "Price cannot exceed 100,000 EGP"),
+
     stock: Yup.number()
-      .required('Stock is required')
-      .min(0, 'Stock cannot be negative')
-      .max(10000, 'Stock cannot exceed 10,000 units')
-      .integer('Stock must be a whole number'),
-    
-    scientificName: Yup.string()
-      .max(100, 'Scientific name cannot exceed 100 characters'),
-    
-    wateringNeeds: Yup.string()
-      .max(50, 'Watering needs cannot exceed 50 characters'),
-    
-    sunlight: Yup.string()
-      .max(50, 'Sunlight cannot exceed 50 characters'),
-    
-    soilType: Yup.string()
-      .max(50, 'Soil type cannot exceed 50 characters'),
-    
-    humidity: Yup.string()
-      .max(50, 'Humidity cannot exceed 50 characters'),
-    
-    growthRate: Yup.string()
-      .max(50, 'Growth rate cannot exceed 50 characters'),
-    
-    propagation: Yup.string()
-      .max(50, 'Propagation cannot exceed 50 characters'),
-    
-    toxicity: Yup.string()
-      .max(50, 'Toxicity cannot exceed 50 characters'),
-    
-    careTips: Yup.string()
-      .max(500, 'Care tips cannot exceed 500 characters'),
-    
-    floweringSeason: Yup.string()
-      .max(50, 'Flowering season cannot exceed 50 characters'),
-    
-    height: Yup.string()
-      .max(50, 'Height cannot exceed 50 characters'),
-    
-    containerType: Yup.string()
-      .max(50, 'Container type cannot exceed 50 characters'),
-    
-    nativeRegion: Yup.string()
-      .max(100, 'Native region cannot exceed 100 characters'),
-    
-    lifeCycle: Yup.string()
-      .max(50, 'Life cycle cannot exceed 50 characters'),
-    
-    genus: Yup.string()
-      .max(50, 'Genus cannot exceed 50 characters'),
-    
-    type: Yup.string()
-      .max(50, 'Type cannot exceed 50 characters'),
-    
-    climate: Yup.string()
-      .max(50, 'Climate cannot exceed 50 characters'),
-    
-    rate: Yup.string()
-      .max(10, 'Rating cannot exceed 10 characters'),
-    
-    review: Yup.string()
-      .max(200, 'Review cannot exceed 200 characters'),
-    
-    discount: Yup.string()
-      .max(10, 'Discount cannot exceed 10 characters'),
-    
-    oldprice: Yup.string()
-      .max(20, 'Old price cannot exceed 20 characters'),
-    
+      .required("Stock is required")
+      .min(0, "Stock cannot be negative")
+      .max(10000, "Stock cannot exceed 10,000 units")
+      .integer("Stock must be a whole number"),
+
+    scientificName: Yup.string().max(
+      100,
+      "Scientific name cannot exceed 100 characters"
+    ),
+
+    wateringNeeds: Yup.string().max(
+      50,
+      "Watering needs cannot exceed 50 characters"
+    ),
+
+    sunlight: Yup.string().max(50, "Sunlight cannot exceed 50 characters"),
+
+    soilType: Yup.string().max(50, "Soil type cannot exceed 50 characters"),
+
+    humidity: Yup.string().max(50, "Humidity cannot exceed 50 characters"),
+
+    growthRate: Yup.string().max(50, "Growth rate cannot exceed 50 characters"),
+
+    propagation: Yup.string().max(
+      50,
+      "Propagation cannot exceed 50 characters"
+    ),
+
+    toxicity: Yup.string().max(50, "Toxicity cannot exceed 50 characters"),
+
+    careTips: Yup.string().max(500, "Care tips cannot exceed 500 characters"),
+
+    floweringSeason: Yup.string().max(
+      50,
+      "Flowering season cannot exceed 50 characters"
+    ),
+
+    height: Yup.string().max(50, "Height cannot exceed 50 characters"),
+
+    containerType: Yup.string().max(
+      50,
+      "Container type cannot exceed 50 characters"
+    ),
+
+    nativeRegion: Yup.string().max(
+      100,
+      "Native region cannot exceed 100 characters"
+    ),
+
+    lifeCycle: Yup.string().max(50, "Life cycle cannot exceed 50 characters"),
+
+    genus: Yup.string().max(50, "Genus cannot exceed 50 characters"),
+
+    type: Yup.string().max(50, "Type cannot exceed 50 characters"),
+
+    climate: Yup.string().max(50, "Climate cannot exceed 50 characters"),
+
+    rate: Yup.string().max(10, "Rating cannot exceed 10 characters"),
+
+    review: Yup.string().max(200, "Review cannot exceed 200 characters"),
+
+    discount: Yup.string().max(10, "Discount cannot exceed 10 characters"),
+
+    oldprice: Yup.string().max(20, "Old price cannot exceed 20 characters"),
+
     bestseller: Yup.boolean(),
-    isNew: Yup.boolean()
+    isNew: Yup.boolean(),
   });
 
   // Formik form initialization
   const formik = useFormik({
     initialValues: {
       id: 0,
-      name: '',
-      image: '',
-      category: 'Indoor',
-      price: '0 EGP',
+      name: "",
+      image: "",
+      category: "Indoor",
+      price: "0 EGP",
       stock: 0,
       bestseller: false,
-      oldprice: '',
-      rate: '4.5',
-      description: '',
-      review: '',
-      discount: '0%',
+      oldprice: "",
+      rate: "4.5",
+      description: "",
+      review: "",
+      discount: "0%",
       isNew: false,
-      scientificName: '',
-      nativeRegion: '',
-      lifeCycle: '',
-      genus: '',
-      type: '',
-      climate: '',
-      soilType: '',
-      wateringNeeds: '',
-      sunlight: '',
-      humidity: '',
-      growthRate: '',
-      propagation: '',
-      toxicity: '',
-      careTips: '',
-      floweringSeason: '',
-      height: '',
-      containerType: '',
+      scientificName: "",
+      nativeRegion: "",
+      lifeCycle: "",
+      genus: "",
+      type: "",
+      climate: "",
+      soilType: "",
+      wateringNeeds: "",
+      sunlight: "",
+      humidity: "",
+      growthRate: "",
+      propagation: "",
+      toxicity: "",
+      careTips: "",
+      floweringSeason: "",
+      height: "",
+      containerType: "",
     },
     validationSchema: productValidationSchema,
     onSubmit: async (values) => {
@@ -172,20 +188,22 @@ export default function Productsadmin() {
   // Update form values when editingProduct or newProduct changes
   useEffect(() => {
     if (editingProduct) {
-      const priceValue = parseFloat(editingProduct.price.replace(' EGP', ''));
+      const priceValue = parseFloat(editingProduct.price.replace(" EGP", ""));
       formik.setValues({
         ...editingProduct,
-        price: priceValue
+        price: priceValue,
       });
     } else if (newProduct) {
-      const numericIds = products.map(p => Number(p.id)).filter(id => !isNaN(id));
+      const numericIds = products
+        .map((p) => Number(p.id))
+        .filter((id) => !isNaN(id));
       const lastId = numericIds.length > 0 ? Math.max(...numericIds) : 0;
-      
-      const priceValue = parseFloat(newProduct.price.replace(' EGP', ''));
+
+      const priceValue = parseFloat(newProduct.price.replace(" EGP", ""));
       formik.setValues({
         ...newProduct,
         id: lastId + 1,
-        price: priceValue
+        price: priceValue,
       });
     }
   }, [editingProduct, newProduct]);
@@ -210,20 +228,48 @@ export default function Productsadmin() {
 
   // delete product
   const handleDelete = async (productId: number, productName: string) => {
-    if (!window.confirm(`Are you sure you want to delete "${productName}"? This action cannot be undone.`)) {
-      return;
-    }
+  const result = await Swal.fire({
+    title: `Delete "${productName}"?`,
+    text: "This action cannot be undone.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#d33",
+    cancelButtonColor: "#aaa",
+    confirmButtonText: "Yes, delete it!",
+    cancelButtonText: "Cancel",
+    background: "#fff",
+    color: "#333",
+  });
 
-    try {
-      await axios.delete(`http://localhost:5005/products/${productId}`);
-      setProducts((prevProducts) =>
-        prevProducts.filter((p) => p.id !== productId)
-      );
-      toast.success(`${productName} deleted successfully!`);
-    } catch (error) {
-      toast.error(`Error in deleting ${productName}`);
-    }
-  };
+  if (!result.isConfirmed) return;
+
+  try {
+    await axios.delete(`http://localhost:5005/products/${productId}`);
+
+   
+    setProducts((prevProducts) =>
+      prevProducts.filter((p) => p.id !== productId)
+    );
+
+  
+    await Swal.fire({
+      title: "Deleted!",
+      text: `"${productName}" has been removed successfully.`,
+      icon: "success",
+      confirmButtonColor: "#3085d6",
+      timer: 1800,
+      showConfirmButton: false,
+    });
+  } catch (error) {
+    
+    Swal.fire({
+      title: "Error!",
+      text: `Error in deleting "${productName}".`,
+      icon: "error",
+      confirmButtonColor: "#d33",
+    });
+  }
+};
 
   const handleSave = async (values: any) => {
     try {
@@ -232,7 +278,7 @@ export default function Productsadmin() {
       // Prepare product data for API
       const productToSave = {
         ...values,
-        price: `${values.price} EGP`
+        price: `${values.price} EGP`,
       };
 
       if (editingProduct) {
@@ -240,13 +286,12 @@ export default function Productsadmin() {
           `http://localhost:5005/products/${editingProduct.id}`,
           productToSave
         );
-        
+
         setProducts((prev) =>
           prev.map((p) => (p.id === editingProduct.id ? res.data : p))
         );
         setEditingProduct(null);
         toast.success(`${editingProduct.name} updated successfully!`);
-        
       } else if (newProduct) {
         const res = await axios.post(
           "http://localhost:5005/products",
@@ -264,13 +309,14 @@ export default function Productsadmin() {
       setTimeout(() => {
         getproducts();
       }, 500);
-      
     } catch (error: any) {
       console.error("Error saving product:", error);
       const productName = editingProduct?.name || newProduct?.name || "Product";
-      
+
       if (error.response?.status === 400) {
-        toast.error(`Validation error: ${error.response.data?.message || 'Invalid data'}`);
+        toast.error(
+          `Validation error: ${error.response.data?.message || "Invalid data"}`
+        );
       } else if (error.response?.status === 409) {
         toast.error(`Product with this name already exists`);
       } else {
@@ -296,7 +342,8 @@ export default function Productsadmin() {
       (p) =>
         sanitizedSearch === "" ||
         p.name.toLowerCase().includes(sanitizedSearch.toLowerCase()) ||
-        (p.description && p.description.toLowerCase().includes(sanitizedSearch.toLowerCase()))
+        (p.description &&
+          p.description.toLowerCase().includes(sanitizedSearch.toLowerCase()))
     );
 
   // pagination
@@ -323,7 +370,10 @@ export default function Productsadmin() {
 
   // Helper function for character count
   const getCharacterCount = (field: string): number => {
-    return (formik.values[field as keyof typeof formik.values] as string)?.length || 0;
+    return (
+      (formik.values[field as keyof typeof formik.values] as string)?.length ||
+      0
+    );
   };
 
   // Helper function for max length
@@ -351,7 +401,7 @@ export default function Productsadmin() {
       containerType: 50,
       rate: 10,
       discount: 10,
-      oldprice: 20
+      oldprice: 20,
     };
     return maxLengths[field] || 100;
   };
@@ -376,8 +426,11 @@ export default function Productsadmin() {
               fontFamily: "var(--font-family-serif)",
             }}
             onClick={() => {
-              const numericIds = products.map(p => Number(p.id)).filter(id => !isNaN(id));
-              const lastId = numericIds.length > 0 ? Math.max(...numericIds) : 0;
+              const numericIds = products
+                .map((p) => Number(p.id))
+                .filter((id) => !isNaN(id));
+              const lastId =
+                numericIds.length > 0 ? Math.max(...numericIds) : 0;
 
               setNewProduct({
                 id: lastId + 1,
@@ -419,12 +472,19 @@ export default function Productsadmin() {
         </div>
 
         {/* Info */}
-        <div style={{ marginBottom: '10px', padding: '10px', background: '#f8f9fa', borderRadius: '5px' }}>
+        <div
+          style={{
+            marginBottom: "10px",
+            padding: "10px",
+            background: "#f8f9fa",
+            borderRadius: "5px",
+          }}
+        >
           <small>
-            Total Products: {products.length} | 
-            Filtered: {filterProducts.length} | 
-            Showing: {currentProducts.length} |
-            {editingProduct && ` Editing: ${editingProduct.name} (ID: ${editingProduct.id})`}
+            Total Products: {products.length} | Filtered:{" "}
+            {filterProducts.length} | Showing: {currentProducts.length} |
+            {editingProduct &&
+              ` Editing: ${editingProduct.name} (ID: ${editingProduct.id})`}
             {newProduct && ` Adding New Product`}
           </small>
         </div>
@@ -473,30 +533,87 @@ export default function Productsadmin() {
             <thead className="table-light">
               <tr
                 className="text-center"
-                style={{ background: "var(--color-green-darker)", color: "white" }}
+                style={{
+                  background: "var(--color-green-darker)",
+                  color: "white",
+                }}
               >
-                <th scope="col" style={{ width: "10px", background: "var(--color-green-darker)", color: "white" }}>
+                <th
+                  scope="col"
+                  style={{
+                    width: "10px",
+                    background: "var(--color-green-darker)",
+                    color: "white",
+                  }}
+                >
                   Id
                 </th>
-                <th scope="col" style={{ width: "80px", background: "var(--color-green-darker)", color: "white"}}>
+                <th
+                  scope="col"
+                  style={{
+                    width: "80px",
+                    background: "var(--color-green-darker)",
+                    color: "white",
+                  }}
+                >
                   Image
                 </th>
-                <th scope="col" style={{ background: "var(--color-green-darker)", color: "white" }} >
+                <th
+                  scope="col"
+                  style={{
+                    background: "var(--color-green-darker)",
+                    color: "white",
+                  }}
+                >
                   Name
                 </th>
-                <th scope="col" style={{ width: "90px", background: "var(--color-green-darker)", color: "white" }}>
+                <th
+                  scope="col"
+                  style={{
+                    width: "90px",
+                    background: "var(--color-green-darker)",
+                    color: "white",
+                  }}
+                >
                   Category
                 </th>
-                <th scope="col" style={{ background: "var(--color-green-darker)", color: "white" }} >
+                <th
+                  scope="col"
+                  style={{
+                    background: "var(--color-green-darker)",
+                    color: "white",
+                  }}
+                >
                   Price
                 </th>
-                <th scope="col" style={{ width: "50px", background: "var(--color-green-darker)", color: "white" }}>
+                <th
+                  scope="col"
+                  style={{
+                    width: "50px",
+                    background: "var(--color-green-darker)",
+                    color: "white",
+                  }}
+                >
                   Stock
                 </th>
-                <th scope="col" style={{ width: "100px", background: "var(--color-green-darker)", color: "white" }}>
+                <th
+                  scope="col"
+                  style={{
+                    width: "100px",
+                    background: "var(--color-green-darker)",
+                    color: "white",
+                  }}
+                >
                   Status
                 </th>
-                <th scope="col" style={{ width: "150px", background: "var(--color-green-darker)", color: "white" }}>
+                <th
+                  scope="col"
+                  style={{
+                    width: "150px",
+                    background: "var(--color-green-darker)",
+                    color: "white",
+                  }}
+                >
                   Actions
                 </th>
               </tr>
@@ -513,7 +630,8 @@ export default function Productsadmin() {
                         className="w-16 h-16 object-cover mx-auto rounded"
                         style={{ width: "70px", height: "70px" }}
                         onError={(e) => {
-                          (e.target as HTMLImageElement).src = "https://via.placeholder.com/70x70?text=No+Image";
+                          (e.target as HTMLImageElement).src =
+                            "https://via.placeholder.com/70x70?text=No+Image";
                         }}
                       />
                     </td>
@@ -537,38 +655,38 @@ export default function Productsadmin() {
                       )}
                     </td>
                     <td>
-                      <button
-                        className="btn btn-sm me-2"
+                      <FaRegEdit size={20}
                         style={{
                           color: "var(--color-green-darkest)",
-                          border: "1px solid var(--color-green-darkest)",
                           width: "55px",
+                          cursor: "pointer"
                         }}
                         onClick={() => {
                           console.log("Editing product:", p);
                           setEditingProduct(p);
                           setNewProduct(null);
                         }}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        className="btn border-danger text-danger btn-sm"
+                      />
+                      
+                      <RiDeleteBinLine size={25}
+                      style={{ cursor: "pointer"}}
+                        className="text-danger"
                         onClick={() => {
-                          if (window.confirm(`Are you sure you want to delete ${p.name}?`)) {
+                          {
                             handleDelete(p.id, p.name);
                           }
                         }}
-                      >
-                        Delete
-                      </button>
+                      />
+                        
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
                   <td colSpan="8" className="text-center py-4 text-gray-500">
-                    {loading ? "Loading products..." : "No products found matching your criteria."}
+                    {loading
+                      ? "Loading products..."
+                      : "No products found matching your criteria."}
                   </td>
                 </tr>
               )}
@@ -655,7 +773,9 @@ export default function Productsadmin() {
                 }}
               >
                 <h5 style={{ margin: 0, color: "var(--color-green-darker)" }}>
-                  {editingProduct ? `Edit Product (ID: ${editingProduct.id})` : "Add New Product"}
+                  {editingProduct
+                    ? `Edit Product (ID: ${editingProduct.id})`
+                    : "Add New Product"}
                 </h5>
                 <button
                   onClick={() => {
@@ -686,7 +806,9 @@ export default function Productsadmin() {
                         <input
                           type="text"
                           className={`form-control ${
-                            formik.touched.name && formik.errors.name ? 'is-invalid' : ''
+                            formik.touched.name && formik.errors.name
+                              ? "is-invalid"
+                              : ""
                           }`}
                           name="name"
                           value={formik.values.name}
@@ -696,10 +818,12 @@ export default function Productsadmin() {
                           maxLength={100}
                         />
                         {formik.touched.name && formik.errors.name && (
-                          <div className="invalid-feedback d-block">{formik.errors.name}</div>
+                          <div className="invalid-feedback d-block">
+                            {formik.errors.name}
+                          </div>
                         )}
                         <div className="form-text">
-                          {getCharacterCount('name')}/100 characters
+                          {getCharacterCount("name")}/100 characters
                         </div>
                       </div>
                     </div>
@@ -709,7 +833,9 @@ export default function Productsadmin() {
                         <label className="form-label">Category *</label>
                         <select
                           className={`form-select ${
-                            formik.touched.category && formik.errors.category ? 'is-invalid' : ''
+                            formik.touched.category && formik.errors.category
+                              ? "is-invalid"
+                              : ""
                           }`}
                           name="category"
                           value={formik.values.category}
@@ -718,11 +844,15 @@ export default function Productsadmin() {
                         >
                           <option value="Indoor">Indoor</option>
                           <option value="Outdoor">Outdoor</option>
-                          <option value="bonsai_miniature">Bonsai & Miniature Plants</option>
+                          <option value="bonsai_miniature">
+                            Bonsai & Miniature Plants
+                          </option>
                           <option value="Flowering">Flowering Plants</option>
                         </select>
                         {formik.touched.category && formik.errors.category && (
-                          <div className="invalid-feedback d-block">{formik.errors.category}</div>
+                          <div className="invalid-feedback d-block">
+                            {formik.errors.category}
+                          </div>
                         )}
                       </div>
                     </div>
@@ -733,7 +863,9 @@ export default function Productsadmin() {
                     <label className="form-label">Description *</label>
                     <textarea
                       className={`form-control ${
-                        formik.touched.description && formik.errors.description ? 'is-invalid' : ''
+                        formik.touched.description && formik.errors.description
+                          ? "is-invalid"
+                          : ""
                       }`}
                       rows={3}
                       name="description"
@@ -743,66 +875,88 @@ export default function Productsadmin() {
                       placeholder="Enter product description"
                       maxLength={1000}
                     />
-                    {formik.touched.description && formik.errors.description && (
-                      <div className="invalid-feedback d-block">{formik.errors.description}</div>
-                    )}
+                    {formik.touched.description &&
+                      formik.errors.description && (
+                        <div className="invalid-feedback d-block">
+                          {formik.errors.description}
+                        </div>
+                      )}
                     <div className="form-text">
-                      {getCharacterCount('description')}/1000 characters
+                      {getCharacterCount("description")}/1000 characters
                     </div>
                   </div>
 
                   {/* Image Section */}
                   <div className="mb-3">
                     <label className="form-label">Product Image *</label>
-                    
+
                     {/* Option 1: Upload from device */}
                     <div className="mb-2">
-                      <label className="form-label small text-muted">Upload from device:</label>
+                      <label className="form-label small text-muted">
+                        Upload from device:
+                      </label>
                       <input
                         type="file"
                         className={`form-control ${
-                          formik.touched.image && formik.errors.image ? 'is-invalid' : ''
+                          formik.touched.image && formik.errors.image
+                            ? "is-invalid"
+                            : ""
                         }`}
                         accept="image/*"
                         onChange={(e) => {
                           const file = e.target.files?.[0];
                           if (!file) return;
 
-                          if (!file.type.startsWith('image/')) {
-                            formik.setFieldError('image', 'Please select a valid image file (JPEG, PNG, GIF, etc.)');
+                          if (!file.type.startsWith("image/")) {
+                            formik.setFieldError(
+                              "image",
+                              "Please select a valid image file (JPEG, PNG, GIF, etc.)"
+                            );
                             return;
                           }
 
                           if (file.size > 5 * 1024 * 1024) {
-                            formik.setFieldError('image', 'Image size should be less than 5MB');
+                            formik.setFieldError(
+                              "image",
+                              "Image size should be less than 5MB"
+                            );
                             return;
                           }
 
                           const reader = new FileReader();
                           reader.onload = (event) => {
                             const base64Image = event.target?.result as string;
-                            formik.setFieldValue('image', base64Image);
-                            formik.setFieldTouched('image', true);
-                            toast.success('Image uploaded successfully!');
+                            formik.setFieldValue("image", base64Image);
+                            formik.setFieldTouched("image", true);
+                            toast.success("Image uploaded successfully!");
                           };
                           reader.onerror = () => {
-                            formik.setFieldError('image', 'Failed to upload image');
+                            formik.setFieldError(
+                              "image",
+                              "Failed to upload image"
+                            );
                           };
                           reader.readAsDataURL(file);
-                          e.target.value = '';
+                          e.target.value = "";
                         }}
                       />
-                      <div className="form-text">Supported formats: JPEG, PNG, GIF, WebP (Max 5MB)</div>
+                      <div className="form-text">
+                        Supported formats: JPEG, PNG, GIF, WebP (Max 5MB)
+                      </div>
                     </div>
 
                     {/* Option 2: Enter URL */}
                     <div className="mb-2">
-                      <label className="form-label small text-muted">Or enter image URL:</label>
+                      <label className="form-label small text-muted">
+                        Or enter image URL:
+                      </label>
                       <div className="input-group">
                         <input
                           type="text"
                           className={`form-control ${
-                            formik.touched.image && formik.errors.image ? 'is-invalid' : ''
+                            formik.touched.image && formik.errors.image
+                              ? "is-invalid"
+                              : ""
                           }`}
                           name="image"
                           value={formik.values.image}
@@ -813,13 +967,15 @@ export default function Productsadmin() {
                         <button
                           className="btn btn-outline-secondary"
                           type="button"
-                          onClick={() => formik.setFieldValue('image', '')}
+                          onClick={() => formik.setFieldValue("image", "")}
                         >
                           Clear
                         </button>
                       </div>
                       {formik.touched.image && formik.errors.image && (
-                        <div className="invalid-feedback d-block">{formik.errors.image}</div>
+                        <div className="invalid-feedback d-block">
+                          {formik.errors.image}
+                        </div>
                       )}
                       <div className="form-text">Enter a direct image URL</div>
                     </div>
@@ -827,7 +983,9 @@ export default function Productsadmin() {
                     {/* Image Preview */}
                     {formik.values.image && !formik.errors.image && (
                       <div className="mt-3">
-                        <label className="form-label small text-muted">Image Preview:</label>
+                        <label className="form-label small text-muted">
+                          Image Preview:
+                        </label>
                         <div className="d-flex flex-column align-items-start">
                           <img
                             src={formik.values.image}
@@ -840,14 +998,18 @@ export default function Productsadmin() {
                               border: "2px solid #dee2e6",
                             }}
                             onError={(e) => {
-                              (e.target as HTMLImageElement).src = "https://via.placeholder.com/200x200?text=Invalid+Image";
-                              formik.setFieldError('image', 'Failed to load image. Please check the URL or upload a new image.');
+                              (e.target as HTMLImageElement).src =
+                                "https://via.placeholder.com/200x200?text=Invalid+Image";
+                              formik.setFieldError(
+                                "image",
+                                "Failed to load image. Please check the URL or upload a new image."
+                              );
                             }}
                           />
                           <button
                             type="button"
                             className="btn btn-sm btn-outline-danger mt-2"
-                            onClick={() => formik.setFieldValue('image', '')}
+                            onClick={() => formik.setFieldValue("image", "")}
                           >
                             Remove Image
                           </button>
@@ -866,7 +1028,9 @@ export default function Productsadmin() {
                           <input
                             type="number"
                             className={`form-control ${
-                              formik.touched.price && formik.errors.price ? 'is-invalid' : ''
+                              formik.touched.price && formik.errors.price
+                                ? "is-invalid"
+                                : ""
                             }`}
                             name="price"
                             value={formik.values.price}
@@ -879,7 +1043,9 @@ export default function Productsadmin() {
                           <span className="input-group-text">EGP</span>
                         </div>
                         {formik.touched.price && formik.errors.price && (
-                          <div className="invalid-feedback d-block">{formik.errors.price}</div>
+                          <div className="invalid-feedback d-block">
+                            {formik.errors.price}
+                          </div>
                         )}
                       </div>
                     </div>
@@ -890,7 +1056,9 @@ export default function Productsadmin() {
                         <input
                           type="text"
                           className={`form-control ${
-                            formik.touched.oldprice && formik.errors.oldprice ? 'is-invalid' : ''
+                            formik.touched.oldprice && formik.errors.oldprice
+                              ? "is-invalid"
+                              : ""
                           }`}
                           name="oldprice"
                           value={formik.values.oldprice}
@@ -900,10 +1068,12 @@ export default function Productsadmin() {
                           maxLength={20}
                         />
                         {formik.touched.oldprice && formik.errors.oldprice && (
-                          <div className="invalid-feedback d-block">{formik.errors.oldprice}</div>
+                          <div className="invalid-feedback d-block">
+                            {formik.errors.oldprice}
+                          </div>
                         )}
                         <div className="form-text">
-                          {getCharacterCount('oldprice')}/20 characters
+                          {getCharacterCount("oldprice")}/20 characters
                         </div>
                       </div>
                     </div>
@@ -914,7 +1084,9 @@ export default function Productsadmin() {
                         <input
                           type="text"
                           className={`form-control ${
-                            formik.touched.discount && formik.errors.discount ? 'is-invalid' : ''
+                            formik.touched.discount && formik.errors.discount
+                              ? "is-invalid"
+                              : ""
                           }`}
                           name="discount"
                           value={formik.values.discount}
@@ -924,10 +1096,12 @@ export default function Productsadmin() {
                           maxLength={10}
                         />
                         {formik.touched.discount && formik.errors.discount && (
-                          <div className="invalid-feedback d-block">{formik.errors.discount}</div>
+                          <div className="invalid-feedback d-block">
+                            {formik.errors.discount}
+                          </div>
                         )}
                         <div className="form-text">
-                          {getCharacterCount('discount')}/10 characters
+                          {getCharacterCount("discount")}/10 characters
                         </div>
                       </div>
                     </div>
@@ -942,7 +1116,9 @@ export default function Productsadmin() {
                         <input
                           type="number"
                           className={`form-control ${
-                            formik.touched.stock && formik.errors.stock ? 'is-invalid' : ''
+                            formik.touched.stock && formik.errors.stock
+                              ? "is-invalid"
+                              : ""
                           }`}
                           name="stock"
                           value={formik.values.stock}
@@ -952,7 +1128,9 @@ export default function Productsadmin() {
                           max="10000"
                         />
                         {formik.touched.stock && formik.errors.stock && (
-                          <div className="invalid-feedback d-block">{formik.errors.stock}</div>
+                          <div className="invalid-feedback d-block">
+                            {formik.errors.stock}
+                          </div>
                         )}
                       </div>
                     </div>
@@ -963,7 +1141,9 @@ export default function Productsadmin() {
                         <input
                           type="text"
                           className={`form-control ${
-                            formik.touched.rate && formik.errors.rate ? 'is-invalid' : ''
+                            formik.touched.rate && formik.errors.rate
+                              ? "is-invalid"
+                              : ""
                           }`}
                           name="rate"
                           value={formik.values.rate}
@@ -973,10 +1153,12 @@ export default function Productsadmin() {
                           maxLength={10}
                         />
                         {formik.touched.rate && formik.errors.rate && (
-                          <div className="invalid-feedback d-block">{formik.errors.rate}</div>
+                          <div className="invalid-feedback d-block">
+                            {formik.errors.rate}
+                          </div>
                         )}
                         <div className="form-text">
-                          {getCharacterCount('rate')}/10 characters
+                          {getCharacterCount("rate")}/10 characters
                         </div>
                       </div>
                     </div>
@@ -986,7 +1168,9 @@ export default function Productsadmin() {
                         <input
                           type="text"
                           className={`form-control ${
-                            formik.touched.review && formik.errors.review ? 'is-invalid' : ''
+                            formik.touched.review && formik.errors.review
+                              ? "is-invalid"
+                              : ""
                           }`}
                           name="review"
                           value={formik.values.review}
@@ -996,10 +1180,12 @@ export default function Productsadmin() {
                           maxLength={200}
                         />
                         {formik.touched.review && formik.errors.review && (
-                          <div className="invalid-feedback d-block">{formik.errors.review}</div>
+                          <div className="invalid-feedback d-block">
+                            {formik.errors.review}
+                          </div>
                         )}
                         <div className="form-text">
-                          {getCharacterCount('review')}/200 characters
+                          {getCharacterCount("review")}/200 characters
                         </div>
                       </div>
                     </div>
@@ -1035,7 +1221,12 @@ export default function Productsadmin() {
 
                   {/* Plant Details Section */}
                   <div className="border-top pt-3 mt-3">
-                    <h6 className="mb-3" style={{ color: "var(--color-green-darker)" }}>Plant Details</h6>
+                    <h6
+                      className="mb-3"
+                      style={{ color: "var(--color-green-darker)" }}
+                    >
+                      Plant Details
+                    </h6>
                     <div className="row">
                       <div className="col-md-6">
                         <div className="mb-3">
@@ -1043,7 +1234,10 @@ export default function Productsadmin() {
                           <input
                             type="text"
                             className={`form-control ${
-                              formik.touched.scientificName && formik.errors.scientificName ? 'is-invalid' : ''
+                              formik.touched.scientificName &&
+                              formik.errors.scientificName
+                                ? "is-invalid"
+                                : ""
                             }`}
                             name="scientificName"
                             value={formik.values.scientificName}
@@ -1052,11 +1246,14 @@ export default function Productsadmin() {
                             placeholder="Mixed Succulent spp."
                             maxLength={100}
                           />
-                          {formik.touched.scientificName && formik.errors.scientificName && (
-                            <div className="invalid-feedback d-block">{formik.errors.scientificName}</div>
-                          )}
+                          {formik.touched.scientificName &&
+                            formik.errors.scientificName && (
+                              <div className="invalid-feedback d-block">
+                                {formik.errors.scientificName}
+                              </div>
+                            )}
                           <div className="form-text">
-                            {getCharacterCount('scientificName')}/100 characters
+                            {getCharacterCount("scientificName")}/100 characters
                           </div>
                         </div>
                       </div>
@@ -1066,7 +1263,10 @@ export default function Productsadmin() {
                           <input
                             type="text"
                             className={`form-control ${
-                              formik.touched.nativeRegion && formik.errors.nativeRegion ? 'is-invalid' : ''
+                              formik.touched.nativeRegion &&
+                              formik.errors.nativeRegion
+                                ? "is-invalid"
+                                : ""
                             }`}
                             name="nativeRegion"
                             value={formik.values.nativeRegion}
@@ -1075,11 +1275,14 @@ export default function Productsadmin() {
                             placeholder="Worldwide (desert regions)"
                             maxLength={100}
                           />
-                          {formik.touched.nativeRegion && formik.errors.nativeRegion && (
-                            <div className="invalid-feedback d-block">{formik.errors.nativeRegion}</div>
-                          )}
+                          {formik.touched.nativeRegion &&
+                            formik.errors.nativeRegion && (
+                              <div className="invalid-feedback d-block">
+                                {formik.errors.nativeRegion}
+                              </div>
+                            )}
                           <div className="form-text">
-                            {getCharacterCount('nativeRegion')}/100 characters
+                            {getCharacterCount("nativeRegion")}/100 characters
                           </div>
                         </div>
                       </div>
@@ -1092,7 +1295,10 @@ export default function Productsadmin() {
                           <input
                             type="text"
                             className={`form-control ${
-                              formik.touched.lifeCycle && formik.errors.lifeCycle ? 'is-invalid' : ''
+                              formik.touched.lifeCycle &&
+                              formik.errors.lifeCycle
+                                ? "is-invalid"
+                                : ""
                             }`}
                             name="lifeCycle"
                             value={formik.values.lifeCycle}
@@ -1101,11 +1307,14 @@ export default function Productsadmin() {
                             placeholder="Perennial"
                             maxLength={50}
                           />
-                          {formik.touched.lifeCycle && formik.errors.lifeCycle && (
-                            <div className="invalid-feedback d-block">{formik.errors.lifeCycle}</div>
-                          )}
+                          {formik.touched.lifeCycle &&
+                            formik.errors.lifeCycle && (
+                              <div className="invalid-feedback d-block">
+                                {formik.errors.lifeCycle}
+                              </div>
+                            )}
                           <div className="form-text">
-                            {getCharacterCount('lifeCycle')}/50 characters
+                            {getCharacterCount("lifeCycle")}/50 characters
                           </div>
                         </div>
                       </div>
@@ -1115,7 +1324,9 @@ export default function Productsadmin() {
                           <input
                             type="text"
                             className={`form-control ${
-                              formik.touched.genus && formik.errors.genus ? 'is-invalid' : ''
+                              formik.touched.genus && formik.errors.genus
+                                ? "is-invalid"
+                                : ""
                             }`}
                             name="genus"
                             value={formik.values.genus}
@@ -1125,10 +1336,12 @@ export default function Productsadmin() {
                             maxLength={50}
                           />
                           {formik.touched.genus && formik.errors.genus && (
-                            <div className="invalid-feedback d-block">{formik.errors.genus}</div>
+                            <div className="invalid-feedback d-block">
+                              {formik.errors.genus}
+                            </div>
                           )}
                           <div className="form-text">
-                            {getCharacterCount('genus')}/50 characters
+                            {getCharacterCount("genus")}/50 characters
                           </div>
                         </div>
                       </div>
@@ -1138,7 +1351,9 @@ export default function Productsadmin() {
                           <input
                             type="text"
                             className={`form-control ${
-                              formik.touched.type && formik.errors.type ? 'is-invalid' : ''
+                              formik.touched.type && formik.errors.type
+                                ? "is-invalid"
+                                : ""
                             }`}
                             name="type"
                             value={formik.values.type}
@@ -1148,10 +1363,12 @@ export default function Productsadmin() {
                             maxLength={50}
                           />
                           {formik.touched.type && formik.errors.type && (
-                            <div className="invalid-feedback d-block">{formik.errors.type}</div>
+                            <div className="invalid-feedback d-block">
+                              {formik.errors.type}
+                            </div>
                           )}
                           <div className="form-text">
-                            {getCharacterCount('type')}/50 characters
+                            {getCharacterCount("type")}/50 characters
                           </div>
                         </div>
                       </div>
@@ -1160,7 +1377,12 @@ export default function Productsadmin() {
 
                   {/* Care & Environment Section */}
                   <div className="border-top pt-3 mt-3">
-                    <h6 className="mb-3" style={{ color: "var(--color-green-darker)" }}>Care & Environment</h6>
+                    <h6
+                      className="mb-3"
+                      style={{ color: "var(--color-green-darker)" }}
+                    >
+                      Care & Environment
+                    </h6>
                     <div className="row">
                       <div className="col-md-4">
                         <div className="mb-3">
@@ -1168,7 +1390,9 @@ export default function Productsadmin() {
                           <input
                             type="text"
                             className={`form-control ${
-                              formik.touched.climate && formik.errors.climate ? 'is-invalid' : ''
+                              formik.touched.climate && formik.errors.climate
+                                ? "is-invalid"
+                                : ""
                             }`}
                             name="climate"
                             value={formik.values.climate}
@@ -1178,10 +1402,12 @@ export default function Productsadmin() {
                             maxLength={50}
                           />
                           {formik.touched.climate && formik.errors.climate && (
-                            <div className="invalid-feedback d-block">{formik.errors.climate}</div>
+                            <div className="invalid-feedback d-block">
+                              {formik.errors.climate}
+                            </div>
                           )}
                           <div className="form-text">
-                            {getCharacterCount('climate')}/50 characters
+                            {getCharacterCount("climate")}/50 characters
                           </div>
                         </div>
                       </div>
@@ -1191,7 +1417,9 @@ export default function Productsadmin() {
                           <input
                             type="text"
                             className={`form-control ${
-                              formik.touched.soilType && formik.errors.soilType ? 'is-invalid' : ''
+                              formik.touched.soilType && formik.errors.soilType
+                                ? "is-invalid"
+                                : ""
                             }`}
                             name="soilType"
                             value={formik.values.soilType}
@@ -1200,11 +1428,14 @@ export default function Productsadmin() {
                             placeholder="Well-draining cactus soil"
                             maxLength={50}
                           />
-                          {formik.touched.soilType && formik.errors.soilType && (
-                            <div className="invalid-feedback d-block">{formik.errors.soilType}</div>
-                          )}
+                          {formik.touched.soilType &&
+                            formik.errors.soilType && (
+                              <div className="invalid-feedback d-block">
+                                {formik.errors.soilType}
+                              </div>
+                            )}
                           <div className="form-text">
-                            {getCharacterCount('soilType')}/50 characters
+                            {getCharacterCount("soilType")}/50 characters
                           </div>
                         </div>
                       </div>
@@ -1214,7 +1445,10 @@ export default function Productsadmin() {
                           <input
                             type="text"
                             className={`form-control ${
-                              formik.touched.wateringNeeds && formik.errors.wateringNeeds ? 'is-invalid' : ''
+                              formik.touched.wateringNeeds &&
+                              formik.errors.wateringNeeds
+                                ? "is-invalid"
+                                : ""
                             }`}
                             name="wateringNeeds"
                             value={formik.values.wateringNeeds}
@@ -1223,11 +1457,14 @@ export default function Productsadmin() {
                             placeholder="Low"
                             maxLength={50}
                           />
-                          {formik.touched.wateringNeeds && formik.errors.wateringNeeds && (
-                            <div className="invalid-feedback d-block">{formik.errors.wateringNeeds}</div>
-                          )}
+                          {formik.touched.wateringNeeds &&
+                            formik.errors.wateringNeeds && (
+                              <div className="invalid-feedback d-block">
+                                {formik.errors.wateringNeeds}
+                              </div>
+                            )}
                           <div className="form-text">
-                            {getCharacterCount('wateringNeeds')}/50 characters
+                            {getCharacterCount("wateringNeeds")}/50 characters
                           </div>
                         </div>
                       </div>
@@ -1240,7 +1477,9 @@ export default function Productsadmin() {
                           <input
                             type="text"
                             className={`form-control ${
-                              formik.touched.sunlight && formik.errors.sunlight ? 'is-invalid' : ''
+                              formik.touched.sunlight && formik.errors.sunlight
+                                ? "is-invalid"
+                                : ""
                             }`}
                             name="sunlight"
                             value={formik.values.sunlight}
@@ -1249,11 +1488,14 @@ export default function Productsadmin() {
                             placeholder="Bright indirect to full sun"
                             maxLength={50}
                           />
-                          {formik.touched.sunlight && formik.errors.sunlight && (
-                            <div className="invalid-feedback d-block">{formik.errors.sunlight}</div>
-                          )}
+                          {formik.touched.sunlight &&
+                            formik.errors.sunlight && (
+                              <div className="invalid-feedback d-block">
+                                {formik.errors.sunlight}
+                              </div>
+                            )}
                           <div className="form-text">
-                            {getCharacterCount('sunlight')}/50 characters
+                            {getCharacterCount("sunlight")}/50 characters
                           </div>
                         </div>
                       </div>
@@ -1263,7 +1505,9 @@ export default function Productsadmin() {
                           <input
                             type="text"
                             className={`form-control ${
-                              formik.touched.humidity && formik.errors.humidity ? 'is-invalid' : ''
+                              formik.touched.humidity && formik.errors.humidity
+                                ? "is-invalid"
+                                : ""
                             }`}
                             name="humidity"
                             value={formik.values.humidity}
@@ -1272,11 +1516,14 @@ export default function Productsadmin() {
                             placeholder="Low"
                             maxLength={50}
                           />
-                          {formik.touched.humidity && formik.errors.humidity && (
-                            <div className="invalid-feedback d-block">{formik.errors.humidity}</div>
-                          )}
+                          {formik.touched.humidity &&
+                            formik.errors.humidity && (
+                              <div className="invalid-feedback d-block">
+                                {formik.errors.humidity}
+                              </div>
+                            )}
                           <div className="form-text">
-                            {getCharacterCount('humidity')}/50 characters
+                            {getCharacterCount("humidity")}/50 characters
                           </div>
                         </div>
                       </div>
@@ -1286,7 +1533,10 @@ export default function Productsadmin() {
                           <input
                             type="text"
                             className={`form-control ${
-                              formik.touched.growthRate && formik.errors.growthRate ? 'is-invalid' : ''
+                              formik.touched.growthRate &&
+                              formik.errors.growthRate
+                                ? "is-invalid"
+                                : ""
                             }`}
                             name="growthRate"
                             value={formik.values.growthRate}
@@ -1295,11 +1545,14 @@ export default function Productsadmin() {
                             placeholder="Slow"
                             maxLength={50}
                           />
-                          {formik.touched.growthRate && formik.errors.growthRate && (
-                            <div className="invalid-feedback d-block">{formik.errors.growthRate}</div>
-                          )}
+                          {formik.touched.growthRate &&
+                            formik.errors.growthRate && (
+                              <div className="invalid-feedback d-block">
+                                {formik.errors.growthRate}
+                              </div>
+                            )}
                           <div className="form-text">
-                            {getCharacterCount('growthRate')}/50 characters
+                            {getCharacterCount("growthRate")}/50 characters
                           </div>
                         </div>
                       </div>
@@ -1312,7 +1565,10 @@ export default function Productsadmin() {
                           <input
                             type="text"
                             className={`form-control ${
-                              formik.touched.propagation && formik.errors.propagation ? 'is-invalid' : ''
+                              formik.touched.propagation &&
+                              formik.errors.propagation
+                                ? "is-invalid"
+                                : ""
                             }`}
                             name="propagation"
                             value={formik.values.propagation}
@@ -1321,11 +1577,14 @@ export default function Productsadmin() {
                             placeholder="Offsets or leaf cuttings"
                             maxLength={50}
                           />
-                          {formik.touched.propagation && formik.errors.propagation && (
-                            <div className="invalid-feedback d-block">{formik.errors.propagation}</div>
-                          )}
+                          {formik.touched.propagation &&
+                            formik.errors.propagation && (
+                              <div className="invalid-feedback d-block">
+                                {formik.errors.propagation}
+                              </div>
+                            )}
                           <div className="form-text">
-                            {getCharacterCount('propagation')}/50 characters
+                            {getCharacterCount("propagation")}/50 characters
                           </div>
                         </div>
                       </div>
@@ -1335,7 +1594,9 @@ export default function Productsadmin() {
                           <input
                             type="text"
                             className={`form-control ${
-                              formik.touched.toxicity && formik.errors.toxicity ? 'is-invalid' : ''
+                              formik.touched.toxicity && formik.errors.toxicity
+                                ? "is-invalid"
+                                : ""
                             }`}
                             name="toxicity"
                             value={formik.values.toxicity}
@@ -1344,11 +1605,14 @@ export default function Productsadmin() {
                             placeholder="Mostly non-toxic"
                             maxLength={50}
                           />
-                          {formik.touched.toxicity && formik.errors.toxicity && (
-                            <div className="invalid-feedback d-block">{formik.errors.toxicity}</div>
-                          )}
+                          {formik.touched.toxicity &&
+                            formik.errors.toxicity && (
+                              <div className="invalid-feedback d-block">
+                                {formik.errors.toxicity}
+                              </div>
+                            )}
                           <div className="form-text">
-                            {getCharacterCount('toxicity')}/50 characters
+                            {getCharacterCount("toxicity")}/50 characters
                           </div>
                         </div>
                       </div>
@@ -1358,7 +1622,10 @@ export default function Productsadmin() {
                           <input
                             type="text"
                             className={`form-control ${
-                              formik.touched.floweringSeason && formik.errors.floweringSeason ? 'is-invalid' : ''
+                              formik.touched.floweringSeason &&
+                              formik.errors.floweringSeason
+                                ? "is-invalid"
+                                : ""
                             }`}
                             name="floweringSeason"
                             value={formik.values.floweringSeason}
@@ -1367,11 +1634,14 @@ export default function Productsadmin() {
                             placeholder="Varies by species"
                             maxLength={50}
                           />
-                          {formik.touched.floweringSeason && formik.errors.floweringSeason && (
-                            <div className="invalid-feedback d-block">{formik.errors.floweringSeason}</div>
-                          )}
+                          {formik.touched.floweringSeason &&
+                            formik.errors.floweringSeason && (
+                              <div className="invalid-feedback d-block">
+                                {formik.errors.floweringSeason}
+                              </div>
+                            )}
                           <div className="form-text">
-                            {getCharacterCount('floweringSeason')}/50 characters
+                            {getCharacterCount("floweringSeason")}/50 characters
                           </div>
                         </div>
                       </div>
@@ -1384,7 +1654,9 @@ export default function Productsadmin() {
                           <input
                             type="text"
                             className={`form-control ${
-                              formik.touched.height && formik.errors.height ? 'is-invalid' : ''
+                              formik.touched.height && formik.errors.height
+                                ? "is-invalid"
+                                : ""
                             }`}
                             name="height"
                             value={formik.values.height}
@@ -1394,10 +1666,12 @@ export default function Productsadmin() {
                             maxLength={50}
                           />
                           {formik.touched.height && formik.errors.height && (
-                            <div className="invalid-feedback d-block">{formik.errors.height}</div>
+                            <div className="invalid-feedback d-block">
+                              {formik.errors.height}
+                            </div>
                           )}
                           <div className="form-text">
-                            {getCharacterCount('height')}/50 characters
+                            {getCharacterCount("height")}/50 characters
                           </div>
                         </div>
                       </div>
@@ -1407,7 +1681,10 @@ export default function Productsadmin() {
                           <input
                             type="text"
                             className={`form-control ${
-                              formik.touched.containerType && formik.errors.containerType ? 'is-invalid' : ''
+                              formik.touched.containerType &&
+                              formik.errors.containerType
+                                ? "is-invalid"
+                                : ""
                             }`}
                             name="containerType"
                             value={formik.values.containerType}
@@ -1416,11 +1693,14 @@ export default function Productsadmin() {
                             placeholder="Pot"
                             maxLength={50}
                           />
-                          {formik.touched.containerType && formik.errors.containerType && (
-                            <div className="invalid-feedback d-block">{formik.errors.containerType}</div>
-                          )}
+                          {formik.touched.containerType &&
+                            formik.errors.containerType && (
+                              <div className="invalid-feedback d-block">
+                                {formik.errors.containerType}
+                              </div>
+                            )}
                           <div className="form-text">
-                            {getCharacterCount('containerType')}/50 characters
+                            {getCharacterCount("containerType")}/50 characters
                           </div>
                         </div>
                       </div>
@@ -1431,7 +1711,9 @@ export default function Productsadmin() {
                       <label className="form-label">Care Tips</label>
                       <textarea
                         className={`form-control ${
-                          formik.touched.careTips && formik.errors.careTips ? 'is-invalid' : ''
+                          formik.touched.careTips && formik.errors.careTips
+                            ? "is-invalid"
+                            : ""
                         }`}
                         rows={2}
                         name="careTips"
@@ -1442,10 +1724,12 @@ export default function Productsadmin() {
                         maxLength={500}
                       />
                       {formik.touched.careTips && formik.errors.careTips && (
-                        <div className="invalid-feedback d-block">{formik.errors.careTips}</div>
+                        <div className="invalid-feedback d-block">
+                          {formik.errors.careTips}
+                        </div>
                       )}
                       <div className="form-text">
-                        {getCharacterCount('careTips')}/500 characters
+                        {getCharacterCount("careTips")}/500 characters
                       </div>
                     </div>
                   </div>
@@ -1473,16 +1757,22 @@ export default function Productsadmin() {
                   >
                     Cancel
                   </button>
-                  <button 
+                  <button
                     type="submit"
                     className="btn btn-primary"
                     disabled={!formik.isValid || formik.isSubmitting}
                     style={{
-                      background: formik.isValid ? "var(--color-green-darker)" : "#6c757d",
+                      background: formik.isValid
+                        ? "var(--color-green-darker)"
+                        : "#6c757d",
                       border: "none",
                     }}
                   >
-                    {formik.isSubmitting ? 'Saving...' : editingProduct ? 'Update Product' : 'Add Product'}
+                    {formik.isSubmitting
+                      ? "Saving..."
+                      : editingProduct
+                      ? "Update Product"
+                      : "Add Product"}
                   </button>
                 </div>
               </form>

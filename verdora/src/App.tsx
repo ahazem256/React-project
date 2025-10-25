@@ -37,7 +37,7 @@ import Orderadmin from "./pages/AdminDashbord/Orderadmin";
 import Reports from "./pages/AdminDashbord/Reports";
 import DashboardPage from "./pages/AdminDashbord/DashboardPage";
 
-// 🌿 هنا بنضيف الكويز الجديد
+
 import PlantQuiz from "./components/PlantQuiz";
 // add wishlist import
 import Wishlish from "./pages/Wishlist";
@@ -88,14 +88,12 @@ const AppContent: React.FC = () => {
     setUserRole("");
   };
 
-  // التحقق لو المستخدم داخل على صفحة أدمن
   const isAdminPage = location.pathname.startsWith("/admin");
 
   return (
     <>
       <Toaster position="top-right" />
       <div className="app-container">
-        {/* Navbar فقط لو مش في صفحة الأدمن */}
         {!isAdminPage &&
           (isAuthenticated ? (
             <MainNavbar
@@ -253,7 +251,8 @@ const AppContent: React.FC = () => {
               }
             />
 
-            {/* 🌿 Route الكويز الجديد */}
+            {/* {Route of quiz} */}
+
             <Route
               path="/quiz"
               element={
@@ -284,7 +283,6 @@ const AppContent: React.FC = () => {
           </Routes>
         </main>
 
-        {/* Footer فقط لو مش في صفحة الأدمن */}
         {isAuthenticated &&
           !location.pathname.startsWith("/auth") &&
           !isAdminPage && <Footer />}

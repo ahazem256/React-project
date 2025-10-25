@@ -11,7 +11,7 @@ const OrdersPage: React.FC = () => {
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const ordersPerPage = 4; // ✅ Show 4 orders per page
+  const ordersPerPage = 4; 
 
   useEffect(() => {
     const fetchUserOrders = async () => {
@@ -39,8 +39,8 @@ const OrdersPage: React.FC = () => {
 
   const handleDeleteOrder = async (orderId: string) => {
     const confirm = await Swal.fire({
-      title: "Are you sure?",
-      text: "This will permanently delete your order.",
+      title: `<span style="font-family: var(--font-family-serif)">Are you sure?</span>`,
+      html:`<span style="font-family: var(--font-family-serif)">This will permanently delete your order.</span>`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#000",
@@ -83,8 +83,8 @@ const OrdersPage: React.FC = () => {
       }
 
       Swal.fire({
-        title: "Deleted!",
-        text: "Order deleted successfully.",
+        title: `<span style="font-family: var(--font-family-serif)">Deleted!</span>`,
+        html: `<span style="font-family: var(--font-family-serif)">Order deleted successfully.</span>`,
         icon: "success",
         confirmButtonColor: "#000",
       });
@@ -95,13 +95,13 @@ const OrdersPage: React.FC = () => {
 
   const handleViewDetails = (order: any) => {
     Swal.fire({
-      title: `Order #${order.id}`,
+      title: `<span style="font-family: 'var(--font-family-serif)'">Order #${order.id}</span>`,
       html: `
-        <div style="text-align:left">
+        <div style="text-align:left; font-family: 'var(--font-family-serif)'">
           <p><b>Date:</b> ${new Date(
             order.orderDate || order.createdAt
           ).toLocaleString()}</p>
-          <p><b>Total:</b> $${Number(order.total ?? 0).toFixed(2)}</p>
+          <p><b>Total:</b> EGP ${Number(order.total ?? 0).toFixed(2)}</p>
           <hr>
           <h4>Items:</h4>
           <ul style="list-style:none; padding:0;">
@@ -112,7 +112,7 @@ const OrdersPage: React.FC = () => {
                 <img src="${item.image}" width="40" height="40" style="border-radius:6px;"/>
                 <div>
                   <p style="margin:0;"><b>${item.name}</b></p>
-                  <p style="margin:0; font-size:13px;">Qty: ${item.quantity} - $${item.price}</p>
+                  <p style="margin:0; font-size:13px;">Qty: ${item.quantity} - ${item.price}</p>
                 </div>
               </li>
             `
@@ -152,9 +152,9 @@ const OrdersPage: React.FC = () => {
   if (orders.length === 0) {
     return (
       <div className="orders-empty">
-        <h2>No orders yet</h2>
-        <p>You haven't placed any orders.</p>
-        <button className="btn text-light" style= {{background: "black" }}onClick={() => navigate("/")}>
+        <h2 style={{fontFamily: "var(--font-family-serif)"}}>No orders yet</h2>
+        <p style={{ fontFamily: "var(--font-family-serif)"}}>You haven't placed any orders.</p>
+        <button className="btn text-light" style= {{background: "black", fontFamily: "var(--font-family-serif)" }}onClick={() => navigate("/")}>
           Go Shopping
         </button>
       </div>
@@ -163,18 +163,18 @@ const OrdersPage: React.FC = () => {
 
   return (
     <div className="orders-container" style={{ backgroundColor: "#fff" }}>
-      <h1>Order History</h1>
-      <p>
+      <h1 style={{fontFamily: "var(--font-family-serif)"}}>Order History</h1>
+      <p style={{ fontFamily: "var(--font-family-serif)"}}>
         You have {orders.length} order{orders.length !== 1 ? "s" : ""}
       </p>
 
       {currentOrders.map((order) => (
-        <div key={order.id} className="order-card">
+        <div key={order.id} className="order-card" style={{ fontFamily: "var(--font-family-serif)"}}>
           <div className="order-header">
             <div>
               <h3>Order #{order.id}</h3>
               <p>{new Date(order.orderDate || order.createdAt).toLocaleString()}</p>
-              <p>Total: ${Number(order.total ?? 0).toFixed(2)}</p>
+              <p>Total: EGP{Number(order.total ?? 0).toFixed(2)}</p>
             </div>
             <span className={`status ${order.status || "pending"}`}>
               {(order.status || "pending").toUpperCase()}

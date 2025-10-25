@@ -379,19 +379,19 @@
 
 .products-grid-single-row {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* تغيير من 3 إلى 2 عمود */
-  gap: 24px; /* زيادة المسافة بين العناصر */
+  grid-template-columns: repeat(2, 1fr); 
+  gap: 24px;
   margin-bottom: 28px;
   width: 100%;
   justify-content: center;
   align-items: start;
-  padding: 0 8px; /* إضافة padding جانبي */
+  padding: 0 8px; 
 }
 
 .product-card-single {
   background: var(--surface);
   border-radius: var(--radius-sm);
-  padding: 24px 16px; /* زيادة padding */
+  padding: 24px 16px;
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   border: 2px solid var(--border);
@@ -399,7 +399,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: 220px; /* زيادة الارتفاع */
+  min-height: 220px; 
   position: relative;
   overflow: visible;
   width: 100%;
@@ -414,7 +414,7 @@
 
 /* Product Image - Larger and Clearer */
 .product-image-single {
-  width: 120px; /* زيادة حجم الحاوية */
+  width: 120px; 
   height: 120px;
   overflow: visible;
   background: linear-gradient(135deg, var(--background), #f0f9f0);
@@ -426,9 +426,9 @@
   transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   position: relative;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-  transform: scale(1.05); /* تقليل scale قليلاً */
+  transform: scale(1.05); 
   z-index: 2;
-  border-radius: 20px; /* إضافة border-radius */
+  border-radius: 20px; 
 }
 
 .image-container {
