@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import ClipLoader from "react-spinners/ClipLoader";
+import { ClipLoader } from "react-spinners";
 import { addToCart } from "../../../redux/slices/cartSlice";
 import { IoHeartOutline, IoHeart } from "react-icons/io5";
 import "./LowestProducts.css";
@@ -146,8 +146,15 @@ const LowestProducts: React.FC = () => {
     if (isLoading) {
         return (
             <div className="lp-final-loading-container">
-                <ClipLoader color="#5b6d51" size={60} />
-                <p>Loading products...</p>
+                <ClipLoader
+                    size={60}
+                    color="#5b6d51"
+                    cssOverride={{
+                        borderColor: 'transparent',
+                        borderTopColor: '#5b6d51',
+                    }}
+                />
+
             </div>
         );
     }

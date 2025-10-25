@@ -13,9 +13,9 @@
     box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
     width: 100%;
     position: relative;
-    /* لازم تكون relative علشان القائمة تستخدمه كـ reference */
+
     z-index: 1;
-    /* تخليه أقل من القائمة */
+
     overflow: visible;
 }
 
@@ -33,7 +33,7 @@
     flex-direction: column;
 }
 
-/* About Section */
+
 .footer-about {
     max-width: 350px;
 }
@@ -57,7 +57,7 @@
     margin: 0;
 }
 
-/* Links Section */
+
 .footer-links-section {
     align-items: center;
 }
@@ -95,7 +95,7 @@
     background-color: rgba(120, 168, 125, 0.1);
 }
 
-/* Social Media Section */
+
 .footer-social-section {
     align-items: center;
 }
@@ -144,14 +144,13 @@
     gap: 0.5rem;
 }
 
-/* Make email and phone icons black */
+
 .black-icon {
     filter: brightness(0);
     display: inline-block;
 }
 
-/* Dropdown Styles */
-/* Dropdown Styles - Click instead of Hover */
+
 .footer-dropdown {
     position: relative;
     display: inline-block;
@@ -195,7 +194,7 @@
     transition: all 0.25s ease-in-out;
 }
 
-/* Show dropdown when active */
+
 .footer-dropdown-menu.show {
     display: block;
     opacity: 1;
@@ -234,7 +233,7 @@
     }
 }
 
-/* Footer Bottom */
+
 .footer-bottom {
     text-align: center;
     border-top: 1px solid rgba(120, 168, 125, 0.3);
@@ -253,13 +252,13 @@
     margin-left: 0.3rem;
 }
 
-/* Center specific sections on desktop */
+
 .footer-section:nth-child(2),
 .footer-section:nth-child(3) {
     margin-top: 45px;
 }
 
-/* Responsive Design */
+
 @media (max-width: 1024px) {
     .footer-container {
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -322,7 +321,7 @@
         font-size: 13px;
     }
 
-    /* Remove top margin on mobile for middle sections */
+
     .footer-section:nth-child(2),
     .footer-section:nth-child(3) {
         margin-top: 0;
@@ -394,7 +393,7 @@
     }
 }
 
-/* Large screens */
+
 @media (min-width: 1200px) {
     .footer-container {
         grid-template-columns: 2fr 1fr 1fr;
@@ -406,7 +405,7 @@
     }
 }
 
-/* Improvements for very small screens */
+
 @media (max-width: 360px) {
     .footer {
         padding: 1rem 0.5rem 0.5rem;
