@@ -34,13 +34,13 @@ const ExploreProducts: React.FC = () => {
         queryFn: fetchProducts,
     });
 
-    const [wishlistMap, setWishlistMap] = useState<{[key: string]: boolean}>({});
+    const [wishlistMap, setWishlistMap] = useState<{ [key: string]: boolean }>({});
 
     useEffect(() => {
         try {
             const raw = localStorage.getItem("wishlist_items") || "[]";
             const list = JSON.parse(raw);
-            const map: {[key: string]: boolean} = {};
+            const map: { [key: string]: boolean } = {};
             if (Array.isArray(list)) {
                 list.forEach((item: any) => {
                     map[item.id] = true;
@@ -64,21 +64,21 @@ const ExploreProducts: React.FC = () => {
     const toggleWishlist = (product: any, e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
-        
+
         try {
             const raw = localStorage.getItem("wishlist_items") || "[]";
             const list = JSON.parse(raw);
             const items = Array.isArray(list) ? list : [];
-            
+
             const exists = items.some((p: any) => String(p.id) === String(product.id));
             if (exists) {
                 // Remove
                 const filtered = items.filter((p: any) => String(p.id) !== String(product.id));
                 localStorage.setItem("wishlist_items", JSON.stringify(filtered));
-                setWishlistMap(prev => ({...prev, [product.id]: false}));
+                setWishlistMap(prev => ({ ...prev, [product.id]: false }));
                 toast.success(`${product.name} removed from wishlist`);
             } else {
-                // Add
+
                 const item = {
                     id: product.id,
                     title: product.name,
@@ -87,7 +87,7 @@ const ExploreProducts: React.FC = () => {
                 };
                 items.push(item);
                 localStorage.setItem("wishlist_items", JSON.stringify(items));
-                setWishlistMap(prev => ({...prev, [product.id]: true}));
+                setWishlistMap(prev => ({ ...prev, [product.id]: true }));
                 toast.success(`${product.name} added to wishlist`);
             }
             window.dispatchEvent(new Event("wishlistUpdated"));
@@ -99,8 +99,15 @@ const ExploreProducts: React.FC = () => {
     if (isLoading) {
         return (
             <div className="loading-spinner">
-                <ClipLoader size={60} color="#5b6d51" />
-                <p>Loading products...</p>
+                <ClipLoader
+                    size={60}
+                    color="#5b6d51"
+                    cssOverride={{
+                        borderColor: 'transparent',
+                        borderTopColor: '#5b6d51',
+                    }}
+                />
+
             </div>
         );
     }
@@ -126,7 +133,7 @@ const ExploreProducts: React.FC = () => {
                                 alt={product.name}
                                 className="product-image-explore"
                             />
-                            
+
                             <button
                                 className="add-to-cart-overlay"
                                 onClick={(e) => {
