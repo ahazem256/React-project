@@ -25,7 +25,6 @@ It helps users explore, choose, and buy plants that fit their lifestyle — usin
 | **Backend / API** | JSON Server (Mock API) |
 | **Routing** | React Router |
 | **State Management** | Redux Toolkit |
-| **Hosting** | Vercel |
 | **Version Control** | Git + GitHub |
 
 ---
