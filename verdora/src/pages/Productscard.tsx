@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import "../components/Home/ExploreProducts/ExploreProducts.css";
 import "../styles/global.css";
 import { IoHeartOutline, IoHeart } from "react-icons/io5";
+import { loadWishlist, saveWishlist } from "../utils/wishlistStorage";
 
 interface ProductCardProps {
   product: Product;
@@ -20,8 +21,7 @@ export default function ProductsCard({ product, onClick }: ProductCardProps) {
 
   useEffect(() => {
     try {
-      const raw = localStorage.getItem("wishlist_items") || "[]";
-      const list = JSON.parse(raw);
+      const list = loadWishlist();
       const exists = Array.isArray(list) && list.some((p: any) => String(p.id) === String(product.id));
       setInWishlist(Boolean(exists));
     } catch {
@@ -30,8 +30,7 @@ export default function ProductsCard({ product, onClick }: ProductCardProps) {
 
     const onWishlistUpdated = () => {
       try {
-        const raw = localStorage.getItem("wishlist_items") || "[]";
-        const list = JSON.parse(raw);
+        const list = loadWishlist();
         const exists = Array.isArray(list) && list.some((p: any) => String(p.id) === String(product.id));
         setInWishlist(Boolean(exists));
       } catch {
@@ -57,15 +56,14 @@ export default function ProductsCard({ product, onClick }: ProductCardProps) {
   const addToWishlist = (e: React.MouseEvent) => {
     e.stopPropagation();
     try {
-      const raw = localStorage.getItem("wishlist_items") || "[]";
-      const parsed = JSON.parse(raw);
-      const list = Array.isArray(parsed) ? parsed : [];
+      const list = loadWishlist();
 
       const existsIndex = list.findIndex((p: any) => String(p.id) === String(product.id));
       if (existsIndex >= 0) {
         // remove
-        list.splice(existsIndex, 1);
-        localStorage.setItem("wishlist_items", JSON.stringify(list));
+        const next = [...list];
+        next.splice(existsIndex, 1);
+        saveWishlist(next);
         window.dispatchEvent(new Event("wishlistUpdated"));
         setInWishlist(false);
         toast.success(`${product.name} removed from wishlist`);
@@ -80,8 +78,8 @@ export default function ProductsCard({ product, onClick }: ProductCardProps) {
         image: product.image ?? "",
       };
 
-      list.push(item);
-      localStorage.setItem("wishlist_items", JSON.stringify(list));
+      const next = [...list, item];
+      saveWishlist(next);
       window.dispatchEvent(new Event("wishlistUpdated"));
       setInWishlist(true);
       toast.success(`${item.title} added to wishlist`);

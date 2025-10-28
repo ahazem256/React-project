@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import type { RootState } from "../redux/store";
 import { addToCart } from "../redux/slices/cartSlice";
 import "../styles/global.css";
-import {
-  IoCartOutline,
-} from "react-icons/io5";
+import { IoCartOutline } from "react-icons/io5";
+import { loadWishlist, removeFromWishlistById, clearWishlist } from "../utils/wishlistStorage";
 
 type Product = {
   id: number | string;
@@ -21,15 +21,10 @@ const Wishlish: React.FC = () => {
   const [items, setItems] = useState<Product[]>([]);
   const [hoveredCard, setHoveredCard] = useState<number | string | null>(null);
   const [hoveredButton, setHoveredButton] = useState<string>("");
+  const authUser = useSelector((state: RootState) => state.auth.user);
 
   const load = () => {
-    try {
-      const raw = localStorage.getItem("wishlist_items") || "[]";
-      const parsed = JSON.parse(raw);
-      setItems(Array.isArray(parsed) ? parsed : []);
-    } catch {
-      setItems([]);
-    }
+    setItems(loadWishlist());
   };
 
   useEffect(() => {
@@ -43,10 +38,13 @@ const Wishlish: React.FC = () => {
     };
   }, []);
 
+  useEffect(() => {
+    // reload wishlist when logged-in user changes
+    load();
+  }, [authUser]);
+
   const removeFromWishlist = (id: number | string) => {
-    const next = items.filter((i) => i.id !== id);
-    localStorage.setItem("wishlist_items", JSON.stringify(next));
-    window.dispatchEvent(new Event("wishlistUpdated"));
+    const next = removeFromWishlistById(id);
     setItems(next);
   };
 
@@ -66,8 +64,7 @@ const Wishlish: React.FC = () => {
       });
 
       // Clear wishlist
-      localStorage.setItem("wishlist_items", JSON.stringify([]));
-      window.dispatchEvent(new Event("wishlistUpdated"));
+      clearWishlist();
       setItems([]);
 
       // Navigate to cart

@@ -9,6 +9,7 @@ import axios from "axios";
 import { ClipLoader } from "react-spinners";
 import { addToCart } from "../../../redux/slices/cartSlice";
 import { IoHeartOutline, IoHeart } from "react-icons/io5";
+import { loadWishlist, saveWishlist } from "../../../utils/wishlistStorage";
 import "./LowestProducts.css";
 
 interface Product {
@@ -93,19 +94,24 @@ const LowestProducts: React.FC = () => {
     const [wishlistMap, setWishlistMap] = useState<{ [key: string]: boolean }>({});
 
     useEffect(() => {
-        try {
-            const raw = localStorage.getItem("wishlist_items") || "[]";
-            const list = JSON.parse(raw);
-            const map: { [key: string]: boolean } = {};
-            if (Array.isArray(list)) {
-                list.forEach((item: any) => {
-                    map[item.id] = true;
-                });
+        const buildMap = () => {
+            try {
+                const list = loadWishlist();
+                const map: { [key: string]: boolean } = {};
+                if (Array.isArray(list)) {
+                    list.forEach((item: any) => {
+                        map[item.id] = true;
+                    });
+                }
+                setWishlistMap(map);
+            } catch {
+                setWishlistMap({});
             }
-            setWishlistMap(map);
-        } catch {
-            setWishlistMap({});
-        }
+        };
+        buildMap();
+        const onWishlistUpdated = () => buildMap();
+        window.addEventListener("wishlistUpdated", onWishlistUpdated as EventListener);
+        return () => window.removeEventListener("wishlistUpdated", onWishlistUpdated as EventListener);
     }, []);
 
     const toggleWishlist = (product: any, e: React.MouseEvent) => {
@@ -113,15 +119,13 @@ const LowestProducts: React.FC = () => {
         e.stopPropagation();
 
         try {
-            const raw = localStorage.getItem("wishlist_items") || "[]";
-            const list = JSON.parse(raw);
-            const items = Array.isArray(list) ? list : [];
+            const items = loadWishlist();
 
             const exists = items.some((p: any) => String(p.id) === String(product.id));
             if (exists) {
                 // Remove
                 const filtered = items.filter((p: any) => String(p.id) !== String(product.id));
-                localStorage.setItem("wishlist_items", JSON.stringify(filtered));
+                saveWishlist(filtered);
                 setWishlistMap((prev) => ({ ...prev, [product.id]: false }));
                 toast.success(`${product.name} removed from wishlist`);
             } else {
@@ -132,8 +136,8 @@ const LowestProducts: React.FC = () => {
                     price: product.price,
                     image: product.image,
                 };
-                items.push(item);
-                localStorage.setItem("wishlist_items", JSON.stringify(items));
+                const next = [...items, item];
+                saveWishlist(next);
                 setWishlistMap((prev) => ({ ...prev, [product.id]: true }));
                 toast.success(`${product.name} added to wishlist`);
             }

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import type { RootState, AppDispatch } from "../redux/store";
@@ -28,6 +28,15 @@ const Checkout: React.FC = () => {
   });
 
   const [isProcessing, setIsProcessing] = useState(false);
+
+  // Responsive helper
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // Calculate total price
   const totalPrice = cartItems.reduce((sum, item) => {
@@ -150,15 +159,15 @@ for (const item of cartItems) {
   }
 
   return (
-    <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "40px 20px" }} className="checkout-page">
+    <div style={{ maxWidth: "1200px", margin: "0 auto", padding: isMobile ? "20px 12px" : "40px 20px" }} className="checkout-page">
       <h1 style={{ marginBottom: "32px", textAlign: "center", color: "var(--color-green-darkest)" }}>Checkout</h1>
       
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "40px" }}>
+      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: isMobile ? "24px" : "40px" }}>
         {/* Checkout Form */}
         <div>
           <h2 style={{ marginBottom: "24px",color:"var(--color-green-darkest)" }}>Shipping Information</h2>
           <form onSubmit={handleSubmit}>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "16px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "16px", marginBottom: "16px" }}>
               <div>
                 <label style={{ display: "block", marginBottom: "4px", fontWeight: "500" }}>
                   First Name *
@@ -258,7 +267,7 @@ for (const item of cartItems) {
               />
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "16px", marginBottom: "32px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "2fr 1fr", gap: "16px", marginBottom: "32px" }}>
               <div>
                 <label style={{ display: "block", marginBottom: "4px", fontWeight: "500" }}>
                   City *
@@ -348,7 +357,7 @@ for (const item of cartItems) {
                     }}
                   />
                 </div>
-                <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "16px" }}>
+                <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "2fr 1fr", gap: "16px" }}>
                   <div>
                     <label style={{ display: "block", marginBottom: "4px", fontWeight: "500" }}>
                       Expiry Date *
@@ -422,50 +431,50 @@ for (const item of cartItems) {
           </form>
         </div>
 
-        {/* Order Summary */}
-        <div>
-          <h2 style={{ marginBottom: "24px", color: "var(--color-green-darkest)" }}>Order Summary</h2>
-          <div style={{ border: "1px solid #ddd", borderRadius: "8px", padding: "20px" }}>
-            <div style={{ marginBottom: "20px" }}>
-              {cartItems.map((item) => {
-                const productName = item.name || 'Product';
-                const productImage = typeof item.image === 'string' ? item.image : item.image[0] || '';
-                const price = typeof item.price === 'string' 
-                  ? parseFloat(item.price.replace(/[^\d.]/g, "")) 
-                  : item.price;
-                const currency = typeof item.price === 'string' && item.price.includes('EGP') ? 'EGP' : '$';
+          {/* Order Summary */}
+          <div>
+            <h2 style={{ marginBottom: "24px", color: "var(--color-green-darkest)" }}>Order Summary</h2>
+            <div style={{ border: "1px solid #ddd", borderRadius: "8px", padding: isMobile ? "12px" : "20px" }}>
+              <div style={{ marginBottom: "20px" }}>
+                {cartItems.map((item) => {
+                  const productName = item.name || 'Product';
+                  const productImage = typeof item.image === 'string' ? item.image : item.image[0] || '';
+                  const price = typeof item.price === 'string' 
+                    ? parseFloat(item.price.replace(/[^\d.]/g, "")) 
+                    : item.price;
+                  const currency = typeof item.price === 'string' && item.price.includes('EGP') ? 'EGP' : '$';
 
-                return (
-                  <div key={item.id} style={{ display: "flex", alignItems: "center", marginBottom: "16px" }}>
-                    <img
-                      src={productImage}
-                      alt={productName}
-                      style={{ width: "60px", height: "60px", objectFit: "cover", borderRadius: "4px", marginRight: "12px" }}
-                    />
-                    <div style={{ flex: 1 }}>
-                      <h4 style={{ margin: "0 0 4px 0", fontSize: "14px" }}>{productName}</h4>
-                      <p style={{ margin: "0", color: "#666", fontSize: "14px" }}>
-                        Qty: {item.quantity} × {currency}{price.toFixed(2)}
-                      </p>
+                  return (
+                    <div key={item.id} style={{ display: "flex", alignItems: "center", marginBottom: isMobile ? "12px" : "16px", gap: isMobile ? "8px" : "12px" }}>
+                      <img
+                        src={productImage}
+                        alt={productName}
+                        style={{ width: isMobile ? "48px" : "60px", height: isMobile ? "48px" : "60px", objectFit: "cover", borderRadius: "4px", marginRight: isMobile ? "8px" : "12px" }}
+                      />
+                      <div style={{ flex: 1 }}>
+                        <h4 style={{ margin: "0 0 4px 0", fontSize: isMobile ? "13px" : "14px" }}>{productName}</h4>
+                        <p style={{ margin: "0", color: "#666", fontSize: isMobile ? "13px" : "14px" }}>
+                          Qty: {item.quantity} × {currency}{price.toFixed(2)}
+                        </p>
+                      </div>
+                      <div style={{ fontWeight: "600", minWidth: isMobile ? "60px" : undefined, textAlign: "right" }}>
+                        {currency}{(price * item.quantity).toFixed(2)}
+                      </div>
                     </div>
-                    <div style={{ fontWeight: "600" }}>
-                      {currency}{(price * item.quantity).toFixed(2)}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+                  );
+                })}
+              </div>
             
-            <div style={{ borderTop: "1px solid #ddd", paddingTop: "16px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: "18px", fontWeight: "600" }}>Total:</span>
-                <span style={{ fontSize: "20px", fontWeight: "700", color: "var(--color-green-darkest)" }}>
-                  {totalPrice.toFixed(2)} {cartItems.length > 0 && typeof cartItems[0].price === 'string' && cartItems[0].price.includes('EGP') ? 'EGP' : '$'}
-                </span>
+              <div style={{ borderTop: "1px solid #ddd", paddingTop: isMobile ? "12px" : "16px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span style={{ fontSize: isMobile ? "16px" : "18px", fontWeight: "600" }}>Total:</span>
+                  <span style={{ fontSize: isMobile ? "18px" : "20px", fontWeight: "700", color: "var(--color-green-darkest)" }}>
+                    {totalPrice.toFixed(2)} {cartItems.length > 0 && typeof cartItems[0].price === 'string' && cartItems[0].price.includes('EGP') ? 'EGP' : '$'}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
       </div>
     </div>
   );

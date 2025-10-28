@@ -8,6 +8,7 @@ import { addToCart } from "../redux/slices/cartSlice";
 import Loader from "../pages/Loader/Loader";
 import { toast } from "react-hot-toast";
 import "../styles/global.css";
+import { loadWishlist, saveWishlist } from "../utils/wishlistStorage";
 
 interface ProductDetailsProps {}
 
@@ -68,9 +69,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
 
   useEffect(() => {
     if (product) {
-      const raw = localStorage.getItem("wishlist_items") || "[]";
-      const parsed = JSON.parse(raw);
-      const list = Array.isArray(parsed) ? parsed : [];
+      const list = loadWishlist();
       const exists = list.some((p: any) => String(p.id) === String(product.id));
       setIsInWishlist(exists);
     }
@@ -87,16 +86,13 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
   const handleAddToWishlist = (): void => {
     if (!product) return;
     try {
-      const raw = localStorage.getItem("wishlist_items") || "[]";
-      const parsed = JSON.parse(raw);
-      const list = Array.isArray(parsed) ? parsed : [];
+      const list = loadWishlist();
       const exists = list.some((p: any) => String(p.id) === String(product.id));
       
       if (exists) {
         // Remove from wishlist
         const updatedList = list.filter((p: any) => String(p.id) !== String(product.id));
-        localStorage.setItem("wishlist_items", JSON.stringify(updatedList));
-        window.dispatchEvent(new Event("wishlistUpdated"));
+        saveWishlist(updatedList);
         setIsInWishlist(false);
         toast.success(`${product.name} removed from wishlist!`);
         return;
@@ -116,8 +112,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
       };
 
       list.push(wishlistItem);
-      localStorage.setItem("wishlist_items", JSON.stringify(list));
-      window.dispatchEvent(new Event("wishlistUpdated"));
+      saveWishlist(list);
       setIsInWishlist(true);
       toast.success(`${wishlistItem.title} added to wishlist!`);
     } catch (err) {

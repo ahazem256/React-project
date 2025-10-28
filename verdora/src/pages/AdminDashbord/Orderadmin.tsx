@@ -295,7 +295,7 @@ const Orderadmin: React.FC = () => {
                       )}
                     </td>
                     <td>{new Date(order.orderDate).toLocaleString()}</td>
-                    <td>${order.total.toFixed(2)}</td>
+                    <td>{order.total.toFixed(2)} EGP</td>
                     <td>
                       <div className="position-relative">
                         <button
@@ -416,7 +416,7 @@ const Orderadmin: React.FC = () => {
               <div className="order-mobile-detail">
                 <span className="order-mobile-label">Total</span>
                 <span className="order-mobile-value fw-bold">
-                  ${order.total.toFixed(2)}
+                  {order.total.toFixed(2)} EGP
                 </span>
               </div>
             </div>

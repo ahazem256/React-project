@@ -177,7 +177,7 @@ nav {
 
 .btn-wishlist .badge,
 .mobile-wish-btn .badge {
-    background-color: var(--color-green-dark) !important;
+    background-color: green !important;
     color: #fff !important;
 }
 

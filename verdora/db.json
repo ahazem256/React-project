@@ -333,6 +333,14 @@
       "password": "Ahmed192",
       "phone": "01023340945",
       "role": "user"
+    },
+    {
+      "id": "c207",
+      "name": "adsad",
+      "email": "znga@gmail.com",
+      "password": "Ahmed192",
+      "phone": "01023340945",
+      "role": "user"
     }
   ],
   "products": [
@@ -341,7 +349,7 @@
       "category": "Indoor",
       "name": "Snake Plant",
       "price": "80 EGP",
-      "stock": 30,
+      "stock": 31,
       "image": "https://i.postimg.cc/YjKM160q/id2.png",
       "bestseller": false,
       "oldprice": null,
@@ -373,7 +381,7 @@
       "category": "Indoor",
       "name": "Peace Lily",
       "price": "90 EGP",
-      "stock": 20,
+      "stock": 21,
       "image": "https://i.postimg.cc/WtLTMGzs/id3.png",
       "bestseller": true,
       "oldprice": "110 EGP",
@@ -501,7 +509,7 @@
       "category": "Indoor",
       "name": "Rubber Plant",
       "price": "130 EGP",
-      "stock": 11,
+      "stock": 12,
       "image": "https://i.postimg.cc/0jJ9MW8L/id7.png",
       "bestseller": true,
       "oldprice": "160 EGP",
@@ -981,7 +989,7 @@
       "category": "Outdoor",
       "name": "Marigold",
       "price": "50 EGP",
-      "stock": 43,
+      "stock": 45,
       "image": "https://i.postimg.cc/1305rjpy/id22.png",
       "bestseller": true,
       "oldprice": "60 EGP",
@@ -2227,7 +2235,7 @@
       "containerType": "Pot"
     },
     {
-      "id": 61,
+      "id": "61",
       "name": "flower",
       "image": "https://glasswingshop.com/cdn/shop/products/8D2A2069.jpg?v=1595400475&width=533",
       "category": "Indoor",
@@ -2464,7 +2472,7 @@
       "total": 105,
       "createdAt": "2025-10-21T16:46:55.922Z",
       "orderDate": "2025-10-21T16:46:55.922Z",
-      "status": "confirmed"
+      "status": "processing"
     },
     {
       "id": "ORD-1761066277818",
@@ -3795,105 +3803,6 @@
       "status": "confirmed"
     },
     {
-      "id": "ORD-1761373124321",
-      "items": [
-        {
-          "id": "3",
-          "category": "Indoor",
-          "name": "Peace Lily",
-          "price": "90 EGP",
-          "stock": 9,
-          "image": "https://i.postimg.cc/WtLTMGzs/id3.png",
-          "bestseller": true,
-          "oldprice": "110 EGP",
-          "rate": "⭐⭐⭐⭐☆",
-          "description": "An elegant indoor plant admired for its graceful white flowers",
-          "review": "Purifies air and blooms beautifully.",
-          "discount": "10%",
-          "isNew": false,
-          "scientificName": "Spathiphyllum wallisii",
-          "nativeRegion": "Tropical Americas",
-          "lifeCycle": "Perennial indoor plant; blooms throughout year under proper care.",
-          "genus": "Spathiphyllum",
-          "type": "Evergreen",
-          "climate": "Tropical, warm and humid",
-          "soilType": "Rich, well-draining potting mix",
-          "wateringNeeds": "Moderate; keep soil moist but not soggy",
-          "sunlight": "Low to bright indirect light",
-          "humidity": "High",
-          "growthRate": "Medium",
-          "propagation": "Division of rhizomes",
-          "toxicity": "Toxic to pets if ingested",
-          "careTips": "Wipe leaves, remove faded flowers, avoid cold drafts.",
-          "floweringSeason": "Spring to fall",
-          "height": "0.6 - 1 m",
-          "containerType": "Medium indoor pot",
-          "quantity": 1
-        }
-      ],
-      "shippingInfo": {
-        "firstName": "ahmeed",
-        "lastName": "hazeemm",
-        "email": "ahmed.hazem708@gmail.com",
-        "phone": "01023340945",
-        "address": "asdsad",
-        "city": "tanta",
-        "zipCode": "12321"
-      },
-      "paymentMethod": "cash-on-delivery",
-      "total": 90,
-      "createdAt": "2025-10-25T06:18:44.320Z",
-      "orderDate": "2025-10-25T06:18:44.320Z",
-      "status": "shipped"
-    },
-    {
-      "id": "ORD-1761379139317",
-      "items": [
-        {
-          "id": "3",
-          "name": "Peace Lily",
-          "price": "90 EGP",
-          "image": "https://i.postimg.cc/WtLTMGzs/id3.png",
-          "quantity": 2
-        },
-        {
-          "id": "22",
-          "name": "Marigold",
-          "price": "50 EGP",
-          "image": "https://i.postimg.cc/1305rjpy/id22.png",
-          "quantity": 3
-        },
-        {
-          "id": "7",
-          "name": "Rubber Plant",
-          "price": "130 EGP",
-          "image": "https://i.postimg.cc/0jJ9MW8L/id7.png",
-          "quantity": 1
-        },
-        {
-          "id": "2",
-          "name": "Snake Plant",
-          "price": "80 EGP",
-          "image": "https://i.postimg.cc/YjKM160q/id2.png",
-          "quantity": 1
-        }
-      ],
-      "shippingInfo": {
-        "firstName": "3ayezz",
-        "lastName": "anaaammmm",
-        "email": "ahmed.hazem708@gmail.com",
-        "phone": "12312",
-        "address": "adas",
-        "city": "tanta",
-        "zipCode": "21312"
-      },
-      "paymentMethod": "credit-card",
-      "total": 540,
-      "createdAt": "2025-10-25T07:58:59.317Z",
-      "orderDate": "2025-10-25T07:58:59.317Z",
-      "status": "shipped"
-    },
-    {
       "id": "ORD-1761398405236",
       "items": [
         {
@@ -4086,6 +3995,66 @@
       "createdAt": "2025-10-25T16:56:34.715Z",
       "orderDate": "2025-10-25T16:56:34.715Z",
       "status": "confirmed"
+    },
+    {
+      "id": "ORD-1761669267910",
+      "items": [
+        {
+          "id": "3",
+          "name": "Peace Lily",
+          "price": "90 EGP",
+          "image": "https://i.postimg.cc/WtLTMGzs/id3.png",
+          "quantity": 2
+        },
+        {
+          "id": "22",
+          "category": "Outdoor",
+          "name": "Marigold",
+          "price": "50 EGP",
+          "stock": 46,
+          "image": "https://i.postimg.cc/1305rjpy/id22.png",
+          "bestseller": true,
+          "oldprice": "60 EGP",
+          "rate": "⭐⭐⭐⭐☆",
+          "description": "Bright flowering plant, perfect choice for colorful garden beds.",
+          "review": "Easy to grow and maintain.",
+          "discount": "10%",
+          "isNew": false,
+          "scientificName": "Tagetes spp.",
+          "nativeRegion": "Americas",
+          "lifeCycle": "Annual flowering plant; fast growth; produces vibrant blooms.",
+          "genus": "Tagetes",
+          "type": "Flowering annual",
+          "climate": "Sunny, warm",
+          "soilType": "Well-draining soil",
+          "wateringNeeds": "Moderate; avoid waterlogging",
+          "sunlight": "Full sun",
+          "humidity": "Low to moderate",
+          "growthRate": "Fast",
+          "propagation": "Seeds",
+          "toxicity": "Non-toxic to pets",
+          "careTips": "Deadhead spent flowers, provide full sun, keep soil moderately moist.",
+          "floweringSeason": "Spring to Autumn",
+          "height": "0.3 - 0.6 m",
+          "containerType": "Garden bed or pot",
+          "numericPrice": 50,
+          "quantity": 1
+        }
+      ],
+      "shippingInfo": {
+        "firstName": "sad",
+        "lastName": "hazeemm",
+        "email": "ahmed.hazem708@gmail.com",
+        "phone": "01023340945",
+        "address": "asdasdas",
+        "city": "tanta",
+        "zipCode": "21312"
+      },
+      "paymentMethod": "cash-on-delivery",
+      "total": 230,
+      "createdAt": "2025-10-28T16:34:27.910Z",
+      "orderDate": "2025-10-28T16:34:27.910Z",
+      "status": "shipped"
     }
   ]
 }

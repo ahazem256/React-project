@@ -12,6 +12,7 @@ import {
 import { CiMenuFries } from "react-icons/ci";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import { GoHistory } from "react-icons/go";
+import { loadWishlist } from "../../utils/wishlistStorage";
 import "./MainNavbar.css";
 
 interface Category {
@@ -65,19 +66,13 @@ const MainNavbar: React.FC<MainNavbarProps> = ({ onLogout, userName }) => {
   };
 
   const updateWishlistCount = (): void => {
-    try {
-      const wishlist = JSON.parse(localStorage.getItem("wishlist_items") || "[]");
-      const previous = wishlistCount;
-      const newCount = Array.isArray(wishlist) ? wishlist.length : 0;
-
-      setWishlistCount(newCount);
-
-      if (newCount > previous) {
-        setIsWishAnimating(true);
-        setTimeout(() => setIsWishAnimating(false), 600);
-      }
-    } catch {
-      setWishlistCount(0);
+    const wishlist = loadWishlist();
+    const previous = wishlistCount;
+    const newCount = Array.isArray(wishlist) ? wishlist.length : 0;
+    setWishlistCount(newCount);
+    if (newCount > previous) {
+      setIsWishAnimating(true);
+      setTimeout(() => setIsWishAnimating(false), 600);
     }
   };
 
@@ -99,7 +94,7 @@ const MainNavbar: React.FC<MainNavbarProps> = ({ onLogout, userName }) => {
       if (e.key === "cart_items") {
         updateCartCount();
       }
-      if (e.key === "wishlist_items") {
+      if (e.key && e.key.startsWith("wishlist_items_")) {
         updateWishlistCount();
       }
     };
@@ -156,8 +151,11 @@ const MainNavbar: React.FC<MainNavbarProps> = ({ onLogout, userName }) => {
     localStorage.removeItem("userEmail");
     localStorage.removeItem("loggedInUser");
     localStorage.removeItem("orders_state");
+    // also clear guest wishlist to avoid showing stale badge for guests
+    localStorage.removeItem("wishlist_items_guest");
 
     setStoredName("");
+    setWishlistCount(0);
     onLogout();
     navigate("/auth/signin", { replace: true });
   };
