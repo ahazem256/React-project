@@ -20,23 +20,26 @@ interface Product {
 
 export type {Product};
 
-let cachedProducts: Product[] = [];
-
 export default function UseProducts() {
-  const [products, setProducts] = useState<Product[]>(cachedProducts);
+  const [products, setProducts] = useState<Product[]>([]);
   const [filter, setFilter] = useState<string>(""); 
   const [searchTerm, setSearchTerm] = useState<string>("");
   const navigate = useNavigate();
 
   async function getproducts() {
-    if (cachedProducts.length > 0) return; 
     try {
       const res = await axios.get<Product[]>("http://localhost:5005/products");
-      const fixedData = res.data.map(p => ({ ...p, id: String(p.id) }));
-      cachedProducts = fixedData; 
+      console.log("Raw data from API:", res.data);
+
+      const fixedData = res.data.map((p: any) => ({
+        ...p,
+        id: String(p.id) 
+      }));
+
+      console.log("Fixed data IDs:", fixedData.map((p: any) => ({ id: p.id, type: typeof p.id })));
       setProducts(fixedData);
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching products:", error);
     }
   }
 

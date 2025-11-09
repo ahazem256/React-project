@@ -29,7 +29,7 @@ export default function UseProducts() {
   const navigate = useNavigate();
 
   async function getproducts() {
-    if (cachedProducts.length > 0) return; 
+    if (cachedProducts.length > 0) return; // لو البيانات موجودة خلاص
     try {
       const res = await axios.get<Product[]>("http://localhost:5005/products");
       const fixedData = res.data.map(p => ({ ...p, id: String(p.id) }));

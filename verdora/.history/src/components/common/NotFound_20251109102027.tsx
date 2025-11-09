@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-// import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet";
 import "../../styles/global.css";
 import "./NotFound.css";
 
@@ -9,9 +9,9 @@ const NotFound: React.FC = () => {
 
   return (
     <>
-      {/* <Helmet>
+      <Helmet>
         <title>404 | Verdora</title>
-      </Helmet> */}
+      </Helmet>
 
       <div
         className="d-flex justify-content-center align-items-center vh-100 bg-white text-dark notfound-container"

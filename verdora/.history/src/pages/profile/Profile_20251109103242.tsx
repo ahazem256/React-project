@@ -3,7 +3,6 @@ import { IoCallOutline, IoLocationOutline, IoSaveOutline, IoCameraOutline } from
 import { FaRegEdit } from "react-icons/fa";
 import { toast } from "react-hot-toast";
 import "../../styles/global.css"
-import Todashboard from "../../components/Home/Todashboard";
 
 
 
@@ -187,7 +186,7 @@ const UserProfile: React.FC = () => {
         )}
       </div>
 
-        <Todashboard />
+,
     </div>
   );
 };
