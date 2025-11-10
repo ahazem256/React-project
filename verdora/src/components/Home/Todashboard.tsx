@@ -9,7 +9,7 @@ export default function Todashboard() {
 
   return (
     <>
-      <Link to="/admin" style={{ textDecoration: "none" }}>
+      <Link to="/admin/dashboard" style={{ textDecoration: "none" }}>
         <div
           style={{
             display: "flex",

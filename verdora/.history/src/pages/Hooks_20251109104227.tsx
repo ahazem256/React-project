@@ -29,11 +29,11 @@ export default function UseProducts() {
   const navigate = useNavigate();
 
   async function getproducts() {
-    if (cachedProducts.length > 0) return; // لو البيانات موجودة خلاص
+    if (cachedProducts.length > 0) return; 
     try {
       const res = await axios.get<Product[]>("http://localhost:5005/products");
       const fixedData = res.data.map(p => ({ ...p, id: String(p.id) }));
-      cachedProducts = fixedData; // خزنه في المتغير الخارجي
+      cachedProducts = fixedData; 
       setProducts(fixedData);
     } catch (error) {
       console.error(error);
